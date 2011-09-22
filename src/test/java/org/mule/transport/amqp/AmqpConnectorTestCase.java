@@ -10,6 +10,8 @@
 
 package org.mule.transport.amqp;
 
+import junit.framework.Assert;
+
 import org.mule.api.transport.Connector;
 import org.mule.transport.AbstractConnectorTestCase;
 import org.mule.transport.amqp.AmqpConstants.AckMode;
@@ -40,7 +42,7 @@ public class AmqpConnectorTestCase extends AbstractConnectorTestCase
     {
         final AmqpConnector amqpConnector = (AmqpConnector) getConnector();
         amqpConnector.setAckMode(AckMode.MULE_AUTO);
-        assertEquals(AckMode.MULE_AUTO, amqpConnector.getAckMode());
+        Assert.assertEquals(AckMode.MULE_AUTO, amqpConnector.getAckMode());
     }
 
     @Override

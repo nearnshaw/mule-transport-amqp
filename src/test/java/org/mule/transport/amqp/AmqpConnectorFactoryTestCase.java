@@ -17,8 +17,7 @@ public class AmqpConnectorFactoryTestCase extends AbstractMuleTestCase
 {
     public void testCreateFromFactory() throws Exception
     {
-        final InboundEndpoint endpoint = muleContext.getRegistry()
-            .lookupEndpointFactory()
+        final InboundEndpoint endpoint = muleContext.getEndpointFactory()
             .getInboundEndpoint(getEndpointURI());
         assertNotNull(endpoint);
         assertNotNull(endpoint.getConnector());

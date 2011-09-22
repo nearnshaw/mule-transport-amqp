@@ -12,26 +12,26 @@ package org.mule.transport.amqp;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Collections;
 
 import org.mule.DefaultMuleEvent;
+import org.mule.MessageExchangePattern;
 import org.mule.api.MessagingException;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.endpoint.OutboundEndpoint;
 import org.mule.api.processor.MessageProcessor;
-import org.mule.api.transformer.Transformer;
 import org.mule.config.i18n.MessageFactory;
 import org.mule.transport.DefaultReplyToHandler;
 
 public class AmqpReplyToHandler extends DefaultReplyToHandler
 {
-    private final AmqpConnector amqpConnector;
+    private static final long serialVersionUID = 1L;
+    private final transient AmqpConnector amqpConnector;
 
     public AmqpReplyToHandler(final AmqpConnector amqpConnector)
     {
-        super(Collections.<Transformer> emptyList(), amqpConnector.getMuleContext());
+        super(amqpConnector.getMuleContext());
         this.amqpConnector = amqpConnector;
     }
 
@@ -47,8 +47,8 @@ public class AmqpReplyToHandler extends DefaultReplyToHandler
                             + urlEncode(event, amqpConnector.getName()));
 
         final MessageProcessor dispatcher = amqpConnector.createDispatcherMessageProcessor(outboundEndpoint);
-        final DefaultMuleEvent replyEvent = new DefaultMuleEvent(returnMessage, outboundEndpoint,
-            event.getSession());
+        final DefaultMuleEvent replyEvent = new DefaultMuleEvent(returnMessage,
+            MessageExchangePattern.REQUEST_RESPONSE, event.getSession());
         dispatcher.process(replyEvent);
 
         if (logger.isDebugEnabled())

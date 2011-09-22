@@ -20,11 +20,11 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mule.DefaultMuleEvent;
+import org.mule.MessageExchangePattern;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.construct.FlowConstruct;
-import org.mule.api.endpoint.ImmutableEndpoint;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.api.transport.PropertyScope;
 import org.mule.processor.AbstractInterceptingMessageProcessor;
@@ -98,7 +98,6 @@ public class AmqpReturnHandler extends AbstractInterceptingMessageProcessor
 
     public static class DispatchingReturnListener extends AbstractAmqpReturnHandlerListener
     {
-        protected final ImmutableEndpoint eventEndpoint;
         protected final FlowConstruct eventFlowConstruct;
         protected final List<MessageProcessor> returnMessageProcessors;
 
@@ -107,21 +106,19 @@ public class AmqpReturnHandler extends AbstractInterceptingMessageProcessor
         public DispatchingReturnListener(final List<MessageProcessor> returnMessageProcessors,
                                          final MuleEvent event)
         {
-            this(event.getEndpoint(), event.getFlowConstruct(), returnMessageProcessors);
+            this(event.getFlowConstruct(), returnMessageProcessors);
         }
 
         public DispatchingReturnListener(final List<MessageProcessor> returnMessageProcessors,
                                          final AmqpConnector amqpConnector)
         {
-            this(null, null, returnMessageProcessors);
+            this(null, returnMessageProcessors);
             this.amqpConnector = amqpConnector;
         }
 
-        private DispatchingReturnListener(final ImmutableEndpoint eventEndpoint,
-                                          final FlowConstruct eventFlowConstruct,
+        private DispatchingReturnListener(final FlowConstruct eventFlowConstruct,
                                           final List<MessageProcessor> returnMessageProcessors)
         {
-            this.eventEndpoint = eventEndpoint;
             this.eventFlowConstruct = eventFlowConstruct;
             this.returnMessageProcessors = returnMessageProcessors;
         }
@@ -147,12 +144,8 @@ public class AmqpReturnHandler extends AbstractInterceptingMessageProcessor
 
                 for (final MessageProcessor returnMessageProcessor : returnMessageProcessors)
                 {
-                    final ImmutableEndpoint returnEndpoint = returnMessageProcessor instanceof ImmutableEndpoint
-                                                                                                                ? (ImmutableEndpoint) returnMessageProcessor
-                                                                                                                : eventEndpoint;
-
                     final DefaultMuleEvent returnedMuleEvent = new DefaultMuleEvent(returnedMuleMessage,
-                        returnEndpoint, new DefaultMuleSession(eventFlowConstruct,
+                        MessageExchangePattern.ONE_WAY, new DefaultMuleSession(eventFlowConstruct,
                             amqpConnector.getMuleContext()));
 
                     returnedMuleMessage.applyTransformers(returnedMuleEvent,
