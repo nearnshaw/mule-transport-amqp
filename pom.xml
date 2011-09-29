@@ -12,7 +12,7 @@
     <url>http://www.muleforge.org/projects/AMQP</url>
 
     <properties>
-        <mule.version>3.1.1-SNAPSHOT</mule.version>
+        <mule.version>3.1.1</mule.version>
         <spring.version>3.0.3.RELEASE</spring.version>
         <rabbitmq.version>2.3.1</rabbitmq.version>
         <!-- Tools properties -->
