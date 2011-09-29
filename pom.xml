@@ -254,7 +254,7 @@
         <url>http://www.mulesoft.org/jira/browse/AMQP</url>
     </issueManagement>
 
-
+<!--
     <distributionManagement>
         <repository>
             <id>muleforge.webdav.releases</id>
@@ -266,6 +266,23 @@
             <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>
     </distributionManagement>
+-->
+
+    <distributionManagement>
+        <repository>
+            <id>muleforge-releases</id>
+            <name>MuleForge Snapshot Repository</name>
+            <url>http://repository.mulesoft.org/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>muleforge-snapshots</id>
+            <name>MuleForge Repository</name>
+            <url>http://repository.mulesoft.org/snapshots/</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+    
+
 
     <!-- End of MuleForge Configuration -->
     <repositories>
