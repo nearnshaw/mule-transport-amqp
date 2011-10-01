@@ -248,15 +248,14 @@
         <url>http://www.mulesoft.org/jira/browse/AMQP</url>
     </issueManagement>
 
-
     <distributionManagement>
         <repository>
           <id>muleforge.webdav.releases</id>
-          <url>dav:https://dav.muleforge.org/repository/mule-transport-amqp/</url>
+          <url>dav:https://dav.muleforge.org/repository/</url>
         </repository>
         <snapshotRepository>
           <id>muleforge.webdav.snapshots</id>
-          <url>dav:https://dav.muleforge.org/snapshots.repository/mule-transport-amqp/</url>
+          <url>dav:https://dav.muleforge.org/snapshots.repository/</url>
         </snapshotRepository>
     </distributionManagement>
 
