@@ -251,13 +251,12 @@
 
     <distributionManagement>
         <repository>
-            <id>muleforge.webdav.releases</id>
-            <url>dav:https://repository.muleforge.org/release/</url>
+          <id>muleforge.webdav.releases</id>
+          <url>dav:https://dav.muleforge.org/repository/mule-transport-amqp/</url>
         </repository>
         <snapshotRepository>
-            <id>muleforge.webdav.snapshots</id>
-            <url>dav:https://repository.muleforge.org/snapshot/</url>
-            <uniqueVersion>false</uniqueVersion>
+          <id>muleforge.webdav.snapshots</id>
+          <url>dav:https://dav.muleforge.org/snapshots.repository/mule-transport-amqp/</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -277,10 +276,6 @@
             <layout>default</layout>
         </repository>
         <repository>
-            <!-- local repository for this forge project. Users can upload dependencies
-        here when the artifact is not available on any other repository. Its the 
-        users' responsibility to make sure that no licenses are violated by uploading 
-        dependencies to this location -->
             <id>amqp-deps</id>
             <name>Amqp Dependencies</name>
             <url>http://dist.muleforge.org/mule-transport-amqp/dependencies/maven2</url>
