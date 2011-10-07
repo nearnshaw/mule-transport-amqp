@@ -20,11 +20,11 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mule.DefaultMuleEvent;
+import org.mule.MessageExchangePattern;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.construct.FlowConstruct;
-import org.mule.api.endpoint.ImmutableEndpoint;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.api.transport.PropertyScope;
 import org.mule.processor.AbstractInterceptingMessageProcessor;
@@ -44,12 +44,12 @@ public class AmqpReturnHandler extends AbstractInterceptingMessageProcessor
     {
         protected static Log LOGGER = LogFactory.getLog(AmqpReturnHandler.class);
 
-        public void handleBasicReturn(final int replyCode,
-                                      final String replyText,
-                                      final String exchange,
-                                      final String routingKey,
-                                      final AMQP.BasicProperties properties,
-                                      final byte[] body) throws IOException
+        public void handleReturn(final int replyCode,
+                                 final String replyText,
+                                 final String exchange,
+                                 final String routingKey,
+                                 final AMQP.BasicProperties properties,
+                                 final byte[] body) throws IOException
         {
             final String errorMessage = String.format(
                 "AMQP returned message with code: %d, reason: %s, exchange: %s, routing key: %s", replyCode,
@@ -63,10 +63,10 @@ public class AmqpReturnHandler extends AbstractInterceptingMessageProcessor
 
             final AmqpMessage returnedAmqpMessage = new AmqpMessage(null, null, properties, body);
 
-            doHandleBasicReturn(errorMessage, returnContext, returnedAmqpMessage);
+            doHandleReturn(errorMessage, returnContext, returnedAmqpMessage);
         }
 
-        protected abstract void doHandleBasicReturn(String errorMessage,
+        protected abstract void doHandleReturn(String errorMessage,
                                                     Map<String, Object> returnContext,
                                                     AmqpMessage returnedAmqpMessage);
 
@@ -82,7 +82,7 @@ public class AmqpReturnHandler extends AbstractInterceptingMessageProcessor
         protected final AtomicInteger hitCount = new AtomicInteger(0);
 
         @Override
-        protected void doHandleBasicReturn(final String errorMessage,
+        protected void doHandleReturn(final String errorMessage,
                                            final Map<String, Object> ignored,
                                            final AmqpMessage returnedAmqpMessage)
         {
@@ -98,7 +98,6 @@ public class AmqpReturnHandler extends AbstractInterceptingMessageProcessor
 
     public static class DispatchingReturnListener extends AbstractAmqpReturnHandlerListener
     {
-        protected final ImmutableEndpoint eventEndpoint;
         protected final FlowConstruct eventFlowConstruct;
         protected final List<MessageProcessor> returnMessageProcessors;
 
@@ -107,21 +106,19 @@ public class AmqpReturnHandler extends AbstractInterceptingMessageProcessor
         public DispatchingReturnListener(final List<MessageProcessor> returnMessageProcessors,
                                          final MuleEvent event)
         {
-            this(event.getEndpoint(), event.getFlowConstruct(), returnMessageProcessors);
+            this(event.getFlowConstruct(), returnMessageProcessors);
         }
 
         public DispatchingReturnListener(final List<MessageProcessor> returnMessageProcessors,
                                          final AmqpConnector amqpConnector)
         {
-            this(null, null, returnMessageProcessors);
+            this(null, returnMessageProcessors);
             this.amqpConnector = amqpConnector;
         }
 
-        private DispatchingReturnListener(final ImmutableEndpoint eventEndpoint,
-                                          final FlowConstruct eventFlowConstruct,
+        private DispatchingReturnListener(final FlowConstruct eventFlowConstruct,
                                           final List<MessageProcessor> returnMessageProcessors)
         {
-            this.eventEndpoint = eventEndpoint;
             this.eventFlowConstruct = eventFlowConstruct;
             this.returnMessageProcessors = returnMessageProcessors;
         }
@@ -132,7 +129,7 @@ public class AmqpReturnHandler extends AbstractInterceptingMessageProcessor
         }
 
         @Override
-        protected void doHandleBasicReturn(final String errorMessage,
+        protected void doHandleReturn(final String errorMessage,
                                            final Map<String, Object> returnContext,
                                            final AmqpMessage returnedAmqpMessage)
         {
@@ -147,12 +144,8 @@ public class AmqpReturnHandler extends AbstractInterceptingMessageProcessor
 
                 for (final MessageProcessor returnMessageProcessor : returnMessageProcessors)
                 {
-                    final ImmutableEndpoint returnEndpoint = returnMessageProcessor instanceof ImmutableEndpoint
-                                                                                                                ? (ImmutableEndpoint) returnMessageProcessor
-                                                                                                                : eventEndpoint;
-
                     final DefaultMuleEvent returnedMuleEvent = new DefaultMuleEvent(returnedMuleMessage,
-                        returnEndpoint, new DefaultMuleSession(eventFlowConstruct,
+                        MessageExchangePattern.ONE_WAY, new DefaultMuleSession(eventFlowConstruct,
                             amqpConnector.getMuleContext()));
 
                     returnedMuleMessage.applyTransformers(returnedMuleEvent,

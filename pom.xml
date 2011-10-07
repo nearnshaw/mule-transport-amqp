@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.transports</groupId>
     <artifactId>mule-transport-amqp</artifactId>
     <packaging>jar</packaging>
-    <name>Mule Amqp Transport</name>
-    <version>3.1.2-SNAPSHOT</version>
+    <name>Mule AMQP Transport</name>
+    <version>3.3.0-SNAPSHOT</version>
     <description>Connects to AMQP brokers</description>
     <url>http://www.muleforge.org/projects/AMQP</url>
 
     <properties>
-        <mule.version>3.1.1</mule.version>
-        <spring.version>3.0.3.RELEASE</spring.version>
-        <rabbitmq.version>2.3.1</rabbitmq.version>
+        <mule.version>3.3-M1-SNAPSHOT</mule.version>
+        <spring.version>3.0.5.RELEASE</spring.version>
+        <rabbitmq.version>2.6.1</rabbitmq.version>
         <!-- Tools properties -->
-        <eclipsePluginVersion>2.5</eclipsePluginVersion>
         <vmtype>org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType</vmtype>
-        <jdk5Name>J2SE-1.5</jdk5Name>
-        <jdk.version>1.5</jdk.version>
+        <jdk5Name>JavaSE-1.6</jdk5Name>
+        <jdk.version>1.6</jdk.version>
         <domainName>maven2</domainName>
     </properties>
 
@@ -29,13 +29,6 @@
     </scm>
 
     <build>
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-webdav</artifactId>
-                <version>1.0-beta-2</version>
-            </extension>
-        </extensions>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -50,7 +43,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-eclipse-plugin</artifactId>
-                <version>${eclipsePluginVersion}</version>
+                <version>2.8</version>
                 <configuration>
                     <!-- by default download all sources when generating project files -->
                     <downloadSources>true</downloadSources>
@@ -63,6 +56,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-idea-plugin</artifactId>
+                <version>2.2</version>
                 <configuration>
                     <downloadSources>true</downloadSources>
                     <jdkName>${jdk.version}</jdkName>
@@ -72,8 +66,9 @@
             <!-- Responsible for creating the release distribution for this project -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.2.1</version>
                 <configuration>
-                    <finalName>${artifactId}-${version}</finalName>
+                    <finalName>${project.artifactId}-${project.version}</finalName>
                     <descriptors>
                         <descriptor>assembly.xml</descriptor>
                     </descriptors>
@@ -96,9 +91,6 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.1</version>
                 <configuration>
-                    <!-- We only do this at release time. However, before doing a release
-            of your project and deploying it you nedd to run 'mvn assembly:assembly' 
-            and check that the distribution is created correctly -->
                     <preparationGoals>assembly:assembly</preparationGoals>
                 </configuration>
             </plugin>
@@ -112,6 +104,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.8</version>
                 <configuration>
                     <source>${jdk.version}</source>
                 </configuration>
@@ -119,29 +112,50 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.10</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.7</version>
                 <configuration>
-                    <configLocation>http://mulesoft.org/download/attachments/92/checkstyle.xml?version=1
-                    </configLocation>
+                    <configLocation>http://www.mulesoft.org/docs/checkstyle.xml</configLocation>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
+                <version>2.5</version>
                 <configuration>
                     <targetJdk>${jdk.version}</targetJdk>
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>2.3</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.8</version>
+                <configuration>
+                    <links>
+                        <link>http://java.sun.com/j2ee/1.4/docs/api</link>
+                        <link>http://java.sun.com/j2se/1.4.2/docs/api</link>
+                        <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
+                    </links>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.5.1</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>taglist-maven-plugin</artifactId>
+                <version>2.4</version>
                 <configuration>
                     <tags>
                         <tag>TODO</tag>
@@ -153,27 +167,14 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jxr-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <links>
-                        <link>http://java.sun.com/j2ee/1.4/docs/api</link>
-                        <link>http://java.sun.com/j2se/1.4.2/docs/api</link>
-                        <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
-                    </links>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jdepend-maven-plugin</artifactId>
+                <version>2.0-beta-2</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.3.2</version>
             </plugin>
         </plugins>
     </reporting>
@@ -242,7 +243,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.2</version>
+            <version>4.9</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -252,21 +253,6 @@
         <system>Jira</system>
         <url>http://www.mulesoft.org/jira/browse/AMQP</url>
     </issueManagement>
-
-<!--
-    <distributionManagement>
-        <repository>
-            <id>muleforge.webdav.releases</id>
-            <url>dav:https://repository.muleforge.org/release/</url>
-        </repository>
-        <snapshotRepository>
-            <id>muleforge.webdav.snapshots</id>
-            <url>dav:https://repository.muleforge.org/snapshot/</url>
-            <uniqueVersion>false</uniqueVersion>
-        </snapshotRepository>
-    </distributionManagement>
--->
-
 
     <distributionManagement>
         <repository>
@@ -281,8 +267,6 @@
             <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>
     </distributionManagement>
-    
-
 
     <!-- End of MuleForge Configuration -->
     <repositories>
@@ -292,18 +276,13 @@
             <url>http://repository.muleforge.org</url>
             <layout>default</layout>
         </repository>
-
         <repository>
-            <id>codehaus-repo</id>
+            <id>mule-deps</id>
             <name>Codehaus Repository</name>
             <url>http://dist.codehaus.org/mule/dependencies/maven2</url>
             <layout>default</layout>
         </repository>
         <repository>
-            <!-- local repository for this forge project. Users can upload dependencies
-        here when the artifact is not available on any other repository. Its the 
-        users' responsibility to make sure that no licenses are violated by uploading 
-        dependencies to this location -->
             <id>amqp-deps</id>
             <name>Amqp Dependencies</name>
             <url>http://dist.muleforge.org/mule-transport-amqp/dependencies/maven2</url>

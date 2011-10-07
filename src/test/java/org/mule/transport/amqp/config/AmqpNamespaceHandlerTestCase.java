@@ -12,11 +12,11 @@ package org.mule.transport.amqp.config;
 
 import java.util.List;
 
+import org.mule.api.construct.Pipeline;
 import org.mule.api.endpoint.EndpointBuilder;
 import org.mule.api.endpoint.InboundEndpoint;
 import org.mule.api.endpoint.OutboundEndpoint;
 import org.mule.api.processor.MessageProcessor;
-import org.mule.construct.SimpleFlowConstruct;
 import org.mule.tck.FunctionalTestCase;
 import org.mule.transport.amqp.AmqpConnector;
 import org.mule.transport.amqp.AmqpConstants.AckMode;
@@ -111,7 +111,7 @@ public class AmqpNamespaceHandlerTestCase extends FunctionalTestCase
 
     public void testAcknowledger() throws Exception
     {
-        final List<MessageProcessor> messageProcessors = ((SimpleFlowConstruct) muleContext.getRegistry()
+        final List<MessageProcessor> messageProcessors = ((Pipeline) muleContext.getRegistry()
             .lookupFlowConstruct("ackerFlow")).getMessageProcessors();
         assertEquals(1, messageProcessors.size());
         System.out.println(messageProcessors.get(0));

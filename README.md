@@ -38,14 +38,14 @@ Run:
 The integration tests rely on a locally running RabbitMQ broker and an OS that can run shell scripts (for the setup of the testing vhost and user).
 
 Maven Support
------
+-------------
 
 Add the following repository:
 
     <repository>
       <id>muleforge-repo</id>
       <name>MuleForge Repository</name>
-      <url>http://repository.muleforge.org</url>
+      <url>https://repository.mulesoft.org/nexus/content/repositories/releases</url>
       <layout>default</layout>
     </repository>
 
@@ -54,7 +54,7 @@ To add the Mule AMQP transport to a Maven project add the following dependency:
     <dependency>
       <groupId>org.mule.transports</groupId>
       <artifactId>mule-transport-amqp</artifactId>
-      <version>3.1.0</version>
+      <version>x.y.z</version>
     </dependency>
 
 

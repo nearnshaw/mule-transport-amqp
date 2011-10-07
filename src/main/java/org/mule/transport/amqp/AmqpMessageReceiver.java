@@ -120,10 +120,13 @@ public class AmqpMessageReceiver extends AbstractMessageReceiver
                         {
                             // inform the connector the subscription is dead
                             // so it will reconnect the receiver
-                            amqpConnector.handleException(new ConnectException(
-                                MessageFactory.createStaticMessage("Unexpected susbscription shutdown for: "
-                                                                   + consumerTag), sse,
-                                AmqpMessageReceiver.this));
+                            amqpConnector.getMuleContext()
+                                .getExceptionListener()
+                                .handleException(
+                                    new ConnectException(
+                                        MessageFactory.createStaticMessage("Unexpected susbscription shutdown for: "
+                                                                           + consumerTag), sse,
+                                        AmqpMessageReceiver.this));
                         }
                     }
                 });

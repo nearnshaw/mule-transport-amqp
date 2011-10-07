@@ -114,7 +114,7 @@ public class AmqpConnector extends AbstractConnector
                     }
                 });
 
-                channel.setReturnListener(amqpConnector.defaultReturnListener);
+                channel.addReturnListener(amqpConnector.defaultReturnListener);
 
                 channel.basicQos(amqpConnector.getPrefetchSize(), amqpConnector.getPrefetchCount(), false);
 
@@ -122,9 +122,13 @@ public class AmqpConnector extends AbstractConnector
             }
             catch (final IOException ioe)
             {
-                amqpConnector.handleException(new ConnectException(
-                    MessageFactory.createStaticMessage("Impossible to create new channels on connection: "
-                                                       + amqpConnector.getConnection()), ioe, amqpConnector));
+                amqpConnector.getMuleContext()
+                    .getExceptionListener()
+                    .handleException(
+                        new ConnectException(
+                            MessageFactory.createStaticMessage("Impossible to create new channels on connection: "
+                                                               + amqpConnector.getConnection()), ioe,
+                            amqpConnector));
                 return null;
             }
         }
@@ -248,27 +252,28 @@ public class AmqpConnector extends AbstractConnector
     @Override
     public void doInitialise() throws InitialisationException
     {
-    	if (connectionFactory == null) {
-        	connectionFactory = new ConnectionFactory();
-        	connectionFactory.setVirtualHost(virtualHost);
+        if (connectionFactory == null)
+        {
+            connectionFactory = new ConnectionFactory();
+            connectionFactory.setVirtualHost(virtualHost);
             connectionFactory.setUsername(username);
             connectionFactory.setPassword(password);
-    	}
-    	else
+        }
+        else
         {
-    		if (connectionFactory.getVirtualHost() != null)
+            if (connectionFactory.getVirtualHost() != null)
             {
-    			setVirtualHost(connectionFactory.getVirtualHost());
-    		}
-    		else
+                setVirtualHost(connectionFactory.getVirtualHost());
+            }
+            else
             {
-    			connectionFactory.setVirtualHost(virtualHost);
-    		}
-    		setUsername(connectionFactory.getUsername());
-		 	setPassword(connectionFactory.getPassword());
-		 	setHost(connectionFactory.getHost());
-		 	setPort(connectionFactory.getPort());
-    	}
+                connectionFactory.setVirtualHost(virtualHost);
+            }
+            setUsername(connectionFactory.getUsername());
+            setPassword(connectionFactory.getPassword());
+            setHost(connectionFactory.getHost());
+            setPort(connectionFactory.getPort());
+        }
     }
 
     @Override
@@ -448,12 +453,12 @@ public class AmqpConnector extends AbstractConnector
                         connectorConnection.getChannel(), outboundEndpoint, activeDeclarationsOnly);
 
                     if (StringUtils.isNotEmpty(AmqpEndpointUtil.getQueueName(outboundEndpoint.getAddress()))
-                            || outboundEndpoint.getProperties().containsKey(AmqpEndpointUtil.QUEUE_DURABLE)
-                            || outboundEndpoint.getProperties().containsKey(AmqpEndpointUtil.QUEUE_AUTO_DELETE)
-                            || outboundEndpoint.getProperties().containsKey(AmqpEndpointUtil.QUEUE_EXCLUSIVE))
+                        || outboundEndpoint.getProperties().containsKey(AmqpEndpointUtil.QUEUE_DURABLE)
+                        || outboundEndpoint.getProperties().containsKey(AmqpEndpointUtil.QUEUE_AUTO_DELETE)
+                        || outboundEndpoint.getProperties().containsKey(AmqpEndpointUtil.QUEUE_EXCLUSIVE))
                     {
-                        AmqpEndpointUtil.getOrCreateQueue(connectorConnection.getChannel(),
-                            outboundEndpoint, activeDeclarationsOnly);
+                        AmqpEndpointUtil.getOrCreateQueue(connectorConnection.getChannel(), outboundEndpoint,
+                            activeDeclarationsOnly);
                     }
 
                     String routingKey = AmqpEndpointUtil.getRoutingKey(outboundEndpoint);
@@ -467,8 +472,8 @@ public class AmqpConnector extends AbstractConnector
                             routingKey = queueName;
                         }
                     }
-                    OutboundConnection oc = new OutboundConnection(connectorConnection.getAmqpConnector(), exchange,
-                        routingKey);
+                    final OutboundConnection oc = new OutboundConnection(
+                        connectorConnection.getAmqpConnector(), exchange, routingKey);
                     return oc;
                 }
             });
@@ -691,11 +696,13 @@ public class AmqpConnector extends AbstractConnector
         this.exclusiveConsumers = exclusiveConsumers;
     }
 
-    public void setConnectionFactory(ConnectionFactory connectionFactory){
-    	this.connectionFactory = connectionFactory;
+    public void setConnectionFactory(final ConnectionFactory connectionFactory)
+    {
+        this.connectionFactory = connectionFactory;
     }
 
-    public ConnectionFactory getConnectionFactory() {
-    	return this.connectionFactory;
+    public ConnectionFactory getConnectionFactory()
+    {
+        return this.connectionFactory;
     }
 }

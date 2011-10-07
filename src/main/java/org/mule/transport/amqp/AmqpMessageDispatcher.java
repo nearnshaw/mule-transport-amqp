@@ -14,11 +14,7 @@ import java.io.IOException;
 
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleMessage;
-import org.mule.api.construct.FlowConstruct;
-import org.mule.api.endpoint.InboundEndpoint;
 import org.mule.api.endpoint.OutboundEndpoint;
-import org.mule.api.lifecycle.CreateException;
-import org.mule.api.transport.Connector;
 import org.mule.api.transport.DispatchException;
 import org.mule.config.i18n.MessageFactory;
 import org.mule.transport.AbstractMessageDispatcher;
@@ -88,7 +84,7 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
         amqpConnector = (AmqpConnector) endpoint.getConnector();
         if (logger.isDebugEnabled())
         {
-             logger.debug("[Instantiate Dispatcher]");
+            logger.debug("[Instantiate Dispatcher]");
         }
 
     }
@@ -159,7 +155,7 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
         setReturnListenerIfNeeded(event, eventChannel);
 
         final AmqpMessage result = outboundAction.run(amqpConnector, eventChannel, eventExchange,
-            eventRoutingKey, amqpMessage, event.getTimeout());
+            eventRoutingKey, amqpMessage, getTimeOutForEvent(event));
 
         if (logger.isDebugEnabled())
         {
@@ -169,6 +165,19 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
         }
 
         return result;
+    }
+
+    private int getTimeOutForEvent(final MuleEvent muleEvent)
+    {
+        final int defaultTimeOut = muleEvent.getMuleContext().getConfiguration().getDefaultResponseTimeout();
+        final int eventTimeOut = muleEvent.getTimeout();
+
+        // allow event time out to override endpoint response time
+        if (eventTimeOut != defaultTimeOut)
+        {
+            return eventTimeOut;
+        }
+        return getEndpoint().getResponseTimeout();
     }
 
     /**
@@ -191,7 +200,7 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
             ((AmqpReturnHandler.DispatchingReturnListener) returnListener).setAmqpConnector(amqpConnector);
         }
 
-        channel.setReturnListener(returnListener);
+        channel.addReturnListener(returnListener);
 
         if (logger.isDebugEnabled())
         {

@@ -31,23 +31,22 @@ public class AmqpMuleMessageFactoryTestCase extends AbstractMuleTestCase
 
         final Envelope envelope = new Envelope(123456L, true, "exchange", "routingKey");
 
-        final BasicProperties amqpProperties = new BasicProperties();
-        amqpProperties.setAppId("appId");
-        amqpProperties.setContentEncoding("utf-16");
-        amqpProperties.setContentType("application/vnd+mule.xml");
-        amqpProperties.setCorrelationId("cid-951753");
-        amqpProperties.setDeliveryMode(2);
-        amqpProperties.setExpiration("expiration");
-        amqpProperties.setMessageId("messageId");
-        amqpProperties.setPriority(5);
-        amqpProperties.setReplyTo("replyTo");
-        amqpProperties.setTimestamp(new Date(100000L));
-        amqpProperties.setType("type");
-        amqpProperties.setUserId("userId");
+        final BasicProperties.Builder builder = new BasicProperties.Builder();
+        builder.appId("appId")
+            .contentEncoding("utf-16")
+            .contentType("application/vnd+mule.xml")
+            .correlationId("cid-951753")
+            .deliveryMode(2)
+            .expiration("expiration")
+            .messageId("messageId")
+            .priority(5)
+            .replyTo("replyTo")
+            .timestamp(new Date(100000L))
+            .type("type")
+            .userId("userId")
+            .headers(Collections.<String, Object> singletonMap("customKey", "customValue"));
 
-        amqpProperties.setHeaders(Collections.<String, Object> singletonMap("customKey", "customValue"));
-
-        return new AmqpMessage(consumerTag, envelope, amqpProperties, body);
+        return new AmqpMessage(consumerTag, envelope, builder.build(), body);
     }
 
     public void testCreate() throws Exception
