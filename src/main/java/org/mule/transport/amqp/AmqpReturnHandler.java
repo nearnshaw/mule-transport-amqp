@@ -44,12 +44,12 @@ public class AmqpReturnHandler extends AbstractInterceptingMessageProcessor
     {
         protected static Log LOGGER = LogFactory.getLog(AmqpReturnHandler.class);
 
-        public void handleBasicReturn(final int replyCode,
-                                      final String replyText,
-                                      final String exchange,
-                                      final String routingKey,
-                                      final AMQP.BasicProperties properties,
-                                      final byte[] body) throws IOException
+        public void handleReturn(final int replyCode,
+                                 final String replyText,
+                                 final String exchange,
+                                 final String routingKey,
+                                 final AMQP.BasicProperties properties,
+                                 final byte[] body) throws IOException
         {
             final String errorMessage = String.format(
                 "AMQP returned message with code: %d, reason: %s, exchange: %s, routing key: %s", replyCode,
@@ -63,10 +63,10 @@ public class AmqpReturnHandler extends AbstractInterceptingMessageProcessor
 
             final AmqpMessage returnedAmqpMessage = new AmqpMessage(null, null, properties, body);
 
-            doHandleBasicReturn(errorMessage, returnContext, returnedAmqpMessage);
+            doHandleReturn(errorMessage, returnContext, returnedAmqpMessage);
         }
 
-        protected abstract void doHandleBasicReturn(String errorMessage,
+        protected abstract void doHandleReturn(String errorMessage,
                                                     Map<String, Object> returnContext,
                                                     AmqpMessage returnedAmqpMessage);
 
@@ -82,7 +82,7 @@ public class AmqpReturnHandler extends AbstractInterceptingMessageProcessor
         protected final AtomicInteger hitCount = new AtomicInteger(0);
 
         @Override
-        protected void doHandleBasicReturn(final String errorMessage,
+        protected void doHandleReturn(final String errorMessage,
                                            final Map<String, Object> ignored,
                                            final AmqpMessage returnedAmqpMessage)
         {
@@ -129,7 +129,7 @@ public class AmqpReturnHandler extends AbstractInterceptingMessageProcessor
         }
 
         @Override
-        protected void doHandleBasicReturn(final String errorMessage,
+        protected void doHandleReturn(final String errorMessage,
                                            final Map<String, Object> returnContext,
                                            final AmqpMessage returnedAmqpMessage)
         {
