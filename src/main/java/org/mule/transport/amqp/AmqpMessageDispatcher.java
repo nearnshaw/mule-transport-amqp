@@ -155,7 +155,7 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
         setReturnListenerIfNeeded(event, eventChannel);
 
         final AmqpMessage result = outboundAction.run(amqpConnector, eventChannel, eventExchange,
-            eventRoutingKey, amqpMessage, event.getTimeout());
+            eventRoutingKey, amqpMessage, getTimeOutForEvent(event));
 
         if (logger.isDebugEnabled())
         {
@@ -165,6 +165,19 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
         }
 
         return result;
+    }
+
+    private int getTimeOutForEvent(final MuleEvent muleEvent)
+    {
+        final int defaultTimeOut = muleEvent.getMuleContext().getConfiguration().getDefaultResponseTimeout();
+        final int eventTimeOut = muleEvent.getTimeout();
+
+        // allow event time out to override endpoint response time
+        if (eventTimeOut != defaultTimeOut)
+        {
+            return eventTimeOut;
+        }
+        return getEndpoint().getResponseTimeout();
     }
 
     /**

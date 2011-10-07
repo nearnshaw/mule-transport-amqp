@@ -178,7 +178,8 @@
                                 exchangeType="fanout"
                                 exchangeAutoDelete="false"
                                 exchangeDurable="false"
-                                connector-ref="amqpConnector"/>
+                                connector-ref="amqpConnector"
+                                responseTimeout="15000"/>
     </bridge>
 
     <model>
