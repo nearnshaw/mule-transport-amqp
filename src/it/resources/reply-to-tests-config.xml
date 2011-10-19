@@ -25,25 +25,21 @@
     <test:component />
   </flow>
   
-  <model>
-    <service name="amqpReplierService">
-      <inbound>
-        <amqp:inbound-endpoint exchangeName="amqpReplierService-exchange"
-                               exchangeType="fanout"
-                               exchangeAutoDelete="false"
-                               exchangeDurable="false"
-                               queueName="amqpReplierService-queue"
-                               queueDurable="false"
-                               queueExclusive="false"
-                               queueAutoDelete="true"
-                               connector-ref="amqpAutoAckLocalhostConnector">
-          <!-- Carry a custom inbound property to the outbound scope so it is preserved in the rest of the message processing flow -->
-          <message-properties-transformer scope="outbound">
-            <add-message-property key="customHeader" value="#[header:INBOUND:customHeader]"/>
-          </message-properties-transformer>
-        </amqp:inbound-endpoint>
-      </inbound>
-      <test:component appendString="-reply" />
-    </service>
-  </model>
+  <flow name="amqpReplierService">
+    <amqp:inbound-endpoint exchangeName="amqpReplierService-exchange"
+                           exchangeType="fanout"
+                           exchangeAutoDelete="false"
+                           exchangeDurable="false"
+                           queueName="amqpReplierService-queue"
+                           queueDurable="false"
+                           queueExclusive="false"
+                           queueAutoDelete="true"
+                           connector-ref="amqpAutoAckLocalhostConnector">
+      <!-- Carry a custom inbound property to the outbound scope so it is preserved in the rest of the message processing flow -->
+      <message-properties-transformer scope="outbound">
+        <add-message-property key="customHeader" value="#[header:INBOUND:customHeader]"/>
+      </message-properties-transformer>
+    </amqp:inbound-endpoint>
+    <test:component appendString="-reply" />
+  </flow>
 </mule>

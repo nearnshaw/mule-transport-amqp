@@ -9,58 +9,49 @@
        http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
        http://www.mulesoft.org/schema/mule/test http://www.mulesoft.org/schema/mule/test/current/mule-test.xsd">
 
-  <amqp:connector name="amqpConnector"
+    <amqp:connector name="amqpConnector"
                   virtualHost="mule-test"
                   username="mule"
                   password="elum" />
-
-  <amqp:connector name="amqpThrottledConnector"
+    
+    <amqp:connector name="amqpThrottledConnector"
                   virtualHost="mule-test"
                   username="mule"
                   password="elum"
                   prefetchCount="1"
                   ackMode="MANUAL" />
                   
-  <bridge name="amqpOneWayBridge" exchange-pattern="one-way">
-    <amqp:inbound-endpoint queueName="amqpOneWayBridge-queue"
-                           connector-ref="amqpConnector" />
-    <amqp:outbound-endpoint exchangeName="amqpOneWayBridgeTarget-exchange"
-                            connector-ref="amqpConnector" />
-  </bridge>
+    <bridge name="amqpOneWayBridge" exchange-pattern="one-way">
+        <amqp:inbound-endpoint queueName="amqpOneWayBridge-queue"
+                               connector-ref="amqpConnector" />
+        <amqp:outbound-endpoint exchangeName="amqpOneWayBridgeTarget-exchange"
+                                connector-ref="amqpConnector" />
+    </bridge>
                   
-  <flow name="amqpThrottledBridge">
-    <amqp:inbound-endpoint queueName="amqpThrottledBridge-queue"
-                           connector-ref="amqpThrottledConnector" />
-    <amqp:outbound-endpoint exchangeName="amqpThrottledBridgeTarget-exchange"
-                            connector-ref="amqpConnector" />
-   <amqp:acknowledge-message /> 
-  </flow>
-  
-  <flow name="amqpThrottledBridgeTarget">
-    <amqp:inbound-endpoint queueName="amqpThrottledBridgeTarget-queue"
-                           connector-ref="amqpConnector" />
-    <test:component />
-  </flow>
-                  
-  <model>
-    <!-- use a service because flows are not supporting reply-to as of 3.1 -->
-    <service name="amqpRequestResponseBridge">
-      <inbound>
+    <flow name="amqpThrottledBridge">
+        <amqp:inbound-endpoint queueName="amqpThrottledBridge-queue"
+                               connector-ref="amqpThrottledConnector" />
+        <amqp:outbound-endpoint exchangeName="amqpThrottledBridgeTarget-exchange"
+                                connector-ref="amqpConnector" />
+    <amqp:acknowledge-message /> 
+    </flow>
+    
+    <flow name="amqpThrottledBridgeTarget">
+        <amqp:inbound-endpoint queueName="amqpThrottledBridgeTarget-queue"
+                               connector-ref="amqpConnector" />
+        <test:component />
+    </flow>
+            
+    <!-- Doesn't work with a standard bridge :( -->
+    <flow name="amqpRequestResponseBridge">
         <amqp:inbound-endpoint queueName="amqpRequestResponseBridge-queue"
                                exchange-pattern="request-response"
                                connector-ref="amqpConnector" />
-      </inbound>
-      <outbound>
-        <pass-through-router>
-          <amqp:outbound-endpoint exchangeName="amqpRequestResponseBridgeTarget-exchange"
-                                  exchange-pattern="request-response"
-                                  connector-ref="amqpConnector" />
-        </pass-through-router>
-      </outbound>
-    </service>
-  
-    <service name="amqpRequestResponseBridgeTargetService">
-      <inbound>
+        <amqp:outbound-endpoint exchangeName="amqpRequestResponseBridgeTarget-exchange"
+                                exchange-pattern="request-response"
+                                connector-ref="amqpConnector" />
+    </flow>
+    <flow name="amqpRequestResponseBridgeTargetService">
         <amqp:inbound-endpoint exchangeName="amqpRequestResponseBridgeTarget-exchange"
                                exchangeType="fanout"
                                exchangeAutoDelete="false"
@@ -70,8 +61,6 @@
                                queueExclusive="false"
                                queueAutoDelete="true"
                                connector-ref="amqpConnector" />
-      </inbound>
-      <test:component appendString="-response" />
-    </service>
-  </model>
+        <test:component appendString="-response" />
+    </flow>
 </mule>

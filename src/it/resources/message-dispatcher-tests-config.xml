@@ -182,28 +182,24 @@
                                 responseTimeout="15000"/>
     </bridge>
 
-    <model>
-        <service name="amqpSendTargetService">
-            <inbound>
-                <amqp:inbound-endpoint exchangeName="amqpSendTargetService-exchange"
-                                       exchangeType="fanout"
-                                       exchangeAutoDelete="false"
-                                       exchangeDurable="false"
-                                       queueName="amqpSendTargetService-queue"
-                                       queueDurable="false"
-                                       queueExclusive="false"
-                                       queueAutoDelete="true"
-                                       connector-ref="amqpConnector"
-                                       exchange-pattern="request-response">
-                    <!-- Carry a custom inbound property to the outbound scope so it is preserved in the rest of the message processing flow -->
-                    <message-properties-transformer scope="outbound">
-                        <add-message-property key="customHeader" value="#[header:INBOUND:customHeader]"/>
-                    </message-properties-transformer>
-                </amqp:inbound-endpoint>
-            </inbound>
-            <test:component appendString="-response"/>
-        </service>
-    </model>
+    <flow name="amqpSendTargetService">
+        <amqp:inbound-endpoint exchangeName="amqpSendTargetService-exchange"
+                               exchangeType="fanout"
+                               exchangeAutoDelete="false"
+                               exchangeDurable="false"
+                               queueName="amqpSendTargetService-queue"
+                               queueDurable="false"
+                               queueExclusive="false"
+                               queueAutoDelete="true"
+                               connector-ref="amqpConnector"
+                               exchange-pattern="request-response">
+            <!-- Carry a custom inbound property to the outbound scope so it is preserved in the rest of the message processing flow -->
+            <message-properties-transformer scope="outbound">
+                <add-message-property key="customHeader" value="#[header:INBOUND:customHeader]"/>
+            </message-properties-transformer>
+        </amqp:inbound-endpoint>
+        <test:component appendString="-response"/>
+    </flow>
 
     <flow name="amqpOutboundQueue">
         <vm:inbound-endpoint path="amqpOutBoundQueue.in"/>
