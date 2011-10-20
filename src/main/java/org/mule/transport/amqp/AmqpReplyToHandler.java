@@ -13,6 +13,8 @@ package org.mule.transport.amqp;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mule.DefaultMuleEvent;
 import org.mule.MessageExchangePattern;
 import org.mule.api.MessagingException;
@@ -20,13 +22,13 @@ import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.endpoint.OutboundEndpoint;
-import org.mule.api.processor.MessageProcessor;
 import org.mule.config.i18n.MessageFactory;
 import org.mule.transport.DefaultReplyToHandler;
 
 public class AmqpReplyToHandler extends DefaultReplyToHandler
 {
     private static final long serialVersionUID = 1L;
+    private static final Log LOG = LogFactory.getLog(AmqpReplyToHandler.class);
     private final transient AmqpConnector amqpConnector;
 
     public AmqpReplyToHandler(final AmqpConnector amqpConnector)
@@ -41,15 +43,25 @@ public class AmqpReplyToHandler extends DefaultReplyToHandler
     {
         final String replyToQueueName = (String) replyTo;
 
-        // target the default (ie. "") exchange with a routing key equals to the queue replied to
+        // target the default (ie. "") exchange with a routing key equals to the
+        // queue replied to
         final OutboundEndpoint outboundEndpoint = getEndpoint(event,
             AmqpConnector.AMQP + "://?routingKey=" + urlEncode(event, replyToQueueName) + "&connector="
                             + urlEncode(event, amqpConnector.getName()));
 
-        final MessageProcessor dispatcher = amqpConnector.createDispatcherMessageProcessor(outboundEndpoint);
+        final AmqpMessageDispatcher dispatcher = new AmqpMessageDispatcher(outboundEndpoint);
         final DefaultMuleEvent replyEvent = new DefaultMuleEvent(returnMessage,
             MessageExchangePattern.REQUEST_RESPONSE, event.getSession());
         dispatcher.process(replyEvent);
+
+        try
+        {
+            dispatcher.disconnect();
+        }
+        catch (final Exception e)
+        {
+            LOG.warn("Failed to disconnect message dispatcher: " + dispatcher, e);
+        }
 
         if (logger.isDebugEnabled())
         {
@@ -58,7 +70,6 @@ public class AmqpReplyToHandler extends DefaultReplyToHandler
     }
 
     protected String urlEncode(final MuleEvent event, final String stringToEncode) throws MessagingException
-
     {
         try
         {
