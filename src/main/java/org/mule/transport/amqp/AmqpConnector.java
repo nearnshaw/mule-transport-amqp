@@ -16,6 +16,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.pool.impl.StackObjectPool;
 import org.mule.api.MuleContext;
@@ -87,6 +89,7 @@ public class AmqpConnector extends AbstractConnector
 
     private static abstract class AmqpConnection
     {
+        private final Log logger = LogFactory.getLog(getClass());
         private final AmqpConnector amqpConnector;
         private final AtomicReference<Channel> channelRef = new AtomicReference<Channel>();
 
@@ -107,8 +110,10 @@ public class AmqpConnector extends AbstractConnector
                     {
                         if (!sse.isInitiatedByApplication())
                         {
-                            // do not inform the connector of the issue as it can't decide what to do
-                            // reset the channel so it would later be lazily reconnected
+                            // do not inform the connector of the issue as it can't
+                            // decide what to do
+                            // reset the channel so it would later be lazily
+                            // reconnected
                             channelRef.set(null);
                         }
                     }
@@ -117,6 +122,11 @@ public class AmqpConnector extends AbstractConnector
                 channel.setReturnListener(amqpConnector.defaultReturnListener);
 
                 channel.basicQos(amqpConnector.getPrefetchSize(), amqpConnector.getPrefetchCount(), false);
+
+                if (logger.isDebugEnabled())
+                {
+                    logger.debug("Created and configured new channel: " + channel);
+                }
 
                 return channel;
             }
@@ -300,7 +310,8 @@ public class AmqpConnector extends AbstractConnector
         connection = connectionFactory.newConnection(brokerAddresses.toArray(new Address[0]));
 
         configureDefaultReturnListener();
-        // clear any connector connections that could have been created in a previous connect() operation
+        // clear any connector connections that could have been created in a previous
+        // connect() operation
         connectorConnectionPool.clear();
     }
 
