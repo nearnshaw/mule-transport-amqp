@@ -10,6 +10,7 @@
 
 package org.mule.transport.amqp;
 
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -106,6 +107,7 @@ public abstract class AmqpConstants
         Arrays.asList((String[]) ArrayUtils.addAll(
             ArrayUtils.addAll(AMQP_ENVELOPE_PROPERTY_NAMES_ARRAY, AMQP_BASIC_PROPERTY_NAMES_ARRAY),
             AMQP_TRANSPORT_TECHNICAL_PROPERTY_NAMES_ARRAY))));
+    public static final Charset LONG_STRING_CHARSET = Charset.forName("UTF-8");
 
     public static void main(final String[] args)
     {

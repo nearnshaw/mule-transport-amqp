@@ -6,14 +6,14 @@
     <artifactId>mule-transport-amqp</artifactId>
     <packaging>jar</packaging>
     <name>Mule Amqp Transport</name>
-    <version>3.2.0.2-SNAPSHOT</version>
+    <version>3.2.1-SNAPSHOT</version>
     <description>Connects to AMQP brokers</description>
     <url>http://www.muleforge.org/projects/AMQP</url>
 
     <properties>
-        <mule.version>3.2.0</mule.version>
+        <mule.version>3.2.1</mule.version>
         <spring.version>3.0.5.RELEASE</spring.version>
-        <rabbitmq.version>2.4.1</rabbitmq.version>
+        <rabbitmq.version>2.7.0</rabbitmq.version>
         <!-- Tools properties -->
         <vmtype>org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType</vmtype>
         <jdk5Name>JavaSE-1.6</jdk5Name>

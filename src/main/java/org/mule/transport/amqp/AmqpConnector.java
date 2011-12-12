@@ -119,7 +119,7 @@ public class AmqpConnector extends AbstractConnector
                     }
                 });
 
-                channel.setReturnListener(amqpConnector.defaultReturnListener);
+                channel.addReturnListener(amqpConnector.defaultReturnListener);
 
                 channel.basicQos(amqpConnector.getPrefetchSize(), amqpConnector.getPrefetchCount(), false);
 
@@ -287,6 +287,40 @@ public class AmqpConnector extends AbstractConnector
     }
 
     @Override
+    public void doConnect() throws Exception
+    {
+        final List<Address> brokerAddresses = new ArrayList<Address>();
+        brokerAddresses.add(new Address(host, port));
+        addFallbackAddresses(brokerAddresses);
+
+        connectToFirstResponsiveBroker(brokerAddresses);
+
+        configureDefaultReturnListener();
+        // clear any connector connections that could have been created in a previous
+        // connect() operation
+        connectorConnectionPool.clear();
+    }
+
+    @Override
+    public void doStart() throws MuleException
+    {
+        // NOOP
+    }
+
+    @Override
+    public void doStop() throws MuleException
+    {
+        // NOOP
+    }
+
+    @Override
+    public void doDisconnect() throws Exception
+    {
+        connectorConnectionPool.clear();
+        connection.close();
+    }
+
+    @Override
     public void doDispose()
     {
         try
@@ -299,20 +333,6 @@ public class AmqpConnector extends AbstractConnector
         }
         connection = null;
         connectionFactory = null;
-    }
-
-    @Override
-    public void doConnect() throws Exception
-    {
-        final List<Address> brokerAddresses = new ArrayList<Address>();
-        brokerAddresses.add(new Address(host, port));
-        addFallbackAddresses(brokerAddresses);
-        connection = connectionFactory.newConnection(brokerAddresses.toArray(new Address[0]));
-
-        configureDefaultReturnListener();
-        // clear any connector connections that could have been created in a previous
-        // connect() operation
-        connectorConnectionPool.clear();
     }
 
     private void addFallbackAddresses(final List<Address> brokerAddresses)
@@ -339,6 +359,32 @@ public class AmqpConnector extends AbstractConnector
         }
     }
 
+    private void connectToFirstResponsiveBroker(final List<Address> brokerAddresses) throws IOException
+    {
+        IOException lastIOE = null;
+
+        for (final Address brokerAddress : brokerAddresses)
+        {
+            lastIOE = null;
+
+            try
+            {
+                connectionFactory.setHost(brokerAddress.getHost());
+                connectionFactory.setPort(brokerAddress.getPort());
+                connection = connectionFactory.newConnection();
+            }
+            catch (final IOException ioe)
+            {
+                lastIOE = ioe;
+            }
+        }
+
+        if (lastIOE != null)
+        {
+            throw lastIOE;
+        }
+    }
+
     private void configureDefaultReturnListener() throws InitialisationException
     {
         if (defaultReturnEndpointBuilder == null)
@@ -359,25 +405,6 @@ public class AmqpConnector extends AbstractConnector
             throw new InitialisationException(
                 MessageFactory.createStaticMessage("Failed to configure default return endpoint"), ee, this);
         }
-    }
-
-    @Override
-    public void doDisconnect() throws Exception
-    {
-        connectorConnectionPool.clear();
-        connection.close();
-    }
-
-    @Override
-    public void doStart() throws MuleException
-    {
-        // NOOP
-    }
-
-    @Override
-    public void doStop() throws MuleException
-    {
-        // NOOP
     }
 
     public static Channel getChannelFromMessage(final MuleMessage message)
