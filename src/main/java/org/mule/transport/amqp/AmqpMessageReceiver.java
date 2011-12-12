@@ -30,7 +30,6 @@ import org.mule.transport.AbstractMessageReceiver;
 import org.mule.transport.ConnectException;
 import org.mule.transport.amqp.AmqpConnector.InboundConnection;
 import org.mule.transport.amqp.AmqpConstants.AckMode;
-import org.mule.util.StringUtils;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -54,14 +53,6 @@ public class AmqpMessageReceiver extends AbstractMessageReceiver
     {
         super(connector, flowConstruct, endpoint);
         this.amqpConnector = (AmqpConnector) connector;
-    }
-
-    // FIXME remove when http://www.mulesoft.org/jira/browse/MULE-5288 is fixed
-    @Override
-    public String getReceiverKey()
-    {
-        return StringUtils.defaultIfEmpty(endpoint.getEndpointURI().getFilterAddress(),
-            endpoint.getEndpointURI().getAddress());
     }
 
     @Override
