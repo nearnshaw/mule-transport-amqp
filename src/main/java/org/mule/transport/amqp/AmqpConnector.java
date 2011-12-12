@@ -555,13 +555,6 @@ public class AmqpConnector extends AbstractConnector
 
     public void closeChannel(final Channel channel) throws ConnectException
     {
-        // FIXME remove when http://www.mulesoft.org/jira/browse/MULE-5290 is fixed
-        if (!channel.isOpen())
-        {
-            logger.warn("Attempting to close an already closed channel (probably due to http://www.mulesoft.org/jira/browse/MULE-5290)");
-            return;
-        }
-
         try
         {
             if (logger.isDebugEnabled())

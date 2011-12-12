@@ -39,7 +39,8 @@ import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.ShutdownSignalException;
 
 /**
- * The <code>AmqpMessageReceiver</code> subscribes to a queue and dispatches received messages to Mule.
+ * The <code>AmqpMessageReceiver</code> subscribes to a queue and dispatches received
+ * messages to Mule.
  */
 public class AmqpMessageReceiver extends AbstractMessageReceiver
 {
@@ -144,14 +145,6 @@ public class AmqpMessageReceiver extends AbstractMessageReceiver
     @Override
     public void doStop()
     {
-        // FIXME remove when http://www.mulesoft.org/jira/browse/MULE-5290 is
-        // fixed
-        if (!getChannel().isOpen())
-        {
-            logger.warn("Attempting to stop a subscription on a closed channel (probably due to http://www.mulesoft.org/jira/browse/MULE-5290)");
-            return;
-        }
-
         try
         {
             if (logger.isDebugEnabled())
