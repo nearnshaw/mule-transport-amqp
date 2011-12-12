@@ -27,6 +27,7 @@ import org.mule.tck.functional.EventCallback;
 import org.mule.tck.functional.FunctionalTestComponent;
 import org.mule.util.UUID;
 
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.AMQP.Queue.DeclareOk;
 import com.rabbitmq.client.Channel;
@@ -193,7 +194,7 @@ public abstract class AbstractAmqpITCase extends FunctionalTestCase
         }
         catch (final IOException ioe)
         {
-            //ignored
+            // ignored
             Thread.sleep(1000L);
         }
     }
@@ -237,11 +238,11 @@ public abstract class AbstractAmqpITCase extends FunctionalTestCase
                                           final String flowName,
                                           final String replyTo) throws IOException
     {
-        final BasicProperties props = new BasicProperties();
-        props.setContentType("text/plain");
-        props.setCorrelationId(correlationId);
-        props.setReplyTo(replyTo);
-        props.setHeaders(Collections.<String, Object> singletonMap("customHeader", 123L));
+        final AMQP.BasicProperties.Builder bob = new AMQP.BasicProperties.Builder();
+        bob.contentType("text/plain").correlationId(correlationId).replyTo(replyTo);
+        bob.headers(Collections.<String, Object> singletonMap("customHeader", 123L));
+
+        final BasicProperties props = bob.build();
         getChannel().basicPublish(getExchangeName(flowName), "", props, body);
     }
 

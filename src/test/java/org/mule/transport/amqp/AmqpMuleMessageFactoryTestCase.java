@@ -18,6 +18,7 @@ import org.mule.api.MuleMessage;
 import org.mule.api.transport.PropertyScope;
 import org.mule.tck.AbstractMuleTestCase;
 
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Envelope;
 
@@ -31,22 +32,23 @@ public class AmqpMuleMessageFactoryTestCase extends AbstractMuleTestCase
 
         final Envelope envelope = new Envelope(123456L, true, "exchange", "routingKey");
 
-        final BasicProperties amqpProperties = new BasicProperties();
-        amqpProperties.setAppId("appId");
-        amqpProperties.setContentEncoding("utf-16");
-        amqpProperties.setContentType("application/vnd+mule.xml");
-        amqpProperties.setCorrelationId("cid-951753");
-        amqpProperties.setDeliveryMode(2);
-        amqpProperties.setExpiration("expiration");
-        amqpProperties.setMessageId("messageId");
-        amqpProperties.setPriority(5);
-        amqpProperties.setReplyTo("replyTo");
-        amqpProperties.setTimestamp(new Date(100000L));
-        amqpProperties.setType("type");
-        amqpProperties.setUserId("userId");
+        final AMQP.BasicProperties.Builder bob = new AMQP.BasicProperties.Builder();
+        bob.appId("appId")
+            .contentEncoding("utf-16")
+            .contentType("application/vnd+mule.xml")
+            .correlationId("cid-951753")
+            .deliveryMode(2)
+            .expiration("expiration")
+            .messageId("messageId")
+            .priority(5)
+            .replyTo("replyTo")
+            .timestamp(new Date(100000L))
+            .type("type")
+            .userId("userId");
 
-        amqpProperties.setHeaders(Collections.<String, Object> singletonMap("customKey", "customValue"));
+        bob.headers(Collections.<String, Object> singletonMap("customKey", "customValue"));
 
+        final BasicProperties amqpProperties = bob.build();
         return new AmqpMessage(consumerTag, envelope, amqpProperties, body);
     }
 

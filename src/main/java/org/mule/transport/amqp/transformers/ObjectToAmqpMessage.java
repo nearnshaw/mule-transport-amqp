@@ -22,6 +22,7 @@ import org.mule.transformer.types.DataTypeFactory;
 import org.mule.transport.amqp.AmqpConstants;
 import org.mule.transport.amqp.AmqpMessage;
 
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Envelope;
 
@@ -59,26 +60,26 @@ public class ObjectToAmqpMessage extends AbstractAmqpMessageToObject
         final String routingKey = getProperty(message, AmqpConstants.ROUTING_KEY);
         final Envelope envelope = new Envelope(deliveryTag, redelivered, exchange, routingKey);
 
-        final BasicProperties amqpProperties = new BasicProperties();
-        amqpProperties.setAppId(this.<String> getProperty(message, AmqpConstants.APP_ID));
-        amqpProperties.setContentEncoding(this.<String> getProperty(message, AmqpConstants.CONTENT_ENCODING,
-            outputEncoding));
-        amqpProperties.setContentType(this.<String> getProperty(message, AmqpConstants.CONTENT_TYPE));
-        amqpProperties.setCorrelationId(this.<String> getProperty(message, AmqpConstants.CORRELATION_ID,
-            message.getCorrelationId()));
-        amqpProperties.setDeliveryMode(this.<Integer> getProperty(message, AmqpConstants.DELIVERY_MODE));
-        amqpProperties.setExpiration(this.<String> getProperty(message, AmqpConstants.EXPIRATION));
-        amqpProperties.setMessageId(this.<String> getProperty(message, AmqpConstants.MESSAGE_ID,
-            message.getUniqueId()));
-        amqpProperties.setPriority(this.<Integer> getProperty(message, AmqpConstants.PRIORITY));
-        amqpProperties.setReplyTo(this.<String> getProperty(message, AmqpConstants.REPLY_TO,
-            (String) message.getReplyTo()));
-        amqpProperties.setTimestamp(this.<Date> getProperty(message, AmqpConstants.TIMESTAMP, new Date()));
-        amqpProperties.setType(this.<String> getProperty(message, AmqpConstants.TYPE));
-        amqpProperties.setUserId(this.<String> getProperty(message, AmqpConstants.USER_ID));
+        final AMQP.BasicProperties.Builder bob = new AMQP.BasicProperties.Builder();
+        bob.appId(this.<String> getProperty(message, AmqpConstants.APP_ID))
+            .contentEncoding(
+                this.<String> getProperty(message, AmqpConstants.CONTENT_ENCODING, outputEncoding))
+            .contentType(this.<String> getProperty(message, AmqpConstants.CONTENT_TYPE))
+            .correlationId(
+                this.<String> getProperty(message, AmqpConstants.CORRELATION_ID, message.getCorrelationId()))
+            .deliveryMode(this.<Integer> getProperty(message, AmqpConstants.DELIVERY_MODE))
+            .expiration(this.<String> getProperty(message, AmqpConstants.EXPIRATION))
+            .messageId(this.<String> getProperty(message, AmqpConstants.MESSAGE_ID, message.getUniqueId()))
+            .priority(this.<Integer> getProperty(message, AmqpConstants.PRIORITY))
+            .replyTo(
+                this.<String> getProperty(message, AmqpConstants.REPLY_TO, (String) message.getReplyTo()))
+            .timestamp(this.<Date> getProperty(message, AmqpConstants.TIMESTAMP, new Date()))
+            .type(this.<String> getProperty(message, AmqpConstants.TYPE))
+            .userId(this.<String> getProperty(message, AmqpConstants.USER_ID));
 
-        amqpProperties.setHeaders(getHeaders(message));
+        bob.headers(getHeaders(message));
 
+        final BasicProperties amqpProperties = bob.build();
         return new AmqpMessage(consumerTag, envelope, amqpProperties, body);
     }
 
