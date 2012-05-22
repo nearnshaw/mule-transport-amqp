@@ -12,6 +12,7 @@ package org.mule.transport.amqp;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleContext;
@@ -20,6 +21,7 @@ import org.mule.transport.AbstractMuleMessageFactory;
 
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Envelope;
+import com.rabbitmq.client.LongString;
 
 public class AmqpMuleMessageFactory extends AbstractMuleMessageFactory
 {
@@ -50,14 +52,21 @@ public class AmqpMuleMessageFactory extends AbstractMuleMessageFactory
         putIfNonNull(messageProperties, AmqpConstants.CONSUMER_TAG, amqpMessage.getConsumerTag());
         addEnvelopeProperties(messageProperties, amqpMessage.getEnvelope());
         addBasicProperties(muleMessage, messageProperties, amqpMessage.getProperties());
-        muleMessage.addInboundProperties(messageProperties);
-
-        final Object muleSession = muleMessage.getInboundProperty(MuleProperties.MULE_SESSION_PROPERTY);
-        if (muleSession != null)
-        {
-            // this turns the com.rabbitmq.client.impl.LongStringHelper into a java.lang.String
-            muleMessage.setInboundProperty(MuleProperties.MULE_SESSION_PROPERTY, muleSession.toString());
+        if (amqpMessage.getProperties().getHeaders() != null) {
+            addHeaders(messageProperties, amqpMessage.getProperties().getHeaders());
         }
+
+        muleMessage.addInboundProperties(messageProperties);
+    }
+
+    private void addEnvelopeProperties(final Map<String, Object> messageProperties, final Envelope envelope)
+    {
+        if (envelope == null) return;
+
+        putIfNonNull(messageProperties, AmqpConstants.DELIVERY_TAG, envelope.getDeliveryTag());
+        putIfNonNull(messageProperties, AmqpConstants.REDELIVER, envelope.isRedeliver());
+        putIfNonNull(messageProperties, AmqpConstants.EXCHANGE, envelope.getExchange());
+        putIfNonNull(messageProperties, AmqpConstants.ROUTING_KEY, envelope.getRoutingKey());
     }
 
     private void addBasicProperties(final DefaultMuleMessage muleMessage,
@@ -92,25 +101,32 @@ public class AmqpMuleMessageFactory extends AbstractMuleMessageFactory
         putIfNonNull(messageProperties, AmqpConstants.TIMESTAMP, amqpProperties.getTimestamp());
         putIfNonNull(messageProperties, AmqpConstants.TYPE, amqpProperties.getType());
         putIfNonNull(messageProperties, AmqpConstants.USER_ID, amqpProperties.getUserId());
-
-        messageProperties.putAll(amqpProperties.getHeaders());
     }
 
-    private void addEnvelopeProperties(final Map<String, Object> messageProperties, final Envelope envelope)
+    private void addHeaders(final Map<String, Object> messageProperties, final Map<String, Object> headers)
     {
-        if (envelope == null) return;
-
-        putIfNonNull(messageProperties, AmqpConstants.DELIVERY_TAG, envelope.getDeliveryTag());
-        putIfNonNull(messageProperties, AmqpConstants.REDELIVER, envelope.isRedeliver());
-        putIfNonNull(messageProperties, AmqpConstants.EXCHANGE, envelope.getExchange());
-        putIfNonNull(messageProperties, AmqpConstants.ROUTING_KEY, envelope.getRoutingKey());
+        for (final Entry<String, Object> header : headers.entrySet())
+        {
+            putIfNonNull(messageProperties, header.getKey(), header.getValue());
+        }
     }
 
     private void putIfNonNull(final Map<String, Object> messageProperties,
                               final String key,
                               final Object value)
     {
-        if (value != null)
+        if (value == null)
+        {
+            return;
+        }
+
+        if (value instanceof LongString)
+        {
+            final String stringValue = new String(((LongString) value).getBytes(),
+                AmqpConstants.LONG_STRING_CHARSET);
+            messageProperties.put(key, stringValue);
+        }
+        else
         {
             messageProperties.put(key, value);
         }

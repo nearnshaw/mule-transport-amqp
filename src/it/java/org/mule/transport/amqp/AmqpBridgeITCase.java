@@ -10,6 +10,10 @@
 
 package org.mule.transport.amqp;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.mule.tck.functional.FunctionalTestComponent;
 import org.mule.util.UUID;
@@ -56,7 +60,7 @@ public class AmqpBridgeITCase extends AbstractAmqpITCase
         final FunctionalTestComponent functionalTestComponent = getFunctionalTestComponent("amqpThrottledBridgeTarget");
 
         int attempts = 0;
-        while (attempts++ < DEFAULT_MULE_TEST_TIMEOUT_SECS * 2)
+        while (attempts++ < getTestTimeoutSecs() * 2)
         {
             if (functionalTestComponent.getReceivedMessagesCount() == 10) return;
             Thread.sleep(500L);
@@ -72,7 +76,7 @@ public class AmqpBridgeITCase extends AbstractAmqpITCase
         final String correlationId = publishMessageWithAmqp(payload.getBytes(), flowName);
 
         final Delivery dispatchedMessage = consumeMessageWithAmqp(targetQueueName,
-            DEFAULT_MULE_TEST_TIMEOUT_SECS * 1000L);
+            getTestTimeoutSecs() * 1000L);
 
         assertNotNull(dispatchedMessage);
         assertEquals(payload, new String(dispatchedMessage.getBody()));
@@ -85,7 +89,7 @@ public class AmqpBridgeITCase extends AbstractAmqpITCase
         final String correlationId = UUID.getUUID();
 
         final Delivery result = sendMessageWithAmqp(correlationId, payload.getBytes(), flowName,
-            DEFAULT_MULE_TEST_TIMEOUT_SECS * 1000L);
+            getTestTimeoutSecs() * 1000L);
 
         assertNotNull(result);
         assertEquals(payload + "-response", new String(result.getBody()));

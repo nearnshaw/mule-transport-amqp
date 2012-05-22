@@ -16,7 +16,6 @@ import java.net.URLEncoder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mule.DefaultMuleEvent;
-import org.mule.MessageExchangePattern;
 import org.mule.api.MessagingException;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
@@ -50,8 +49,7 @@ public class AmqpReplyToHandler extends DefaultReplyToHandler
                             + urlEncode(event, amqpConnector.getName()));
 
         final AmqpMessageDispatcher dispatcher = new AmqpMessageDispatcher(outboundEndpoint);
-        final DefaultMuleEvent replyEvent = new DefaultMuleEvent(returnMessage,
-            MessageExchangePattern.REQUEST_RESPONSE, event.getSession());
+        final DefaultMuleEvent replyEvent = new DefaultMuleEvent(returnMessage, event);
         dispatcher.process(replyEvent);
 
         try

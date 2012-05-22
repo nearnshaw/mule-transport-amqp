@@ -10,6 +10,10 @@
 
 package org.mule.transport.amqp;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,11 +26,12 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.mule.api.MuleEventContext;
 import org.mule.api.MuleMessage;
-import org.mule.tck.FunctionalTestCase;
 import org.mule.tck.functional.EventCallback;
 import org.mule.tck.functional.FunctionalTestComponent;
+import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.util.UUID;
 
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.AMQP.Queue.DeclareOk;
 import com.rabbitmq.client.Channel;
@@ -46,7 +51,7 @@ public abstract class AbstractAmqpITCase extends FunctionalTestCase
     public AbstractAmqpITCase() throws IOException
     {
         super();
-        setDisposeManagerPerSuite(true);
+        setDisposeContextPerClass(true);
 
         factory = new ConnectionFactory();
         factory.setUsername("mule");
@@ -139,8 +144,14 @@ public abstract class AbstractAmqpITCase extends FunctionalTestCase
             public MuleMessage get(final long timeout, final TimeUnit unit)
                 throws InterruptedException, ExecutionException, TimeoutException
             {
-                messageReceivedLatch.await(timeout, unit);
-                return receivedMessageRef.get();
+                if (messageReceivedLatch.await(timeout, unit))
+                {
+                    return receivedMessageRef.get();
+                }
+                else
+                {
+                    return null;
+                }
             }
         };
 
@@ -193,7 +204,7 @@ public abstract class AbstractAmqpITCase extends FunctionalTestCase
         }
         catch (final IOException ioe)
         {
-            //ignored
+            // ignored
             Thread.sleep(1000L);
         }
     }
@@ -237,11 +248,11 @@ public abstract class AbstractAmqpITCase extends FunctionalTestCase
                                           final String flowName,
                                           final String replyTo) throws IOException
     {
-        final BasicProperties props = new BasicProperties();
-        props.setContentType("text/plain");
-        props.setCorrelationId(correlationId);
-        props.setReplyTo(replyTo);
-        props.setHeaders(Collections.<String, Object> singletonMap("customHeader", 123L));
+        final AMQP.BasicProperties.Builder bob = new AMQP.BasicProperties.Builder();
+        bob.contentType("text/plain").correlationId(correlationId).replyTo(replyTo);
+        bob.headers(Collections.<String, Object> singletonMap("customHeader", 123L));
+
+        final BasicProperties props = bob.build();
         getChannel().basicPublish(getExchangeName(flowName), "", props, body);
     }
 

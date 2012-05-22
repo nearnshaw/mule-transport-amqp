@@ -10,6 +10,10 @@
 
 package org.mule.transport.amqp;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.concurrent.Future;
@@ -73,9 +77,10 @@ public class AmqpMessageDispatcherITCase extends AbstractAmqpITCase
         final String bridgeName = "amqpNewExchangeService";
         new MuleClient(muleContext).dispatch("vm://" + bridgeName + ".in", "ignored_payload", null);
 
-        // there is no queue bound to this new exchange, so we can only test its presence
+        // there is no queue bound to this new exchange, so we can only test its
+        // presence
         int attempts = 0;
-        while (attempts++ < DEFAULT_MULE_TEST_TIMEOUT_SECS * 2)
+        while (attempts++ < getTestTimeoutSecs() * 2)
         {
             try
             {
@@ -97,11 +102,11 @@ public class AmqpMessageDispatcherITCase extends AbstractAmqpITCase
 
         // test to see if there is a message on the queue.
         int attempts = 0;
-        while (attempts++ < DEFAULT_MULE_TEST_TIMEOUT_SECS * 2)
+        while (attempts++ < getTestTimeoutSecs() * 2)
         {
             try
             {
-                if(getChannel().basicGet(getQueueName(flowName), true).getBody() != null )
+                if (getChannel().basicGet(getQueueName(flowName), true).getBody() != null)
                 {
                     return;
                 }
@@ -119,9 +124,10 @@ public class AmqpMessageDispatcherITCase extends AbstractAmqpITCase
         final String flowName = "amqpExternalFactoryConnector";
         new MuleClient(muleContext).dispatch("vm://" + flowName + ".in", "ignored_payload", null);
 
-         // there is no queue bound to this new exchange, so we can only test its presence
+        // there is no queue bound to this new exchange, so we can only test its
+        // presence
         int attempts = 0;
-        while (attempts++ < DEFAULT_MULE_TEST_TIMEOUT_SECS * 2)
+        while (attempts++ < getTestTimeoutSecs() * 2)
         {
             try
             {
@@ -157,8 +163,7 @@ public class AmqpMessageDispatcherITCase extends AbstractAmqpITCase
         final String payload = RandomStringUtils.randomAlphanumeric(20);
         final Future<MuleMessage> futureReturnedMessage = setupFunctionTestComponentForFlow("returnedMessageProcessor");
         new MuleClient(muleContext).dispatch("vm://amqpMandatoryDeliveryFailureWithHandler.in", payload, null);
-        final MuleMessage returnedMessage = futureReturnedMessage.get(DEFAULT_MULE_TEST_TIMEOUT_SECS,
-            TimeUnit.SECONDS);
+        final MuleMessage returnedMessage = futureReturnedMessage.get(getTestTimeoutSecs(), TimeUnit.SECONDS);
         assertNotNull(returnedMessage);
         assertEquals(payload, returnedMessage.getPayloadAsString());
     }
@@ -173,8 +178,7 @@ public class AmqpMessageDispatcherITCase extends AbstractAmqpITCase
         final String customHeaderValue = UUID.getUUID();
         final String payload = RandomStringUtils.randomAlphanumeric(20);
         final MuleMessage response = new MuleClient(muleContext).send("vm://amqpRequestResponseService.in",
-            payload, Collections.singletonMap("customHeader", customHeaderValue),
-            DEFAULT_MULE_TEST_TIMEOUT_SECS * 1000);
+            payload, Collections.singletonMap("customHeader", customHeaderValue), getTestTimeoutSecs() * 1000);
 
         assertEquals(payload + "-response", response.getPayloadAsString());
         assertEquals(customHeaderValue, response.getInboundProperty("customHeader").toString());
@@ -188,7 +192,7 @@ public class AmqpMessageDispatcherITCase extends AbstractAmqpITCase
             Collections.singletonMap("customHeader", customHeaderValue));
 
         final Delivery dispatchedMessage = consumeMessageWithAmqp(getQueueName(flowName),
-            DEFAULT_MULE_TEST_TIMEOUT_SECS * 1000L);
+            getTestTimeoutSecs() * 1000L);
 
         assertNotNull(dispatchedMessage);
         assertEquals(payload, new String(dispatchedMessage.getBody()));

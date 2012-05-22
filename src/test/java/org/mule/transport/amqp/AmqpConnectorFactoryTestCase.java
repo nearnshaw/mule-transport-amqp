@@ -10,10 +10,14 @@
 
 package org.mule.transport.amqp;
 
-import org.mule.api.endpoint.InboundEndpoint;
-import org.mule.tck.AbstractMuleTestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-public class AmqpConnectorFactoryTestCase extends AbstractMuleTestCase
+import org.mule.api.endpoint.InboundEndpoint;
+import org.mule.tck.junit4.AbstractMuleContextTestCase;
+
+public class AmqpConnectorFactoryTestCase extends AbstractMuleContextTestCase
 {
     public void testCreateFromFactory() throws Exception
     {

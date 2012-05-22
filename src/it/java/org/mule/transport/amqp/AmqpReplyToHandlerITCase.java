@@ -39,8 +39,7 @@ public class AmqpReplyToHandlerITCase extends AbstractAmqpITCase
         final String correlationId = publishMessageWithAmqp(body, "amqpReplierService",
             "amqpReplyTargetService-queue");
 
-        final MuleMessage receivedMessage = futureReceivedMessage.get(DEFAULT_MULE_TEST_TIMEOUT_SECS,
-            TimeUnit.SECONDS);
+        final MuleMessage receivedMessage = futureReceivedMessage.get(getTestTimeoutSecs(), TimeUnit.SECONDS);
 
         assertValidReceivedMessage(correlationId, ArrayUtils.addAll(body, "-reply".getBytes()),
             receivedMessage);

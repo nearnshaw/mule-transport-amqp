@@ -10,6 +10,8 @@
 
 package org.mule.transport.amqp;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -86,8 +88,7 @@ public class AmqpMessageReceiverITCase extends AbstractAmqpITCase
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpManualRejectService");
         // check the message has been successfully pushed back to the queue
-        assertNotNull(consumeMessageWithAmqp(getQueueName("amqpManualRejectService"),
-            DEFAULT_MULE_TEST_TIMEOUT_SECS));
+        assertNotNull(consumeMessageWithAmqp(getQueueName("amqpManualRejectService"), getTestTimeoutSecs()));
     }
 
     public void testExclusiveConsumer() throws Exception
@@ -103,8 +104,7 @@ public class AmqpMessageReceiverITCase extends AbstractAmqpITCase
         final byte[] body = RandomStringUtils.randomAlphanumeric(20).getBytes();
         final String correlationId = publishMessageWithAmqp(body, flowName);
 
-        final MuleMessage receivedMessage = futureReceivedMessage.get(DEFAULT_MULE_TEST_TIMEOUT_SECS,
-            TimeUnit.SECONDS);
+        final MuleMessage receivedMessage = futureReceivedMessage.get(getTestTimeoutSecs(), TimeUnit.SECONDS);
 
         assertValidReceivedMessage(correlationId, body, receivedMessage);
     }

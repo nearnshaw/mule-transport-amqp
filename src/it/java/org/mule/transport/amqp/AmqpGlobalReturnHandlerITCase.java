@@ -10,6 +10,9 @@
 
 package org.mule.transport.amqp;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.Collections;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -49,8 +52,7 @@ public class AmqpGlobalReturnHandlerITCase extends AbstractAmqpITCase
         final Future<MuleMessage> futureReturnedMessage = setupFunctionTestComponentForFlow("globalReturnedMessageProcessor");
         new MuleClient(muleContext).dispatch("vm://amqpMandatoryDeliveryFailureGlobalHandler.in", payload,
             null);
-        final MuleMessage returnedMessage = futureReturnedMessage.get(DEFAULT_MULE_TEST_TIMEOUT_SECS,
-            TimeUnit.SECONDS);
+        final MuleMessage returnedMessage = futureReturnedMessage.get(getTestTimeoutSecs(), TimeUnit.SECONDS);
         assertNotNull(returnedMessage);
         assertEquals(payload, returnedMessage.getPayloadAsString());
     }
@@ -60,8 +62,7 @@ public class AmqpGlobalReturnHandlerITCase extends AbstractAmqpITCase
         final String payload = RandomStringUtils.randomAlphanumeric(20);
         final Future<MuleMessage> futureReturnedMessage = setupFunctionTestComponentForFlow("flowReturnedMessageProcessor");
         new MuleClient(muleContext).dispatch("vm://amqpMandatoryDeliveryFailureFlowHandler.in", payload, null);
-        final MuleMessage returnedMessage = futureReturnedMessage.get(DEFAULT_MULE_TEST_TIMEOUT_SECS,
-            TimeUnit.SECONDS);
+        final MuleMessage returnedMessage = futureReturnedMessage.get(getTestTimeoutSecs(), TimeUnit.SECONDS);
         assertNotNull(returnedMessage);
         assertEquals(payload, returnedMessage.getPayloadAsString());
     }
@@ -74,7 +75,7 @@ public class AmqpGlobalReturnHandlerITCase extends AbstractAmqpITCase
             Collections.singletonMap("customHeader", customHeaderValue));
 
         final Delivery dispatchedMessage = consumeMessageWithAmqp(getQueueName(flowName),
-            DEFAULT_MULE_TEST_TIMEOUT_SECS * 1000L);
+            getTestTimeoutSecs() * 1000L);
 
         assertNotNull(dispatchedMessage);
         assertEquals(payload, new String(dispatchedMessage.getBody()));

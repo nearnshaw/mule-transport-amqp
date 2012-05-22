@@ -10,18 +10,21 @@
 
 package org.mule.transport.amqp;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map.Entry;
 
 import org.mule.api.MuleMessage;
 import org.mule.api.transport.PropertyScope;
-import org.mule.tck.AbstractMuleTestCase;
+import org.mule.tck.junit4.AbstractMuleContextTestCase;
 
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Envelope;
 
-public class AmqpMuleMessageFactoryTestCase extends AbstractMuleTestCase
+public class AmqpMuleMessageFactoryTestCase extends AbstractMuleContextTestCase
 {
     public static AmqpMessage getTestMessage()
     {
@@ -31,8 +34,8 @@ public class AmqpMuleMessageFactoryTestCase extends AbstractMuleTestCase
 
         final Envelope envelope = new Envelope(123456L, true, "exchange", "routingKey");
 
-        final BasicProperties.Builder builder = new BasicProperties.Builder();
-        builder.appId("appId")
+        final AMQP.BasicProperties.Builder bob = new AMQP.BasicProperties.Builder();
+        bob.appId("appId")
             .contentEncoding("utf-16")
             .contentType("application/vnd+mule.xml")
             .correlationId("cid-951753")
@@ -43,10 +46,12 @@ public class AmqpMuleMessageFactoryTestCase extends AbstractMuleTestCase
             .replyTo("replyTo")
             .timestamp(new Date(100000L))
             .type("type")
-            .userId("userId")
-            .headers(Collections.<String, Object> singletonMap("customKey", "customValue"));
+            .userId("userId");
 
-        return new AmqpMessage(consumerTag, envelope, builder.build(), body);
+        bob.headers(Collections.<String, Object> singletonMap("customKey", "customValue"));
+
+        final BasicProperties amqpProperties = bob.build();
+        return new AmqpMessage(consumerTag, envelope, amqpProperties, body);
     }
 
     public void testCreate() throws Exception

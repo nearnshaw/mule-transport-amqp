@@ -22,6 +22,7 @@ import org.mule.transformer.types.DataTypeFactory;
 import org.mule.transport.amqp.AmqpConstants;
 import org.mule.transport.amqp.AmqpMessage;
 
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Envelope;
 
@@ -59,8 +60,8 @@ public class ObjectToAmqpMessage extends AbstractAmqpMessageToObject
         final String routingKey = getProperty(message, AmqpConstants.ROUTING_KEY);
         final Envelope envelope = new Envelope(deliveryTag, redelivered, exchange, routingKey);
 
-        final BasicProperties.Builder builder = new BasicProperties.Builder();
-        builder.appId(this.<String> getProperty(message, AmqpConstants.APP_ID))
+        final AMQP.BasicProperties.Builder bob = new AMQP.BasicProperties.Builder();
+        bob.appId(this.<String> getProperty(message, AmqpConstants.APP_ID))
             .contentEncoding(
                 this.<String> getProperty(message, AmqpConstants.CONTENT_ENCODING, outputEncoding))
             .contentType(this.<String> getProperty(message, AmqpConstants.CONTENT_TYPE))
@@ -74,10 +75,12 @@ public class ObjectToAmqpMessage extends AbstractAmqpMessageToObject
                 this.<String> getProperty(message, AmqpConstants.REPLY_TO, (String) message.getReplyTo()))
             .timestamp(this.<Date> getProperty(message, AmqpConstants.TIMESTAMP, new Date()))
             .type(this.<String> getProperty(message, AmqpConstants.TYPE))
-            .userId(this.<String> getProperty(message, AmqpConstants.USER_ID))
-            .headers(getHeaders(message));
+            .userId(this.<String> getProperty(message, AmqpConstants.USER_ID));
 
-        return new AmqpMessage(consumerTag, envelope, builder.build(), body);
+        bob.headers(getHeaders(message));
+
+        final BasicProperties amqpProperties = bob.build();
+        return new AmqpMessage(consumerTag, envelope, amqpProperties, body);
     }
 
     private Map<String, Object> getHeaders(final MuleMessage message)

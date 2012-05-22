@@ -28,15 +28,15 @@ import org.mule.api.construct.FlowConstruct;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.api.transport.PropertyScope;
 import org.mule.processor.AbstractInterceptingMessageProcessor;
-import org.mule.session.DefaultMuleSession;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.ReturnListener;
 
 /**
- * Message processor that sets the return listener for the flow, leaving it up to the dispatcher to set it on the
- * channel.<br/>
- * This class is also the holder of all the different return listeners of the transport.
+ * Message processor that sets the return listener for the flow, leaving it up to the
+ * dispatcher to set it on the channel.<br/>
+ * This class is also the holder of all the different return listeners of the
+ * transport.
  */
 public class AmqpReturnHandler extends AbstractInterceptingMessageProcessor
 {
@@ -67,8 +67,8 @@ public class AmqpReturnHandler extends AbstractInterceptingMessageProcessor
         }
 
         protected abstract void doHandleReturn(String errorMessage,
-                                                    Map<String, Object> returnContext,
-                                                    AmqpMessage returnedAmqpMessage);
+                                               Map<String, Object> returnContext,
+                                               AmqpMessage returnedAmqpMessage);
 
         @Override
         public String toString()
@@ -83,8 +83,8 @@ public class AmqpReturnHandler extends AbstractInterceptingMessageProcessor
 
         @Override
         protected void doHandleReturn(final String errorMessage,
-                                           final Map<String, Object> ignored,
-                                           final AmqpMessage returnedAmqpMessage)
+                                      final Map<String, Object> ignored,
+                                      final AmqpMessage returnedAmqpMessage)
         {
             hitCount.incrementAndGet();
             LOGGER.warn(String.format("%s: %s", errorMessage, returnedAmqpMessage));
@@ -130,8 +130,8 @@ public class AmqpReturnHandler extends AbstractInterceptingMessageProcessor
 
         @Override
         protected void doHandleReturn(final String errorMessage,
-                                           final Map<String, Object> returnContext,
-                                           final AmqpMessage returnedAmqpMessage)
+                                      final Map<String, Object> returnContext,
+                                      final AmqpMessage returnedAmqpMessage)
         {
             try
             {
@@ -145,8 +145,7 @@ public class AmqpReturnHandler extends AbstractInterceptingMessageProcessor
                 for (final MessageProcessor returnMessageProcessor : returnMessageProcessors)
                 {
                     final DefaultMuleEvent returnedMuleEvent = new DefaultMuleEvent(returnedMuleMessage,
-                        MessageExchangePattern.ONE_WAY, new DefaultMuleSession(eventFlowConstruct,
-                            amqpConnector.getMuleContext()));
+                        MessageExchangePattern.ONE_WAY, eventFlowConstruct);
 
                     returnedMuleMessage.applyTransformers(returnedMuleEvent,
                         amqpConnector.getReceiveTransformer());

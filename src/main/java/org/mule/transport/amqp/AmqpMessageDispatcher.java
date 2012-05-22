@@ -26,8 +26,9 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.ReturnListener;
 
 /**
- * The <code>AmqpMessageDispatcher</code> takes care of sending messages from Mule to an AMQP broker. It supports
- * synchronous sending by the means of private temporary reply queues.
+ * The <code>AmqpMessageDispatcher</code> takes care of sending messages from Mule to
+ * an AMQP broker. It supports synchronous sending by the means of private temporary
+ * reply queues.
  */
 public class AmqpMessageDispatcher extends AbstractMessageDispatcher
 {
@@ -134,7 +135,8 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
                                                    + AmqpMessage.class.getName()), event, getEndpoint());
         }
 
-        // LATER: eventChannel = AmqpConnector.getChannelFromMessage(message, getChannel()); when it will be essential
+        // LATER: eventChannel = AmqpConnector.getChannelFromMessage(message,
+        // getChannel()); when it will be essential
         // to use the same channel across the flow (ie. to support transactions).
         final Channel eventChannel = getChannel();
         final String eventExchange = message.getOutboundProperty(AmqpConstants.EXCHANGE, getExchange());
@@ -152,7 +154,7 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
             amqpMessage.getProperties().setPriority(amqpConnector.getPriority().intValue());
         }
 
-        setReturnListenerIfNeeded(event, eventChannel);
+        addReturnListenerIfNeeded(event, eventChannel);
 
         final AmqpMessage result = outboundAction.run(amqpConnector, eventChannel, eventExchange,
             eventRoutingKey, amqpMessage, getTimeOutForEvent(event));
@@ -181,10 +183,10 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
     }
 
     /**
-     * Try to associate a return listener to the channel in order to allow flow-level exception strategy to handle
-     * return messages.
+     * Try to associate a return listener to the channel in order to allow flow-level
+     * exception strategy to handle return messages.
      */
-    protected void setReturnListenerIfNeeded(final MuleEvent event, final Channel channel)
+    protected void addReturnListenerIfNeeded(final MuleEvent event, final Channel channel)
     {
         final ReturnListener returnListener = event.getMessage().getInvocationProperty(
             AmqpConstants.RETURN_LISTENER);

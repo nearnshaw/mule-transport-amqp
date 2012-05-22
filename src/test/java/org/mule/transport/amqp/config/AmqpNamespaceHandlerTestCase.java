@@ -10,6 +10,10 @@
 
 package org.mule.transport.amqp.config;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.mule.api.construct.Pipeline;
@@ -17,7 +21,7 @@ import org.mule.api.endpoint.EndpointBuilder;
 import org.mule.api.endpoint.InboundEndpoint;
 import org.mule.api.endpoint.OutboundEndpoint;
 import org.mule.api.processor.MessageProcessor;
-import org.mule.tck.FunctionalTestCase;
+import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.transport.amqp.AmqpConnector;
 import org.mule.transport.amqp.AmqpConstants.AckMode;
 import org.mule.transport.amqp.AmqpEndpointUtil;
@@ -31,7 +35,7 @@ public class AmqpNamespaceHandlerTestCase extends FunctionalTestCase
     {
         super();
         setStartContext(false);
-        setDisposeManagerPerSuite(true);
+        setDisposeContextPerClass(true);
     }
 
     @Override

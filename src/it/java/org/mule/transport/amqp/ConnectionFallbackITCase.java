@@ -10,7 +10,9 @@
 
 package org.mule.transport.amqp;
 
-import org.mule.tck.FunctionalTestCase;
+import static org.junit.Assert.assertTrue;
+
+import org.mule.tck.junit4.FunctionalTestCase;
 
 public class ConnectionFallbackITCase extends FunctionalTestCase
 {

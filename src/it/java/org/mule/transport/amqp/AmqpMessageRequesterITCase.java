@@ -10,6 +10,9 @@
 
 package org.mule.transport.amqp;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -82,7 +85,7 @@ public class AmqpMessageRequesterITCase extends AbstractAmqpITCase
                                                                                 + getQueueName(flowName)
                                                                                 + "?connector="
                                                                                 + connectorName,
-            DEFAULT_MULE_TEST_TIMEOUT_SECS * 1000L);
+            getTestTimeoutSecs() * 1000L);
 
         assertValidReceivedMessage(correlationId, body, receivedMessage);
 
