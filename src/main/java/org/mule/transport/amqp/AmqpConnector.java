@@ -167,6 +167,12 @@ public class AmqpConnector extends AbstractConnector
             // race condition: use the channel created by another thread
             return getChannel();
         }
+
+        @Override
+        public String toString()
+        {
+            return super.toString() + ", Channel: " + getChannel();
+        }
     }
 
     private static class ConnectorConnection extends AmqpConnection
@@ -231,13 +237,36 @@ public class AmqpConnector extends AbstractConnector
         @Override
         public Object makeObject() throws Exception
         {
-            return new ConnectorConnection(amqpConnector);
+            final ConnectorConnection connectorConnection = new ConnectorConnection(amqpConnector);
+            if (amqpConnector.logger.isDebugEnabled())
+            {
+                amqpConnector.logger.debug("Created new: " + connectorConnection);
+            }
+            return connectorConnection;
+        }
+
+        @Override
+        public boolean validateObject(final Object obj)
+        {
+            return ((ConnectorConnection) obj).getChannel().isOpen();
         }
 
         @Override
         public void destroyObject(final Object obj) throws Exception
         {
-            ((ConnectorConnection) obj).getChannel().close();
+            if (amqpConnector.logger.isDebugEnabled())
+            {
+                amqpConnector.logger.debug("Destroying " + obj);
+            }
+
+            try
+            {
+                ((ConnectorConnection) obj).getChannel().close();
+            }
+            catch (final Exception e)
+            {
+                amqpConnector.logger.info("Ignored exception when destroying ConnectorConnection:", e);
+            }
         }
     }
 
@@ -435,6 +464,24 @@ public class AmqpConnector extends AbstractConnector
         {
             connectorConnection = (ConnectorConnection) connectorConnectionPool.borrowObject();
             return action.run(connectorConnection);
+        }
+        catch (final Exception e)
+        {
+            // whenever an exception occurs with a ConnectorConnection, consider the
+            // object failed and invalidate it
+            if (connectorConnection != null)
+            {
+                try
+                {
+                    connectorConnectionPool.invalidateObject(connectorConnection);
+                }
+                catch (final Exception e2)
+                {
+                    logger.error("Can't invalidate a borrowed connector connection", e2);
+                }
+            }
+
+            throw e;
         }
         finally
         {
