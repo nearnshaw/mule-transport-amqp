@@ -15,6 +15,7 @@ import java.util.Arrays;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.mule.transport.amqp.AmqpConstants.DeliveryMode;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.AMQP.BasicProperties;
@@ -24,8 +25,8 @@ public class AmqpMessage
 {
     private final String consumerTag;
     private final Envelope envelope;
-    private final AMQP.BasicProperties properties;
     private final byte[] body;
+    private AMQP.BasicProperties properties;
 
     public AmqpMessage(final String consumerTag,
                        final Envelope envelope,
@@ -51,6 +52,21 @@ public class AmqpMessage
     public AMQP.BasicProperties getProperties()
     {
         return properties;
+    }
+
+    public void setDeliveryMode(final DeliveryMode deliveryMode)
+    {
+        this.properties = properties.builder().deliveryMode(deliveryMode.getCode()).build();
+    }
+
+    public void setPriority(final int priority)
+    {
+        this.properties = properties.builder().priority(priority).build();
+    }
+
+    public void setReplyTo(final String replyTo)
+    {
+        this.properties = properties.builder().replyTo(replyTo).build();
     }
 
     public byte[] getBody()

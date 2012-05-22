@@ -64,7 +64,7 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
             {
                 final DeclareOk declareOk = channel.queueDeclare();
                 final String temporaryReplyToQueue = declareOk.getQueue();
-                amqpMessage.getProperties().setReplyTo(temporaryReplyToQueue);
+                amqpMessage.setReplyTo(temporaryReplyToQueue);
 
                 DISPATCH.run(amqpConnector, channel, exchange, routingKey, amqpMessage, timeout);
                 return amqpConnector.consume(channel, temporaryReplyToQueue, true, timeout);
@@ -147,11 +147,11 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
         if ((amqpMessage.getProperties().getDeliveryMode() == null)
             && (amqpConnector.getDeliveryMode() != null))
         {
-            amqpMessage.getProperties().setDeliveryMode(amqpConnector.getDeliveryMode().getCode());
+            amqpMessage.setDeliveryMode(amqpConnector.getDeliveryMode());
         }
         if ((amqpMessage.getProperties().getPriority() == null) && (amqpConnector.getPriority() != null))
         {
-            amqpMessage.getProperties().setPriority(amqpConnector.getPriority().intValue());
+            amqpMessage.setPriority(amqpConnector.getPriority().intValue());
         }
 
         addReturnListenerIfNeeded(event, eventChannel);
