@@ -111,9 +111,8 @@ public class AmqpConnector extends AbstractConnector
                         if (!sse.isInitiatedByApplication())
                         {
                             // do not inform the connector of the issue as it can't
-                            // decide what to do
-                            // reset the channel so it would later be lazily
-                            // reconnected
+                            // decide what to do reset the channel so it would later
+                            // be lazily reconnected
                             channelRef.set(null);
                         }
                     }
@@ -222,7 +221,6 @@ public class AmqpConnector extends AbstractConnector
         {
             return routingKey;
         }
-
     }
 
     private static class ConnectorConnectionPoolableObjectFactory extends BasePoolableObjectFactory
@@ -364,7 +362,7 @@ public class AmqpConnector extends AbstractConnector
         connectionFactory = null;
     }
 
-    private void addFallbackAddresses(final List<Address> brokerAddresses)
+    protected void addFallbackAddresses(final List<Address> brokerAddresses)
     {
         if (fallbackAddresses == null) return;
 
@@ -388,7 +386,7 @@ public class AmqpConnector extends AbstractConnector
         }
     }
 
-    private void connectToFirstResponsiveBroker(final List<Address> brokerAddresses) throws IOException
+    protected void connectToFirstResponsiveBroker(final List<Address> brokerAddresses) throws IOException
     {
         IOException lastIOE = null;
 
@@ -414,7 +412,7 @@ public class AmqpConnector extends AbstractConnector
         }
     }
 
-    private void configureDefaultReturnListener() throws InitialisationException
+    protected void configureDefaultReturnListener() throws InitialisationException
     {
         if (defaultReturnEndpointBuilder == null)
         {
@@ -456,7 +454,7 @@ public class AmqpConnector extends AbstractConnector
         return connect(messageRequester, messageRequester.getEndpoint());
     }
 
-    private <T> T runConnectorConnectionAction(final ConnectorConnectionAction<T> action) throws Exception
+    protected <T> T runConnectorConnectionAction(final ConnectorConnectionAction<T> action) throws Exception
     {
         ConnectorConnection connectorConnection = null;
 
@@ -499,7 +497,7 @@ public class AmqpConnector extends AbstractConnector
         }
     }
 
-    private InboundConnection connect(final Connectable connectable, final InboundEndpoint inboundEndpoint)
+    protected InboundConnection connect(final Connectable connectable, final InboundEndpoint inboundEndpoint)
         throws ConnectException
     {
         try
