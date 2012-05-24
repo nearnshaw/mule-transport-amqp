@@ -85,28 +85,28 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
         amqpConnector = (AmqpConnector) endpoint.getConnector();
         if (logger.isDebugEnabled())
         {
-            logger.debug("[Instantiate Dispatcher]");
+            logger.debug("Instantiated: " + this);
         }
-
     }
 
     @Override
     public void doConnect() throws Exception
     {
         outboundConnection = amqpConnector.connect(this);
-
     }
 
     @Override
     public void doDisconnect() throws Exception
     {
-        amqpConnector.closeChannel(getChannel());
-    }
+        final Channel channel = getChannel();
 
-    @Override
-    public void doDispose()
-    {
+        if (logger.isDebugEnabled())
+        {
+            logger.debug("Disconnecting: exchange: " + getExchange() + " from channel: " + channel);
+        }
+
         outboundConnection = null;
+        amqpConnector.closeChannel(channel);
     }
 
     @Override

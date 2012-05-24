@@ -108,12 +108,18 @@ public class AmqpConnector extends AbstractConnector
                 {
                     public void shutdownCompleted(final ShutdownSignalException sse)
                     {
-                        if (!sse.isInitiatedByApplication())
+                        if (sse.isInitiatedByApplication())
                         {
-                            // do not inform the connector of the issue as it can't
-                            // decide what to do reset the channel so it would later
-                            // be lazily reconnected
-                            channelRef.set(null);
+                            return;
+                        }
+
+                        // do not inform the connector of the issue as it can't
+                        // decide what to do reset the channel so it would later
+                        // be lazily reconnected
+                        channelRef.set(null);
+                        if (logger.isDebugEnabled())
+                        {
+                            logger.debug("Terminated dead channel: " + channel, sse);
                         }
                     }
                 });
@@ -129,15 +135,18 @@ public class AmqpConnector extends AbstractConnector
 
                 return channel;
             }
-            catch (final IOException ioe)
+            catch (final Exception e)
             {
-                amqpConnector.getMuleContext()
-                    .getExceptionListener()
-                    .handleException(
-                        new ConnectException(
-                            MessageFactory.createStaticMessage("Impossible to create new channels on connection: "
-                                                               + amqpConnector.getConnection()), ioe,
-                            amqpConnector));
+                if ((!amqpConnector.isStopping()) && (amqpConnector.isStarted()))
+                {
+                    amqpConnector.getMuleContext()
+                        .getExceptionListener()
+                        .handleException(
+                            new ConnectException(
+                                MessageFactory.createStaticMessage("Impossible to create new channels on connection: "
+                                                                   + amqpConnector.getConnection()), e,
+                                amqpConnector));
+                }
                 return null;
             }
         }
@@ -246,7 +255,8 @@ public class AmqpConnector extends AbstractConnector
         @Override
         public boolean validateObject(final Object obj)
         {
-            return ((ConnectorConnection) obj).getChannel().isOpen();
+            final Channel channel = ((ConnectorConnection) obj).getChannel();
+            return channel != null && channel.isOpen();
         }
 
         @Override
@@ -259,7 +269,11 @@ public class AmqpConnector extends AbstractConnector
 
             try
             {
-                ((ConnectorConnection) obj).getChannel().close();
+                final Channel channel = ((ConnectorConnection) obj).getChannel();
+                if (channel != null)
+                {
+                    channel.close();
+                }
             }
             catch (final Exception e)
             {
@@ -399,6 +413,23 @@ public class AmqpConnector extends AbstractConnector
                 connectionFactory.setHost(brokerAddress.getHost());
                 connectionFactory.setPort(brokerAddress.getPort());
                 connection = connectionFactory.newConnection();
+
+                connection.addShutdownListener(new ShutdownListener()
+                {
+                    public void shutdownCompleted(final ShutdownSignalException sse)
+                    {
+                        if (sse.isInitiatedByApplication())
+                        {
+                            return;
+                        }
+
+                        getMuleContext().getExceptionListener().handleException(
+                            new ConnectException(
+                                MessageFactory.createStaticMessage("Connection shutdown detected for: "
+                                                                   + getName()), sse, AmqpConnector.this));
+                    }
+                });
+
             }
             catch (final IOException ioe)
             {
@@ -614,10 +645,9 @@ public class AmqpConnector extends AbstractConnector
                 logger.debug("Closed channel: " + channel);
             }
         }
-        catch (final IOException ioe)
+        catch (final Exception e)
         {
-            throw new ConnectException(MessageFactory.createStaticMessage("Error when closing channel: "
-                                                                          + channel), ioe, this);
+            logger.warn(MessageFactory.createStaticMessage("Failed to close channel: " + channel), e);
         }
     }
 

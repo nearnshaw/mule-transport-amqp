@@ -21,7 +21,8 @@ import org.mule.transport.amqp.AmqpConstants.AckMode;
 import com.rabbitmq.client.Channel;
 
 /**
- * The <code>AmqpMessageRequester</code> is used to consume individual messages from an AMQP broker.
+ * The <code>AmqpMessageRequester</code> is used to consume individual messages from
+ * an AMQP broker.
  */
 public class AmqpMessageRequester extends AbstractMessageRequester
 {
@@ -43,13 +44,15 @@ public class AmqpMessageRequester extends AbstractMessageRequester
     @Override
     public void doDisconnect() throws Exception
     {
-        amqpConnector.closeChannel(getChannel());
-    }
+        final Channel channel = getChannel();
 
-    @Override
-    public void doDispose()
-    {
+        if (logger.isDebugEnabled())
+        {
+            logger.debug("Disconnecting: queue: " + getQueueName() + " from channel: " + channel);
+        }
+
         inboundConnection = null;
+        amqpConnector.closeChannel(channel);
     }
 
     @Override
