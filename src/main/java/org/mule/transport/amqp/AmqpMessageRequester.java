@@ -10,6 +10,7 @@
 
 package org.mule.transport.amqp;
 
+import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.endpoint.InboundEndpoint;
 import org.mule.api.transport.PropertyScope;
@@ -42,7 +43,7 @@ public class AmqpMessageRequester extends AbstractMessageRequester
     }
 
     @Override
-    public void doDisconnect() throws Exception
+    public void doDisconnect() throws MuleException
     {
         final Channel channel = getChannel();
 

@@ -29,7 +29,6 @@ import org.mule.api.transport.Connector;
 import org.mule.api.transport.PropertyScope;
 import org.mule.config.i18n.MessageFactory;
 import org.mule.transport.AbstractMessageReceiver;
-import org.mule.transport.ConnectException;
 import org.mule.transport.amqp.AmqpConnector.InboundConnection;
 import org.mule.transport.amqp.AmqpConstants.AckMode;
 
@@ -57,7 +56,7 @@ public class AmqpMessageReceiver extends AbstractMessageReceiver
     }
 
     @Override
-    public void doConnect() throws ConnectException
+    public void doStart() throws MuleException
     {
         inboundConnection = amqpConnector.connect(this);
 
@@ -65,25 +64,7 @@ public class AmqpMessageReceiver extends AbstractMessageReceiver
         {
             logger.debug("Connected queue: " + getQueueName() + " on channel: " + getChannel());
         }
-    }
 
-    @Override
-    public void doDisconnect() throws ConnectException
-    {
-        final Channel channel = getChannel();
-
-        if (logger.isDebugEnabled())
-        {
-            logger.debug("Disconnecting: queue: " + getQueueName() + " from channel: " + channel);
-        }
-
-        inboundConnection = null;
-        amqpConnector.closeChannel(channel);
-    }
-
-    @Override
-    public void doStart() throws MuleException
-    {
         try
         {
             if (inboundConnection == null)
@@ -125,12 +106,23 @@ public class AmqpMessageReceiver extends AbstractMessageReceiver
             channel.basicCancel(consumerTag);
 
             logger.info("Cancelled subscription of: " + consumerTag + " on channel: " + channel);
+
+            if (logger.isDebugEnabled())
+            {
+                logger.debug("Disconnecting: queue: " + getQueueName() + " from channel: " + channel);
+            }
+
+            amqpConnector.closeChannel(channel);
         }
         catch (final Exception e)
         {
             logger.warn(
                 MessageFactory.createStaticMessage("Failed to cancel subscription: " + consumerTag
                                                    + " on channel: " + channel), e);
+        }
+        finally
+        {
+            inboundConnection = null;
         }
     }
 

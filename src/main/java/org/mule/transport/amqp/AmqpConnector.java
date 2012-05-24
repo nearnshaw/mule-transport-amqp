@@ -631,6 +631,11 @@ public class AmqpConnector extends AbstractConnector
 
     public void closeChannel(final Channel channel) throws ConnectException
     {
+        if (channel == null)
+        {
+            return;
+        }
+
         try
         {
             if (logger.isDebugEnabled())
