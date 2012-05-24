@@ -29,7 +29,6 @@ import org.mule.api.transport.Connector;
 import org.mule.api.transport.PropertyScope;
 import org.mule.config.i18n.MessageFactory;
 import org.mule.transport.AbstractMessageReceiver;
-import org.mule.transport.ConnectException;
 import org.mule.transport.amqp.AmqpConnector.InboundConnection;
 import org.mule.transport.amqp.AmqpConstants.AckMode;
 
@@ -37,7 +36,6 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
-import com.rabbitmq.client.ShutdownSignalException;
 
 /**
  * The <code>AmqpMessageReceiver</code> subscribes to a queue and dispatches received
@@ -58,7 +56,7 @@ public class AmqpMessageReceiver extends AbstractMessageReceiver
     }
 
     @Override
-    public void doConnect() throws ConnectException
+    public void doStart() throws MuleException
     {
         inboundConnection = amqpConnector.connect(this);
 
@@ -66,25 +64,7 @@ public class AmqpMessageReceiver extends AbstractMessageReceiver
         {
             logger.debug("Connected queue: " + getQueueName() + " on channel: " + getChannel());
         }
-    }
 
-    @Override
-    public void doDisconnect() throws ConnectException
-    {
-        final Channel channel = getChannel();
-
-        if (logger.isDebugEnabled())
-        {
-            logger.debug("Disconnecting queue: " + getQueueName() + " from channel: " + channel);
-        }
-
-        inboundConnection = null;
-        amqpConnector.closeChannel(channel);
-    }
-
-    @Override
-    public void doStart() throws MuleException
-    {
         try
         {
             if (inboundConnection == null)
@@ -109,21 +89,40 @@ public class AmqpMessageReceiver extends AbstractMessageReceiver
     @Override
     public void doStop()
     {
+        Channel channel = null;
         try
         {
-            if (logger.isDebugEnabled())
+            channel = getChannel();
+            if (channel == null)
             {
-                logger.debug("Cancelling subscription of: " + consumerTag + " on channel: " + getChannel());
+                return;
             }
 
-            getChannel().basicCancel(consumerTag);
-            logger.info("Cancelled subscription of: " + consumerTag + " on channel: " + getChannel());
+            if (logger.isDebugEnabled())
+            {
+                logger.debug("Cancelling subscription of: " + consumerTag + " on channel: " + channel);
+            }
+
+            channel.basicCancel(consumerTag);
+
+            logger.info("Cancelled subscription of: " + consumerTag + " on channel: " + channel);
+
+            if (logger.isDebugEnabled())
+            {
+                logger.debug("Disconnecting: queue: " + getQueueName() + " from channel: " + channel);
+            }
+
+            amqpConnector.closeChannel(channel);
         }
         catch (final Exception e)
         {
             logger.warn(
                 MessageFactory.createStaticMessage("Failed to cancel subscription: " + consumerTag
-                                                   + " on channel: " + getChannel()), e);
+                                                   + " on channel: " + channel), e);
+        }
+        finally
+        {
+            inboundConnection = null;
         }
     }
 
@@ -178,29 +177,6 @@ public class AmqpMessageReceiver extends AbstractMessageReceiver
             }
 
             deliverAmqpMessage(amqpMessage);
-        }
-
-        @Override
-        public void handleShutdownSignal(final String consumerTag, final ShutdownSignalException sse)
-        {
-            if (sse.isInitiatedByApplication())
-            {
-                return;
-            }
-
-            if ((amqpConnector.isStopping()) || (!amqpConnector.isStarted()))
-            {
-                return;
-            }
-
-            // inform the connector the subscription is dead
-            // so it will reconnect the receiver
-            amqpConnector.getMuleContext()
-                .getExceptionListener()
-                .handleException(
-                    new ConnectException(
-                        MessageFactory.createStaticMessage("Unexpected susbscription shutdown for: "
-                                                           + consumerTag), sse, AmqpMessageReceiver.this));
         }
     }
 

@@ -13,6 +13,7 @@ package org.mule.transport.amqp;
 import java.io.IOException;
 
 import org.mule.api.MuleEvent;
+import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.endpoint.OutboundEndpoint;
 import org.mule.api.transport.DispatchException;
@@ -85,28 +86,28 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
         amqpConnector = (AmqpConnector) endpoint.getConnector();
         if (logger.isDebugEnabled())
         {
-            logger.debug("[Instantiate Dispatcher]");
+            logger.debug("Instantiated: " + this);
         }
-
     }
 
     @Override
-    public void doConnect() throws Exception
+    protected void doConnect() throws MuleException
     {
         outboundConnection = amqpConnector.connect(this);
-
     }
 
     @Override
-    public void doDisconnect() throws Exception
+    protected void doDisconnect() throws MuleException
     {
-        amqpConnector.closeChannel(getChannel());
-    }
+        final Channel channel = getChannel();
 
-    @Override
-    public void doDispose()
-    {
+        if (logger.isDebugEnabled())
+        {
+            logger.debug("Disconnecting: exchange: " + getExchange() + " from channel: " + channel);
+        }
+
         outboundConnection = null;
+        amqpConnector.closeChannel(channel);
     }
 
     @Override
