@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.junit.Test;
 import org.mule.api.construct.Pipeline;
 import org.mule.api.endpoint.EndpointBuilder;
 import org.mule.api.endpoint.InboundEndpoint;
@@ -44,6 +45,7 @@ public class AmqpNamespaceHandlerTestCase extends FunctionalTestCase
         return "amqp-namespace-config.xml";
     }
 
+    @Test
     public void testDefaultConnector() throws Exception
     {
         final AmqpConnector c = (AmqpConnector) muleContext.getRegistry().lookupConnector(
@@ -53,6 +55,7 @@ public class AmqpNamespaceHandlerTestCase extends FunctionalTestCase
         assertEquals(AckMode.AMQP_AUTO, c.getAckMode());
     }
 
+    @Test
     public void testFullGlobalEndpoint() throws Exception
     {
         final EndpointBuilder endpointBuilder = muleContext.getRegistry().lookupEndpointBuilder(
@@ -74,6 +77,7 @@ public class AmqpNamespaceHandlerTestCase extends FunctionalTestCase
         assertEquals("true", outboundEndpoint.getProperty(AmqpEndpointUtil.EXCHANGE_DURABLE));
     }
 
+    @Test
     public void testExistingQueueGlobalEndpoint() throws Exception
     {
         final EndpointBuilder endpointBuilder = muleContext.getRegistry().lookupEndpointBuilder(
@@ -85,6 +89,7 @@ public class AmqpNamespaceHandlerTestCase extends FunctionalTestCase
         assertEquals("amqp://amqp-queue.target-queue", inboundEndpoint.getEndpointURI().getAddress());
     }
 
+    @Test
     public void testPrivateQueueGlobalEndpoint() throws Exception
     {
         final EndpointBuilder endpointBuilder = muleContext.getRegistry().lookupEndpointBuilder(
@@ -96,6 +101,7 @@ public class AmqpNamespaceHandlerTestCase extends FunctionalTestCase
         assertEquals("amqp://target-exchange", inboundEndpoint.getEndpointURI().getAddress());
     }
 
+    @Test
     public void testExistingExchangeGlobalEndpoint() throws Exception
     {
         final EndpointBuilder endpointBuilder = muleContext.getRegistry().lookupEndpointBuilder(
@@ -107,12 +113,14 @@ public class AmqpNamespaceHandlerTestCase extends FunctionalTestCase
         assertEquals("amqp://target-exchange", inboundEndpoint.getEndpointURI().getAddress());
     }
 
+    @Test
     public void testGlobalTransformers() throws Exception
     {
         assertTrue(muleContext.getRegistry().lookupTransformer("a2o") instanceof AmqpMessageToObject);
         assertTrue(muleContext.getRegistry().lookupTransformer("o2a") instanceof ObjectToAmqpMessage);
     }
 
+    @Test
     public void testAcknowledger() throws Exception
     {
         final List<MessageProcessor> messageProcessors = ((Pipeline) muleContext.getRegistry()

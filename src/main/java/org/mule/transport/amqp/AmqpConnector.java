@@ -23,6 +23,7 @@ import org.apache.commons.pool.impl.StackObjectPool;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
+import org.mule.api.construct.FlowConstruct;
 import org.mule.api.endpoint.EndpointBuilder;
 import org.mule.api.endpoint.EndpointException;
 import org.mule.api.endpoint.ImmutableEndpoint;
@@ -37,6 +38,7 @@ import org.mule.api.transport.MessageReceiver;
 import org.mule.api.transport.MessageRequester;
 import org.mule.api.transport.ReplyToHandler;
 import org.mule.config.i18n.MessageFactory;
+import org.mule.construct.AbstractFlowConstruct;
 import org.mule.transport.AbstractConnector;
 import org.mule.transport.ConnectException;
 import org.mule.transport.amqp.AmqpConstants.AckMode;
@@ -87,7 +89,33 @@ public class AmqpConnector extends AbstractConnector
     private Connection connection;
     private final StackObjectPool connectorConnectionPool;
 
-    private static abstract class AmqpConnection
+    /**
+     * A fake {@link FlowConstruct} that is used when the events need to be
+     * dispatched on behalf of the connector and out of any actual Flow context.
+     */
+    protected static class AmqpConnectorFlowConstruct extends AbstractFlowConstruct
+    {
+        private final AmqpConnector connector;
+
+        private AmqpConnectorFlowConstruct(final AmqpConnector connector)
+        {
+            super(connector.getName(), connector.getMuleContext());
+            this.connector = connector;
+        }
+
+        @Override
+        public String getConstructType()
+        {
+            return "Global AMQP Connector Fake Flow";
+        }
+
+        public AmqpConnector getConnector()
+        {
+            return connector;
+        }
+    }
+
+    protected static abstract class AmqpConnection
     {
         private final Log logger = LogFactory.getLog(getClass());
         private final AmqpConnector amqpConnector;
@@ -183,7 +211,7 @@ public class AmqpConnector extends AbstractConnector
         }
     }
 
-    private static class ConnectorConnection extends AmqpConnection
+    protected static class ConnectorConnection extends AmqpConnection
     {
         private ConnectorConnection(final AmqpConnector amqpConnector)
         {
@@ -232,7 +260,7 @@ public class AmqpConnector extends AbstractConnector
         }
     }
 
-    private static class ConnectorConnectionPoolableObjectFactory extends BasePoolableObjectFactory
+    protected static class ConnectorConnectionPoolableObjectFactory extends BasePoolableObjectFactory
     {
         private final AmqpConnector amqpConnector;
 
@@ -282,7 +310,7 @@ public class AmqpConnector extends AbstractConnector
         }
     }
 
-    private interface ConnectorConnectionAction<T>
+    protected interface ConnectorConnectionAction<T>
     {
         public T run(ConnectorConnection connectorConnection) throws Exception;
     }
@@ -455,7 +483,7 @@ public class AmqpConnector extends AbstractConnector
         {
             final MessageProcessor defaultReturnEndpoint = defaultReturnEndpointBuilder.buildOutboundEndpoint();
             defaultReturnListener = new AmqpReturnHandler.DispatchingReturnListener(
-                Collections.singletonList(defaultReturnEndpoint), this);
+                Collections.singletonList(defaultReturnEndpoint), new AmqpConnectorFlowConstruct(this));
             logger.info(String.format("Configured default return endpoint: %s", defaultReturnListener));
         }
         catch (final EndpointException ee)

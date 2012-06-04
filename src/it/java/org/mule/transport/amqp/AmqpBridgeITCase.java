@@ -15,6 +15,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.junit.Test;
 import org.mule.tck.functional.FunctionalTestComponent;
 import org.mule.util.UUID;
 
@@ -39,16 +40,19 @@ public class AmqpBridgeITCase extends AbstractAmqpITCase
         return "bridge-tests-config.xml";
     }
 
+    @Test
     public void testOneWayBridge() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpOneWayBridge", "amqpOneWayBridgeTarget-queue");
     }
 
+    @Test
     public void testRequestResponseBridge() throws Exception
     {
         sendTestMessageAndAssertValidReceivedMessage("amqpRequestResponseBridge");
     }
 
+    @Test
     public void testThrottledBridge() throws Exception
     {
         for (int i = 0; i < 10; i++)

@@ -18,6 +18,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.junit.Test;
 import org.mule.api.MuleMessage;
 import org.mule.module.client.MuleClient;
 import org.mule.util.UUID;
@@ -41,11 +42,13 @@ public class AmqpGlobalReturnHandlerITCase extends AbstractAmqpITCase
         return "global-return-handler-tests-config.xml";
     }
 
+    @Test
     public void testMandatoryDeliverySuccess() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpMandatoryDeliveryWithGlobalHandlerSuccess");
     }
 
+    @Test
     public void testMandatoryDeliveryFailureGlobalHandler() throws Exception
     {
         final String payload = RandomStringUtils.randomAlphanumeric(20);
@@ -57,6 +60,7 @@ public class AmqpGlobalReturnHandlerITCase extends AbstractAmqpITCase
         assertEquals(payload, returnedMessage.getPayloadAsString());
     }
 
+    @Test
     public void testMandatoryDeliveryFailureFlowHandler() throws Exception
     {
         final String payload = RandomStringUtils.randomAlphanumeric(20);

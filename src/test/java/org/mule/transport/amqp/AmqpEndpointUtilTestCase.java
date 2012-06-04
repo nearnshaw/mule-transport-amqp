@@ -10,10 +10,13 @@
 
 package org.mule.transport.amqp;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-public class AmqpEndpointUtilTestCase extends TestCase
+import org.junit.Test;
+
+public class AmqpEndpointUtilTestCase
 {
+    @Test
     public void testGetQueueName()
     {
         assertEquals("queue", AmqpEndpointUtil.getQueueName("amqp://exchange/amqp-queue.queue?connector=foo"));
@@ -24,6 +27,7 @@ public class AmqpEndpointUtilTestCase extends TestCase
         assertEquals("", AmqpEndpointUtil.getQueueName("amqp://exchange"));
     }
 
+    @Test
     public void testGetExchangeName()
     {
         assertEquals("exchange",

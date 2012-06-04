@@ -15,6 +15,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.junit.Test;
 import org.mule.api.MuleMessage;
 import org.mule.util.ArrayUtils;
 
@@ -31,6 +32,7 @@ public class AmqpReplyToHandlerITCase extends AbstractAmqpITCase
         return "reply-to-tests-config.xml";
     }
 
+    @Test
     public void testReplyTo() throws Exception
     {
         final Future<MuleMessage> futureReceivedMessage = setupFunctionTestComponentForFlow("amqpReplyTargetService");

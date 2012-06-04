@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.junit.Test;
 import org.mule.api.MuleMessage;
 import org.mule.module.client.MuleClient;
 
@@ -41,18 +42,21 @@ public class AmqpMessageRequesterITCase extends AbstractAmqpITCase
         return "message-requester-tests-config.xml";
     }
 
+    @Test
     public void testAutoAcknowledgment() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpAutoAckRequester",
             "amqpAutoAckLocalhostConnector");
     }
 
+    @Test
     public void testMuleAcknowledgment() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpMuleAckRequester",
             "amqpMuleAckLocalhostConnector");
     }
 
+    @Test
     public void testManualAcknowledgment() throws Exception
     {
         final MuleMessage receivedMessage = dispatchTestMessageAndAssertValidReceivedMessage(
@@ -61,6 +65,7 @@ public class AmqpMessageRequesterITCase extends AbstractAmqpITCase
         AmqpMessageAcknowledger.ack(receivedMessage, false);
     }
 
+    @Test
     public void testTimeOut() throws Exception
     {
         final long startTime = System.nanoTime();

@@ -24,9 +24,10 @@ import org.mule.config.i18n.MessageFactory;
 import com.rabbitmq.client.Channel;
 
 /**
- * Used to manually perform a basic ack of the message in flow, allowing fine control of message throttling. It looks
- * for a delivery-tag inbound message property and an amqp.channel session property. If the former is missing, it logs a
- * warning. If the former is present but not the latter, it throws an exception.
+ * Used to manually perform a basic ack of the message in flow, allowing fine control
+ * of message throttling. It looks for a delivery-tag inbound message property and an
+ * amqp.channel session property. If the former is missing, it logs a warning. If the
+ * former is present but not the latter, it throws an exception.
  */
 public class AmqpMessageAcknowledger implements MessageProcessor
 {

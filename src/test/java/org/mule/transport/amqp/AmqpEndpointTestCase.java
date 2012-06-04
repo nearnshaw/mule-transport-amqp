@@ -12,12 +12,14 @@ package org.mule.transport.amqp;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Test;
 import org.mule.api.endpoint.EndpointURI;
 import org.mule.endpoint.MuleEndpointURI;
 import org.mule.tck.junit4.AbstractMuleContextTestCase;
 
 public class AmqpEndpointTestCase extends AbstractMuleContextTestCase
 {
+    @Test
     public void testValidEndpointURI() throws Exception
     {
         final EndpointURI url = new MuleEndpointURI("amqp://target-exchange/target-queue", muleContext);

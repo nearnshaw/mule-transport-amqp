@@ -14,11 +14,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Test;
 import org.mule.api.endpoint.InboundEndpoint;
 import org.mule.tck.junit4.AbstractMuleContextTestCase;
 
 public class AmqpConnectorFactoryTestCase extends AbstractMuleContextTestCase
 {
+    @Test
     public void testCreateFromFactory() throws Exception
     {
         final InboundEndpoint endpoint = muleContext.getEndpointFactory()

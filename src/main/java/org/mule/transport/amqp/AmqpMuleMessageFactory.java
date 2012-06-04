@@ -52,7 +52,8 @@ public class AmqpMuleMessageFactory extends AbstractMuleMessageFactory
         putIfNonNull(messageProperties, AmqpConstants.CONSUMER_TAG, amqpMessage.getConsumerTag());
         addEnvelopeProperties(messageProperties, amqpMessage.getEnvelope());
         addBasicProperties(muleMessage, messageProperties, amqpMessage.getProperties());
-        if (amqpMessage.getProperties().getHeaders() != null) {
+        if (amqpMessage.getProperties().getHeaders() != null)
+        {
             addHeaders(messageProperties, amqpMessage.getProperties().getHeaders());
         }
 

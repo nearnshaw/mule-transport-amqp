@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Map.Entry;
 
+import org.junit.Test;
 import org.mule.api.MuleMessage;
 import org.mule.api.transport.PropertyScope;
 import org.mule.tck.junit4.AbstractMuleContextTestCase;
@@ -54,6 +55,7 @@ public class AmqpMuleMessageFactoryTestCase extends AbstractMuleContextTestCase
         return new AmqpMessage(consumerTag, envelope, amqpProperties, body);
     }
 
+    @Test
     public void testCreate() throws Exception
     {
         final AmqpMessage testMessage = getTestMessage();

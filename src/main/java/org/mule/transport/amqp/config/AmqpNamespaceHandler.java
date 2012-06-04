@@ -39,8 +39,8 @@ import org.mule.transport.amqp.transformers.AmqpMessageToObject;
 import org.mule.transport.amqp.transformers.ObjectToAmqpMessage;
 
 /**
- * Registers a Bean Definition Parser for handling <code><amqp:connector></code> elements and supporting endpoint
- * elements.
+ * Registers a Bean Definition Parser for handling <code><amqp:connector></code>
+ * elements and supporting endpoint elements.
  */
 public class AmqpNamespaceHandler extends AbstractMuleNamespaceHandler
 {
@@ -104,8 +104,9 @@ public class AmqpNamespaceHandler extends AbstractMuleNamespaceHandler
     }
 
     /**
-     * The following specific parser exists because the default AddressedEndpointDefinitionParser.AddressParser enforces
-     * exclusivity of address attributes which is not OK for AMQP endpoints.
+     * The following specific parser exists because the default
+     * AddressedEndpointDefinitionParser.AddressParser enforces exclusivity of
+     * address attributes which is not OK for AMQP endpoints.
      */
     private static class NonExclusiveAddressedEndpointDefinitionParser extends
         AbstractSingleParentFamilyDefinitionParser
@@ -120,17 +121,20 @@ public class AmqpNamespaceHandler extends AbstractMuleNamespaceHandler
                                                               final String[][] requiredAddressAttributes,
                                                               final String[][] requiredProperties)
         {
-            // the first delegate, the parent, is an endpoint; we block everything except the endpoint attributes
+            // the first delegate, the parent, is an endpoint; we block everything
+            // except the endpoint attributes
             enableAttributes(endpointParser, endpointAttributes);
             enableAttribute(endpointParser, AbstractMuleBeanDefinitionParser.ATTRIBUTE_NAME);
             addDelegate(endpointParser);
 
             // we handle the address and properties separately, setting the
-            // properties directly on the endpoint (rather than as part of the address)
+            // properties directly on the endpoint (rather than as part of the
+            // address)
             final MuleChildDefinitionParser addressParser = new AddressParser(metaOrProtocol, isMeta,
                 addressAttributes, requiredAddressAttributes);
 
-            // this handles the exception thrown if a ref is found in the address parser
+            // this handles the exception thrown if a ref is found in the address
+            // parser
             addHandledException(BlockAttribute.BlockAttributeException.class);
             addChildDelegate(addressParser);
 
@@ -149,17 +153,23 @@ public class AmqpNamespaceHandler extends AbstractMuleNamespaceHandler
             {
                 super(metaOrProtocol, isMeta);
 
-                // this handles the "ref problem" - we don't want this parsers to be used if a "ref"
-                // defines the address so add a preprocessor to check for that and indicate that the
-                // exception should be handled internally, rather than shown to the user.
-                // we do this before the extra processors below so that this is called last,
-                // allowing other processors to check for conflicts between ref and other attributes
+                // this handles the "ref problem" - we don't want this parsers to be
+                // used if a "ref"
+                // defines the address so add a preprocessor to check for that and
+                // indicate that the
+                // exception should be handled internally, rather than shown to the
+                // user.
+                // we do this before the extra processors below so that this is
+                // called last,
+                // allowing other processors to check for conflicts between ref and
+                // other attributes
                 registerPreProcessor(new BlockAttribute(AbstractMuleBeanDefinitionParser.ATTRIBUTE_REF));
 
                 // the address parser sees only the endpoint attributes
                 enableAttributes(this, addressAttributes);
 
-                // we require either a reference, an address, or the attributes specified
+                // we require either a reference, an address, or the attributes
+                // specified
                 // (properties can be used in parallel with "address")
                 final String[][] addressAttributeSets = new String[(null != requiredAddressAttributes
                                                                                                      ? requiredAddressAttributes.length
@@ -187,7 +197,8 @@ public class AmqpNamespaceHandler extends AbstractMuleNamespaceHandler
             {
                 super(setter);
 
-                // the properties parser gets to see everything that the other parsers don't - if you
+                // the properties parser gets to see everything that the other
+                // parsers don't - if you
                 // don't want something, don't enable it in the schema!
                 disableAttributes(this, endpointAttributes);
                 disableAttributes(this, URIBuilder.ALL_ATTRIBUTES);
@@ -197,7 +208,8 @@ public class AmqpNamespaceHandler extends AbstractMuleNamespaceHandler
                 if (null != requiredProperties && requiredProperties.length > 0
                     && null != requiredProperties[0] && requiredProperties[0].length > 0)
                 {
-                    // if "ref" is present then we don't complain if required properties are missing, since they
+                    // if "ref" is present then we don't complain if required
+                    // properties are missing, since they
                     // must have been provided on the global endpoint
                     final String[][] requiredPropertiesSets = new String[requiredProperties.length + 1][];
                     requiredPropertiesSets[0] = new String[]{AbstractMuleBeanDefinitionParser.ATTRIBUTE_REF};

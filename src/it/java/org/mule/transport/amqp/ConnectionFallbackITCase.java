@@ -12,6 +12,7 @@ package org.mule.transport.amqp;
 
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Test;
 import org.mule.tck.junit4.FunctionalTestCase;
 
 public class ConnectionFallbackITCase extends FunctionalTestCase
@@ -22,6 +23,7 @@ public class ConnectionFallbackITCase extends FunctionalTestCase
         return "connection-fallback-config.xml";
     }
 
+    @Test
     public void testFallbackSuccessfull() throws Exception
     {
         final AmqpConnector connector = (AmqpConnector) muleContext.getRegistry().lookupConnector(

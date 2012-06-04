@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,6 +29,7 @@ import org.mule.api.construct.FlowConstruct;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.api.transport.PropertyScope;
 import org.mule.processor.AbstractInterceptingMessageProcessor;
+import org.mule.transport.amqp.AmqpConnector.AmqpConnectorFlowConstruct;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.ReturnListener;
@@ -110,15 +112,16 @@ public class AmqpReturnHandler extends AbstractInterceptingMessageProcessor
         }
 
         public DispatchingReturnListener(final List<MessageProcessor> returnMessageProcessors,
-                                         final AmqpConnector amqpConnector)
+                                         final AmqpConnectorFlowConstruct flowConstruct)
         {
-            this(null, returnMessageProcessors);
-            this.amqpConnector = amqpConnector;
+            this(flowConstruct, returnMessageProcessors);
+            this.amqpConnector = flowConstruct.getConnector();
         }
 
         private DispatchingReturnListener(final FlowConstruct eventFlowConstruct,
                                           final List<MessageProcessor> returnMessageProcessors)
         {
+            Validate.notNull(eventFlowConstruct, "eventFlowConstruct can't be null");
             this.eventFlowConstruct = eventFlowConstruct;
             this.returnMessageProcessors = returnMessageProcessors;
         }

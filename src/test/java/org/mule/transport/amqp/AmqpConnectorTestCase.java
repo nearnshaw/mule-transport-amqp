@@ -12,6 +12,7 @@ package org.mule.transport.amqp;
 
 import junit.framework.Assert;
 
+import org.junit.Test;
 import org.mule.api.transport.Connector;
 import org.mule.transport.AbstractConnectorTestCase;
 import org.mule.transport.amqp.AmqpConstants.AckMode;
@@ -38,6 +39,7 @@ public class AmqpConnectorTestCase extends AbstractConnectorTestCase
         return AmqpMuleMessageFactoryTestCase.getTestMessage();
     }
 
+    @Test
     public void testProperties() throws Exception
     {
         final AmqpConnector amqpConnector = (AmqpConnector) getConnector();
@@ -46,6 +48,7 @@ public class AmqpConnectorTestCase extends AbstractConnectorTestCase
     }
 
     @Override
+    @Test
     public void testConnectorLifecycle() throws Exception
     {
         // Deactivated because we don't want to start the connector in unit tests

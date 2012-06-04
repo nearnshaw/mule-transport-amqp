@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.junit.Test;
 import org.mule.api.MuleMessage;
 
 public class AmqpMessageReceiverITCase extends AbstractAmqpITCase
@@ -44,46 +45,55 @@ public class AmqpMessageReceiverITCase extends AbstractAmqpITCase
         return "message-receiver-tests-config.xml";
     }
 
+    @Test
     public void testExistingQueue() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpExistingQueueService");
     }
 
+    @Test
     public void testServerNamedQueueExistingExchange() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpServerNamedQueueExistingExchangeService");
     }
 
+    @Test
     public void testNewQueueExistingExchange() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpNewQueueExistingExchangeService");
     }
 
+    @Test
     public void testNewQueueRedeclaredExistingExchange() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpNewQueueRedeclaredExistingExchangeService");
     }
 
+    @Test
     public void testClientConsumerTag() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpClientConsumerTagService");
     }
 
+    @Test
     public void testNewQueueNewExchange() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpNewQueueNewExchangeService");
     }
 
+    @Test
     public void testMuleAcknowledgment() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpMuleAckService");
     }
 
+    @Test
     public void testManualAcknowledgment() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpManualAckService");
     }
 
+    @Test
     public void testManualRejection() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpManualRejectService");
@@ -91,6 +101,7 @@ public class AmqpMessageReceiverITCase extends AbstractAmqpITCase
         assertNotNull(consumeMessageWithAmqp(getQueueName("amqpManualRejectService"), getTestTimeoutSecs()));
     }
 
+    @Test
     public void testExclusiveConsumer() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpExclusiveConsumerService");

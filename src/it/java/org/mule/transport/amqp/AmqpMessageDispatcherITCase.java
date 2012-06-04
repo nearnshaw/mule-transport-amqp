@@ -20,6 +20,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.junit.Test;
 import org.mule.api.MuleMessage;
 import org.mule.module.client.MuleClient;
 import org.mule.transport.amqp.AmqpReturnHandler.LoggingReturnListener;
@@ -52,26 +53,31 @@ public class AmqpMessageDispatcherITCase extends AbstractAmqpITCase
         return "message-dispatcher-tests-config.xml";
     }
 
+    @Test
     public void testDispatchToExistingExchange() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpExistingExchangeService");
     }
 
+    @Test
     public void testDispatchToRedeclaredExistingExchange() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpRedeclaredExistingExchangeService");
     }
 
+    @Test
     public void testDispatchToDefaultExchange() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpDefaultExchangeService");
     }
 
+    @Test
     public void testMessageLevelOverrideService() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpMessageLevelOverrideService");
     }
 
+    @Test
     public void testDispatchToNewExchange() throws Exception
     {
         final String bridgeName = "amqpNewExchangeService";
@@ -95,6 +101,7 @@ public class AmqpMessageDispatcherITCase extends AbstractAmqpITCase
         fail("Exchange not created by outbound endpoint");
     }
 
+    @Test
     public void testOutboundQueueCreation() throws Exception
     {
         final String flowName = "amqpOutBoundQueue";
@@ -119,6 +126,7 @@ public class AmqpMessageDispatcherITCase extends AbstractAmqpITCase
         fail("Queue was not created or message not delivered");
     }
 
+    @Test
     public void testExternalConnectionFactory() throws Exception
     {
         final String flowName = "amqpExternalFactoryConnector";
@@ -142,6 +150,7 @@ public class AmqpMessageDispatcherITCase extends AbstractAmqpITCase
         fail("Exchange not created by outbound endpoint when using an external connection factory");
     }
 
+    @Test
     public void testMandatoryDeliveryFailureDefaultHandler() throws Exception
     {
         final LoggingReturnListener defaultReturnListener = (LoggingReturnListener) AmqpReturnHandler.DEFAULT_RETURN_LISTENER;
@@ -158,6 +167,7 @@ public class AmqpMessageDispatcherITCase extends AbstractAmqpITCase
         fail("Returned message never hit the default handler");
     }
 
+    @Test
     public void testMandatoryDeliveryFailureWithHandler() throws Exception
     {
         final String payload = RandomStringUtils.randomAlphanumeric(20);
@@ -168,11 +178,13 @@ public class AmqpMessageDispatcherITCase extends AbstractAmqpITCase
         assertEquals(payload, returnedMessage.getPayloadAsString());
     }
 
+    @Test
     public void testMandatoryDeliverySuccess() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpMandatoryDeliverySuccess");
     }
 
+    @Test
     public void testRequestResponse() throws Exception
     {
         final String customHeaderValue = UUID.getUUID();

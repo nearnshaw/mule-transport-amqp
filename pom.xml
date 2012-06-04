@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.transports</groupId>
+    <parent>
+        <groupId>org.mule.transports</groupId>
+        <artifactId>mule-transports</artifactId>
+        <version>3.3.0-EA</version>
+    </parent>
+
     <artifactId>mule-transport-amqp</artifactId>
     <packaging>jar</packaging>
     <name>Mule AMQP Transport</name>
@@ -11,8 +18,6 @@
     <url>http://www.muleforge.org/projects/AMQP</url>
 
     <properties>
-        <mule.version>3.3-M2</mule.version>
-        <spring.version>3.1.0.RELEASE</spring.version>
         <rabbitmq.version>2.8.2</rabbitmq.version>
         <!-- Tools properties -->
         <vmtype>org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType</vmtype>
@@ -183,7 +188,7 @@
         <dependency>
             <groupId>org.mule</groupId>
             <artifactId>mule-core</artifactId>
-            <version>${mule.version}</version>
+            <version>${parent.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -191,13 +196,13 @@
         <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-spring-config</artifactId>
-            <version>${mule.version}</version>
+            <version>${parent.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <version>${spring.version}</version>
+            <version>${springVersion}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -205,7 +210,7 @@
         <dependency>
             <groupId>org.mule.transports</groupId>
             <artifactId>mule-transport-vm</artifactId>
-            <version>${mule.version}</version>
+            <version>${parent.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -213,7 +218,7 @@
         <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-client</artifactId>
-            <version>${mule.version}</version>
+            <version>${parent.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -229,7 +234,7 @@
         <dependency>
             <groupId>org.mule.tests</groupId>
             <artifactId>mule-tests-functional</artifactId>
-            <version>${mule.version}</version>
+            <version>${parent.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
