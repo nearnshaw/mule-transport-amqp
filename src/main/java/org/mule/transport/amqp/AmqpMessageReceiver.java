@@ -18,11 +18,14 @@ import javax.resource.spi.work.WorkException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mule.MessageExchangePattern;
+import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.MuleRuntimeException;
 import org.mule.api.construct.FlowConstruct;
 import org.mule.api.endpoint.InboundEndpoint;
+import org.mule.api.execution.ExecutionCallback;
+import org.mule.api.execution.ExecutionTemplate;
 import org.mule.api.lifecycle.CreateException;
 import org.mule.api.lifecycle.StartException;
 import org.mule.api.transport.Connector;
@@ -70,6 +73,11 @@ public class AmqpMessageReceiver extends AbstractMessageReceiver
             if (inboundConnection == null)
             {
                 doConnect();
+            }
+
+            if (endpoint.getTransactionConfig().isTransacted())
+            {
+                getChannel().txSelect();
             }
 
             consumerTag = getChannel().basicConsume(getQueueName(), amqpConnector.getAckMode().isAutoAck(),
@@ -143,15 +151,17 @@ public class AmqpMessageReceiver extends AbstractMessageReceiver
 
     private void deliverAmqpMessage(final AmqpMessage amqpMessage)
     {
-        // deliver message in a different thread to free the Amqp Connector's
-        // thread
+        final AmqpMessageRouterWork work = new AmqpMessageRouterWork(getChannel(), amqpMessage);
+
         try
         {
-            getWorkManager().scheduleWork(new AmqpMessageRouterWork(getChannel(), amqpMessage));
+            // deliver message in a different thread to free the Amqp Connector's
+            // thread
+            getWorkManager().scheduleWork(work);
         }
         catch (final WorkException we)
         {
-            throw new MuleRuntimeException(MessageFactory.createStaticMessage("Work manager can't deliver: "
+            throw new MuleRuntimeException(MessageFactory.createStaticMessage("Failed to deliver: "
                                                                               + amqpMessage), we);
         }
     }
@@ -213,13 +223,29 @@ public class AmqpMessageReceiver extends AbstractMessageReceiver
                     muleMessage.setProperty(AmqpConstants.CHANNEL, channel, PropertyScope.INVOCATION);
                 }
 
-                try
+                if (endpoint.getTransactionConfig().isTransacted())
                 {
-                    routeMessage(muleMessage);
+                    final ExecutionTemplate<MuleEvent> executionTemplate = createExecutionTemplate();
+                    final ExecutionCallback<MuleEvent> processingCallback = new ExecutionCallback<MuleEvent>()
+                    {
+                        public MuleEvent process() throws Exception
+                        {
+                            routeMessage(muleMessage);
+                            return null;
+                        }
+                    };
+                    executionTemplate.execute(processingCallback);
                 }
-                finally
+                else
                 {
-                    amqpConnector.ackMessageIfNecessary(channel, amqpMessage);
+                    try
+                    {
+                        routeMessage(muleMessage);
+                    }
+                    finally
+                    {
+                        amqpConnector.ackMessageIfNecessary(channel, amqpMessage);
+                    }
                 }
             }
             catch (final Exception e)

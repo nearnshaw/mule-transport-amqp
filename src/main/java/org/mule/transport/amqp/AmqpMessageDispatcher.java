@@ -136,9 +136,6 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
                                                    + AmqpMessage.class.getName()), event, getEndpoint());
         }
 
-        // LATER: eventChannel = AmqpConnector.getChannelFromMessage(message,
-        // getChannel()); when it will be essential
-        // to use the same channel across the flow (ie. to support transactions).
         final Channel eventChannel = getChannel();
         final String eventExchange = message.getOutboundProperty(AmqpConstants.EXCHANGE, getExchange());
         final String eventRoutingKey = message.getOutboundProperty(AmqpConstants.ROUTING_KEY, getRoutingKey());

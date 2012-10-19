@@ -15,7 +15,6 @@ import java.io.IOException;
 import org.mule.api.MuleContext;
 import org.mule.api.transaction.TransactionException;
 import org.mule.config.i18n.CoreMessages;
-import org.mule.config.i18n.MessageFactory;
 import org.mule.transaction.AbstractSingleResourceTransaction;
 import org.mule.transaction.IllegalTransactionStateException;
 
@@ -43,29 +42,12 @@ public class AmqpTransaction extends AbstractSingleResourceTransaction
         }
 
         super.bindResource(key, resource);
-
-        // now that we have a channel, we can actually begin the transaction
-        begin();
     }
 
     @Override
     protected void doBegin() throws TransactionException
     {
-        if (resource == null)
-        {
-            started.set(false);
-            return;
-        }
-
-        try
-        {
-            ((Channel) resource).txSelect();
-        }
-        catch (final IOException ioe)
-        {
-            throw new TransactionException(MessageFactory.createStaticMessage("Failed to begin transaction"),
-                ioe);
-        }
+        // NOOP
     }
 
     @Override

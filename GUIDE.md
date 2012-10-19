@@ -578,6 +578,35 @@ In that case, Mule will:
 - publish the message to the specified exchange,
 - wait for a response to be sent to the reply-queue (via the default exchange).
 
+### Transaction support
+
+AMQP local transactions are supported by using the standard Mule transaction configuration element.
+For example the following declares an AMQP inbound endpoint that will start a new transaction for each new received message:
+
+    <amqp:inbound-endpoint queueName="amqpTransactedBridge-queue"
+                           connector-ref="amqpConnector">
+        <amqp:transaction action="ALWAYS_BEGIN" />
+    </amqp:inbound-endpoint>
+
+The following declares a transacted AMQP bridge:
+
+    <bridge name="amqpTransactedBridge" exchange-pattern="one-way" transacted="true">
+        <amqp:inbound-endpoint queueName="amqpTransactedBridge-queue"
+                               connector-ref="amqpConnector">
+            <amqp:transaction action="ALWAYS_BEGIN" />
+        </amqp:inbound-endpoint>
+        <amqp:outbound-endpoint exchangeName="amqpOneWayBridgeTarget-exchange"
+                                connector-ref="amqpConnector">
+            <amqp:transaction action="ALWAYS_JOIN" />
+        </amqp:outbound-endpoint>
+    </bridge>
+
+If an error occurs during the processing of the message after the inbound endpoint, the transaction will automatically be rolled back.
+Otherwise the transaction will be committed after successful dispatch in the outbound endpoint.
+
+Transactions in AMQP are not behaving like JMS transactions: it is strongly suggested that you read [this overview of transaction support in AMQP 0.91](http://www.rabbitmq.com/amqp-0-9-1-reference.html#class.tx) before using transactions.
+It is important to understand that when a transaction gets started on a Mule-managed channel, via for example `<amqp:transaction action="ALWAYS_BEGIN" />`, this channel will remain transactional for its lifetime.
+
 ### Programmatic message requesting
 
 It is possible to programmatically get messages from an AMQP queue.

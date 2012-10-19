@@ -13,35 +13,35 @@
                   virtualHost="mule-test"
                   username="mule"
                   password="elum" />
-    
+
     <amqp:connector name="amqpThrottledConnector"
                   virtualHost="mule-test"
                   username="mule"
                   password="elum"
                   prefetchCount="1"
                   ackMode="MANUAL" />
-                  
+
     <bridge name="amqpOneWayBridge" exchange-pattern="one-way">
         <amqp:inbound-endpoint queueName="amqpOneWayBridge-queue"
                                connector-ref="amqpConnector" />
         <amqp:outbound-endpoint exchangeName="amqpOneWayBridgeTarget-exchange"
                                 connector-ref="amqpConnector" />
     </bridge>
-                  
+
     <flow name="amqpThrottledBridge">
         <amqp:inbound-endpoint queueName="amqpThrottledBridge-queue"
                                connector-ref="amqpThrottledConnector" />
         <amqp:outbound-endpoint exchangeName="amqpThrottledBridgeTarget-exchange"
                                 connector-ref="amqpConnector" />
-    <amqp:acknowledge-message /> 
+        <amqp:acknowledge-message /> 
     </flow>
-    
+
     <flow name="amqpThrottledBridgeTarget">
         <amqp:inbound-endpoint queueName="amqpThrottledBridgeTarget-queue"
                                connector-ref="amqpConnector" />
         <test:component />
     </flow>
-            
+
     <!-- Doesn't work with a standard bridge :( -->
     <flow name="amqpRequestResponseBridge">
         <amqp:inbound-endpoint queueName="amqpRequestResponseBridge-queue"
@@ -63,4 +63,14 @@
                                connector-ref="amqpConnector" />
         <test:component appendString="-response" />
     </flow>
+    <bridge name="amqpTransactedBridge" exchange-pattern="one-way" transacted="true">
+        <amqp:inbound-endpoint queueName="amqpTransactedBridge-queue"
+                               connector-ref="amqpConnector">
+            <amqp:transaction action="ALWAYS_BEGIN" />
+        </amqp:inbound-endpoint>
+        <amqp:outbound-endpoint exchangeName="amqpOneWayBridgeTarget-exchange"
+                                connector-ref="amqpConnector">
+            <amqp:transaction action="ALWAYS_JOIN" />
+        </amqp:outbound-endpoint>
+    </bridge>
 </mule>

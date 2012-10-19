@@ -32,6 +32,7 @@ public class AmqpBridgeITCase extends AbstractAmqpITCase
         setupExchangeAndQueue("amqpRequestResponseBridge");
         setupExchangeAndQueue("amqpThrottledBridge");
         setupExchangeAndQueue("amqpThrottledBridgeTarget");
+        setupExchangeAndQueue("amqpTransactedBridge");
     }
 
     @Override
@@ -70,6 +71,13 @@ public class AmqpBridgeITCase extends AbstractAmqpITCase
             Thread.sleep(500L);
         }
         fail("Not all messages made it through the throttled bridge");
+    }
+
+    @Test
+    public void testTransactedBridge() throws Exception
+    {
+        dispatchTestMessageAndAssertValidReceivedMessage("amqpTransactedBridge",
+            "amqpOneWayBridgeTarget-queue");
     }
 
     private void dispatchTestMessageAndAssertValidReceivedMessage(final String flowName,

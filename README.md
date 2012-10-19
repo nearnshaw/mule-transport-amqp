@@ -56,9 +56,3 @@ To add the Mule AMQP transport to a Maven project add the following dependency:
       <artifactId>mule-transport-amqp</artifactId>
       <version>x.y.z</version>
     </dependency>
-
-
-Not (Yet) Supported
--------------------
-
-- Local transactions
