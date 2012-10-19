@@ -23,6 +23,7 @@ import org.mule.config.spring.parsers.generic.ChildDefinitionParser;
 import org.mule.config.spring.parsers.processors.BlockAttribute;
 import org.mule.config.spring.parsers.processors.CheckRequiredAttributes;
 import org.mule.config.spring.parsers.specific.MessageProcessorDefinitionParser;
+import org.mule.config.spring.parsers.specific.TransactionDefinitionParser;
 import org.mule.config.spring.parsers.specific.endpoint.TransportEndpointDefinitionParser;
 import org.mule.config.spring.parsers.specific.endpoint.TransportGlobalEndpointDefinitionParser;
 import org.mule.config.spring.parsers.specific.endpoint.support.ChildAddressDefinitionParser;
@@ -35,6 +36,7 @@ import org.mule.transport.amqp.AmqpEndpointUtil;
 import org.mule.transport.amqp.AmqpMessageAcknowledger;
 import org.mule.transport.amqp.AmqpMessageRejecter;
 import org.mule.transport.amqp.AmqpReturnHandler;
+import org.mule.transport.amqp.AmqpTransactionFactory;
 import org.mule.transport.amqp.transformers.AmqpMessageToObject;
 import org.mule.transport.amqp.transformers.ObjectToAmqpMessage;
 
@@ -69,6 +71,9 @@ public class AmqpNamespaceHandler extends AbstractMuleNamespaceHandler
 
         registerBeanDefinitionParser("dispatching-return-listener", new ChildDefinitionParser(
             "returnListener", AmqpReturnHandler.DispatchingReturnListener.class));
+
+        registerBeanDefinitionParser("transaction", new TransactionDefinitionParser(
+            AmqpTransactionFactory.class));
     }
 
     protected void registerAmqpTransportEndpoints()

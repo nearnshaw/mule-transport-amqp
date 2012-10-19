@@ -1,58 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:amqp="http://www.mulesoft.org/schema/mule/amqp"
-  xsi:schemaLocation="
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:amqp="http://www.mulesoft.org/schema/mule/amqp"
+    xsi:schemaLocation="
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
        http://www.mulesoft.org/schema/mule/amqp http://www.mulesoft.org/schema/mule/amqp/current/mule-amqp.xsd">
 
-  <amqp:amqpmessage-to-object-transformer name="a2o" />
-  <amqp:object-to-amqpmessage-transformer name="o2a" />
+    <amqp:amqpmessage-to-object-transformer
+        name="a2o" />
+    <amqp:object-to-amqpmessage-transformer
+        name="o2a" />
 
-  <amqp:connector name="amqpDefaultConnector" />
+    <amqp:connector name="amqpDefaultConnector" />
 
-  <!-- Declare an exchange, a queue, bind the latter to the former -->
-  <amqp:endpoint name="amqpFullGlobalEndpoint"
-                 exchangeName="target-exchange"
-                 exchangeType="fanout"
-                 exchangeDurable="true"
-                 exchangeAutoDelete="false"
-                 queueName="target-queue"
-                 queueDurable="true"
-                 queueAutoDelete="false"
-                 queueExclusive="true"
-                 routingKey="a.b.c"
-                 connector-ref="amqpDefaultConnector" />
+    <!-- Declare an exchange, a queue, bind the latter to the former -->
+    <amqp:endpoint name="amqpFullGlobalEndpoint" exchangeName="target-exchange"
+        exchangeType="fanout" exchangeDurable="true" exchangeAutoDelete="false"
+        queueName="target-queue" queueDurable="true" queueAutoDelete="false"
+        queueExclusive="true" routingKey="a.b.c" connector-ref="amqpDefaultConnector" />
 
-  <!-- Use an existing queue -->
-  <amqp:endpoint name="amqpExistingQueueGlobalEndpoint"
-                 queueName="target-queue" />
-  <!-- Declare a server-named exclusive queue and bind it to an existing exchange -->                 
-  <amqp:endpoint name="amqpPrivateQueueGlobalEndpoint"
-                 exchangeName="target-exchange"
-                 routingKey="a.b.c" />
+    <!-- Use an existing queue -->
+    <amqp:endpoint name="amqpExistingQueueGlobalEndpoint"
+        queueName="target-queue" />
 
-  <!-- Declare a queue and bind it to an existing exchange -->                 
-  <amqp:endpoint name="amqpDeclareQueueGlobalEndpoint"
-                 exchangeName="target-exchange"
-                 queueName="target-queue"
-                 queueDurable="true"
-                 queueAutoDelete="false"
-                 queueExclusive="false"
-                 routingKey="a.b.c" />
-                 
-  <!-- Use an existing exchange -->                 
-  <amqp:endpoint name="amqpExistingExchangeGlobalEndpoint"
-                 exchangeName="target-exchange" />
-                 
-  <!-- Declare an exchange -->                 
-  <amqp:endpoint name="amqpDeclareExchangeGlobalEndpoint"
-                 exchangeName="target-exchange"
-                 exchangeType="topic"
-                 exchangeDurable="true"
-                 exchangeAutoDelete="false" />
-  
-  <flow name="ackerFlow">
-    <amqp:acknowledge-message multiple="true" />
-  </flow>
+    <!-- Declare a server-named exclusive queue and bind it to an existing exchange -->
+    <amqp:endpoint name="amqpPrivateQueueGlobalEndpoint"
+        exchangeName="target-exchange" routingKey="a.b.c" />
+
+    <!-- Declare a queue and bind it to an existing exchange -->
+    <amqp:endpoint name="amqpDeclareQueueGlobalEndpoint"
+        exchangeName="target-exchange" queueName="target-queue" queueDurable="true"
+        queueAutoDelete="false" queueExclusive="false" routingKey="a.b.c" />
+
+    <!-- Use an existing exchange -->
+    <amqp:endpoint name="amqpExistingExchangeGlobalEndpoint"
+        exchangeName="target-exchange" />
+
+    <!-- Declare an exchange -->
+    <amqp:endpoint name="amqpDeclareExchangeGlobalEndpoint"
+        exchangeName="target-exchange" exchangeType="topic" exchangeDurable="true"
+        exchangeAutoDelete="false" />
+
+    <!-- Use an existing queue -->
+    <amqp:endpoint name="amqpTransactedEndpoint" queueName="target-queue">
+        <amqp:transaction action="ALWAYS_BEGIN" />
+    </amqp:endpoint>
+
+    <flow name="ackerFlow">
+        <amqp:acknowledge-message multiple="true" />
+    </flow>
 </mule>

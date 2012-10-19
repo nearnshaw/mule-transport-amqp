@@ -11,6 +11,7 @@
 package org.mule.transport.amqp.config;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -68,6 +69,7 @@ public class AmqpNamespaceHandlerTestCase extends FunctionalTestCase
             .getAddress());
         assertEquals("a.b.c", inboundEndpoint.getProperty(AmqpEndpointUtil.ROUTING_KEY));
         assertEquals("true", inboundEndpoint.getProperty(AmqpEndpointUtil.EXCHANGE_DURABLE));
+        assertFalse(inboundEndpoint.getTransactionConfig().isTransacted());
 
         final OutboundEndpoint outboundEndpoint = endpointBuilder.buildOutboundEndpoint();
         assertEquals("amqp://target-exchange/amqp-queue.target-queue", outboundEndpoint.getAddress());
@@ -75,6 +77,7 @@ public class AmqpNamespaceHandlerTestCase extends FunctionalTestCase
             .getAddress());
         assertEquals("a.b.c", outboundEndpoint.getProperty(AmqpEndpointUtil.ROUTING_KEY));
         assertEquals("true", outboundEndpoint.getProperty(AmqpEndpointUtil.EXCHANGE_DURABLE));
+        assertFalse(outboundEndpoint.getTransactionConfig().isTransacted());
     }
 
     @Test
@@ -87,6 +90,7 @@ public class AmqpNamespaceHandlerTestCase extends FunctionalTestCase
         final InboundEndpoint inboundEndpoint = endpointBuilder.buildInboundEndpoint();
         assertEquals("amqp://amqp-queue.target-queue", inboundEndpoint.getAddress());
         assertEquals("amqp://amqp-queue.target-queue", inboundEndpoint.getEndpointURI().getAddress());
+        assertFalse(inboundEndpoint.getTransactionConfig().isTransacted());
     }
 
     @Test
@@ -99,6 +103,7 @@ public class AmqpNamespaceHandlerTestCase extends FunctionalTestCase
         final InboundEndpoint inboundEndpoint = endpointBuilder.buildInboundEndpoint();
         assertEquals("amqp://target-exchange", inboundEndpoint.getAddress());
         assertEquals("amqp://target-exchange", inboundEndpoint.getEndpointURI().getAddress());
+        assertFalse(inboundEndpoint.getTransactionConfig().isTransacted());
     }
 
     @Test
@@ -111,6 +116,7 @@ public class AmqpNamespaceHandlerTestCase extends FunctionalTestCase
         final InboundEndpoint inboundEndpoint = endpointBuilder.buildInboundEndpoint();
         assertEquals("amqp://target-exchange", inboundEndpoint.getAddress());
         assertEquals("amqp://target-exchange", inboundEndpoint.getEndpointURI().getAddress());
+        assertFalse(inboundEndpoint.getTransactionConfig().isTransacted());
     }
 
     @Test
@@ -126,7 +132,16 @@ public class AmqpNamespaceHandlerTestCase extends FunctionalTestCase
         final List<MessageProcessor> messageProcessors = ((Pipeline) muleContext.getRegistry()
             .lookupFlowConstruct("ackerFlow")).getMessageProcessors();
         assertEquals(1, messageProcessors.size());
-        System.out.println(messageProcessors.get(0));
         assertTrue(messageProcessors.get(0) instanceof AmqpMessageAcknowledger);
+    }
+
+    @Test
+    public void testTransactedEndpoint() throws Exception
+    {
+        final EndpointBuilder endpointBuilder = muleContext.getRegistry().lookupEndpointBuilder(
+            "amqpTransactedEndpoint");
+        assertNotNull(endpointBuilder);
+        final InboundEndpoint inboundEndpoint = endpointBuilder.buildInboundEndpoint();
+        assertTrue(inboundEndpoint.getTransactionConfig().isTransacted());
     }
 }
