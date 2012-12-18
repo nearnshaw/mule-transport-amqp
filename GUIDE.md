@@ -418,7 +418,7 @@ Similarly to the previous example, the inbound connection will fail if the queue
                     username="my-user"
                     password="my-pwd"
                     activeDeclarationsOnly="false" />
-                    
+
     <amqp:inbound-endpoint queueName="my-queue"
                            connector-ref="amqpAutoAckStrictLocalhostConnector" />
 
@@ -446,6 +446,17 @@ The following example shows how to manually acknowledge or reject messages withi
         </otherwise>
       </choice>
     </flow>
+
+### Manual channel recovery
+
+To manually recover the channel that is associated with the current message, use:
+
+    <amqp:reject-message />
+
+If you want the messages to be re-queued use:
+
+    <amqp:reject-message requeue="true" />
+
 
 ### Flow control
 
@@ -502,7 +513,7 @@ This is done by configuring the connector to perform passive declarations:
                     username="my-user"
                     password="my-pwd"
                     activeDeclarationsOnly="false" />
-                    
+
     <amqp:outbound-endpoint routingKey="my-key"
                             exchangeName="my-exchange"
                             connector-ref="amqpStrictLocalhostConnector" />

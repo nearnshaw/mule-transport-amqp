@@ -43,7 +43,8 @@
                     default="localhost">
                     <xsd:annotation>
                         <xsd:documentation>
-                            The main AMQP broker host to connect to.
+                            The main AMQP broker host to connect
+                            to.
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
@@ -51,7 +52,8 @@
                     use="optional">
                     <xsd:annotation>
                         <xsd:documentation>
-                            Reference to the connection factory, this is optional
+                            Reference to the connection factory,
+                            this is optional
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
@@ -59,7 +61,8 @@
                     default="5672">
                     <xsd:annotation>
                         <xsd:documentation>
-                            The port to use to connect to the main
+                            The port to use to connect to the
+                            main
                             AMQP broker.
                         </xsd:documentation>
                     </xsd:annotation>
@@ -67,9 +70,12 @@
                 <xsd:attribute name="fallbackAddresses" type="xsd:string">
                     <xsd:annotation>
                         <xsd:documentation>
-                            A comma-separated list of "host:port" or
-                            "host", defining fallback brokers to attempt connection
-                            to, should the connection to main broker fail.
+                            A comma-separated list of "host:port"
+                            or
+                            "host", defining fallback brokers to attempt
+                            connection
+                            to, should the connection to main broker
+                            fail.
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
@@ -86,7 +92,8 @@
                     default="guest">
                     <xsd:annotation>
                         <xsd:documentation>
-                            The user name to use to connect to the
+                            The user name to use to connect to
+                            the
                             AMQP broker.
                         </xsd:documentation>
                     </xsd:annotation>
@@ -103,7 +110,8 @@
                 <xsd:attribute name="deliveryMode" default="PERSISTENT">
                     <xsd:annotation>
                         <xsd:documentation>
-                            The delivery mode to use when publishing
+                            The delivery mode to use when
+                            publishing
                             to the AMQP broker.
                         </xsd:documentation>
                     </xsd:annotation>
@@ -117,7 +125,8 @@
                 <xsd:attribute name="priority" default="0">
                     <xsd:annotation>
                         <xsd:documentation>
-                            The priority to use when publishing to
+                            The priority to use when publishing
+                            to
                             the AMQP broker.
                         </xsd:documentation>
                     </xsd:annotation>
@@ -132,11 +141,15 @@
                     default="false">
                     <xsd:annotation>
                         <xsd:documentation>
-                            This flag tells the server how to react
+                            This flag tells the server how to
+                            react
                             if the message cannot be
-                            routed to a queue. If this flag is
-                            set to true, the server will throw an exception for any
-                            unroutable message. If this flag is false, the server
+                            routed to a queue. If
+                            this flag is
+                            set to true, the server will throw an
+                            exception for any
+                            unroutable message. If this flag is
+                            false, the server
                             silently drops the message.
                         </xsd:documentation>
                     </xsd:annotation>
@@ -145,16 +158,22 @@
                     default="false">
                     <xsd:annotation>
                         <xsd:documentation>
-                            This flag tells the server how to react
+                            This flag tells the server how to
+                            react
                             if the message cannot be
-                            routed to a queue consumer
-                            immediately. If this flag is set to true, the server
+                            routed to a queue
+                            consumer
+                            immediately. If this flag is set to true,
+                            the server
                             will
-                            throw an exception for any undeliverable message. If
+                            throw an exception for any
+                            undeliverable message. If
                             this
-                            flag is false, the server will queue the message, but
+                            flag is false, the
+                            server will queue the message, but
                             with
-                            no guarantee that it will ever be consumed.
+                            no guarantee
+                            that it will ever be consumed.
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
@@ -162,7 +181,8 @@
                     type="xsd:string">
                     <xsd:annotation>
                         <xsd:documentation>
-                            Reference to an endpoint to which AMQP
+                            Reference to an endpoint to which
+                            AMQP
                             returned message should be
                             dispatched to.
                         </xsd:documentation>
@@ -181,7 +201,8 @@
                                 <xsd:annotation>
                                     <xsd:documentation>The AMQP broker will
                                         consider
-                                        messages acknowledged once delivered.
+                                        messages acknowledged once
+                                        delivered.
                                     </xsd:documentation>
                                 </xsd:annotation>
                             </xsd:enumeration>
@@ -189,8 +210,10 @@
                                 <xsd:annotation>
                                     <xsd:documentation>Mule will automatically
                                         acknowledge
-                                        messages when the flow will have been processed, if
-                                        no exception has been encountered.
+                                        messages when the flow will
+                                        have been processed, if
+                                        no exception has
+                                        been encountered.
                                         Using asynchronous
                                         sub-flows or dispatch may lead to early
                                         acknowledgment.
@@ -212,8 +235,10 @@
                     default="0">
                     <xsd:annotation>
                         <xsd:documentation>
-                            The maximum amount of content (measured
-                            in octets) that the server will deliver, 0 if unlimited.
+                            The maximum amount of content
+                            (measured
+                            in octets) that the server will deliver, 0
+                            if unlimited.
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
@@ -221,7 +246,8 @@
                     default="0">
                     <xsd:annotation>
                         <xsd:documentation>
-                            The maximum number of messages that the
+                            The maximum number of messages that
+                            the
                             server will deliver, 0 if unlimited.
                         </xsd:documentation>
                     </xsd:annotation>
@@ -230,8 +256,10 @@
                     default="false">
                     <xsd:annotation>
                         <xsd:documentation>
-                            If the no-local field is set the server
-                            will not send messages to the connection that published
+                            If the no-local field is set the
+                            server
+                            will not send messages to the connection that
+                            published
                             them.
                         </xsd:documentation>
                     </xsd:annotation>
@@ -240,7 +268,8 @@
                     default="false">
                     <xsd:annotation>
                         <xsd:documentation>
-                            Set to true if the connector should only
+                            Set to true if the connector should
+                            only
                             create exclusive consumers.
                         </xsd:documentation>
                     </xsd:annotation>
@@ -249,9 +278,12 @@
                     default="false">
                     <xsd:annotation>
                         <xsd:documentation>
-                            Defines if the connector should only do
-                            active exchange and queue declarations or can also perform
-                            passive declarations to enforce their existence.
+                            Defines if the connector should only
+                            do
+                            active exchange and queue declarations or can also
+                            perform
+                            passive declarations to enforce their
+                            existence.
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
@@ -306,7 +338,8 @@
             <xsd:annotation>
                 <xsd:documentation>
                     The queue name to consume from. Leave blank
-                    or omit for using a new private exclusive server-named queue.
+                    or omit for using a new private exclusive server-named
+                    queue.
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
@@ -316,14 +349,16 @@
         <xsd:attribute name="routingKey" type="xsd:string">
             <xsd:annotation>
                 <xsd:documentation>
-                    The routing key to use when binding a queue or publishing a message.
+                    The routing key to use when binding a queue
+                    or publishing a message.
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
         <xsd:attribute name="consumerTag" type="xsd:string">
             <xsd:annotation>
                 <xsd:documentation>
-                    A client-generated consumer tag to establish context.
+                    A client-generated consumer tag to establish
+                    context.
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
@@ -396,9 +431,12 @@
                     default="false">
                     <xsd:annotation>
                         <xsd:documentation>
-                            Set to true to acknowledge all messages up to and including the
-                            delivery tag of the AMQP message that is currently
-                            processed by Mule; false to acknowledge just the current
+                            Set to true to acknowledge all
+                            messages up to and including the
+                            delivery tag of the
+                            AMQP message that is currently
+                            processed by Mule;
+                            false to acknowledge just the current
                             message.
                         </xsd:documentation>
                     </xsd:annotation>
@@ -422,8 +460,35 @@
                     default="false">
                     <xsd:annotation>
                         <xsd:documentation>
-                            Set to true if the rejected message should be requeued rather than
+                            Set to true if the rejected message
+                            should be requeued rather than
                             discarded/dead-lettered.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+
+    <xsd:element name="recover" type="basicRecoverType"
+        substitutionGroup="mule:abstract-message-processor" />
+    <xsd:complexType name="basicRecoverType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Ask the broker to resend unacknowledged messages.
+                In 0-8 basic.recover is asynchronous; in 0-9-1 it is
+                synchronous.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="mule:abstractMessageProcessorType">
+                <xsd:attribute name="requeue" type="mule:substitutableBoolean"
+                    default="false">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            If true, messages will be requeued and possibly delivered to a different consumer.
+                            If false, messages will be redelivered to the same consumer.
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
@@ -436,7 +501,8 @@
     <xsd:complexType name="returnHandlerType">
         <xsd:annotation>
             <xsd:documentation>Defines the strategy to use to handle messages
-                returned by the AMQP broker.</xsd:documentation>
+                returned by the AMQP broker.
+            </xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="mule:abstractMessageProcessorType">

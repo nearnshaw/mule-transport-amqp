@@ -13,10 +13,8 @@ package org.mule.transport.amqp;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Test;
@@ -102,13 +100,21 @@ public class AmqpMessageReceiverITCase extends AbstractAmqpITCase
     }
 
     @Test
+    public void testManualRecover() throws Exception
+    {
+        dispatchTestMessageAndAssertValidReceivedMessage("amqpManualRecoverService");
+        // check the message has been successfully pushed back to the queue
+        // assertNotNull(consumeMessageWithAmqp(getQueueName("amqpManualRecoverService"),
+        // getTestTimeoutSecs()));
+    }
+
+    @Test
     public void testExclusiveConsumer() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpExclusiveConsumerService");
     }
 
-    private void dispatchTestMessageAndAssertValidReceivedMessage(final String flowName)
-        throws Exception, IOException, InterruptedException, ExecutionException, TimeoutException
+    private void dispatchTestMessageAndAssertValidReceivedMessage(final String flowName) throws Exception
     {
         final Future<MuleMessage> futureReceivedMessage = setupFunctionTestComponentForFlow(flowName);
 

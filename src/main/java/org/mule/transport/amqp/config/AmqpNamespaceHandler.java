@@ -35,6 +35,7 @@ import org.mule.transport.amqp.AmqpConnector;
 import org.mule.transport.amqp.AmqpEndpointUtil;
 import org.mule.transport.amqp.AmqpMessageAcknowledger;
 import org.mule.transport.amqp.AmqpMessageRejecter;
+import org.mule.transport.amqp.AmqpRecover;
 import org.mule.transport.amqp.AmqpReturnHandler;
 import org.mule.transport.amqp.AmqpTransactionFactory;
 import org.mule.transport.amqp.transformers.AmqpMessageToObject;
@@ -65,6 +66,8 @@ public class AmqpNamespaceHandler extends AbstractMuleNamespaceHandler
 
         registerBeanDefinitionParser("reject-message", new MessageProcessorDefinitionParser(
             AmqpMessageRejecter.class));
+
+        registerBeanDefinitionParser("recover", new MessageProcessorDefinitionParser(AmqpRecover.class));
 
         registerBeanDefinitionParser("return-handler", new MessageProcessorDefinitionParser(
             AmqpReturnHandler.class));

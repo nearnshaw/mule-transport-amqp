@@ -113,6 +113,14 @@
     <test:component />
     <amqp:reject-message requeue="true" />
   </flow>
+
+  <flow name="amqpManualRecoverService">
+    <!-- Test the manual recovery of channels -->
+    <amqp:inbound-endpoint queueName="amqpManualRecoverService-queue"
+                           connector-ref="amqpAutoAckLocalhostConnector" />
+    <test:component />
+    <amqp:recover requeue="true" />
+  </flow>
   
   <flow name="amqpExclusiveConsumerService">
     <!-- Use a connector configured for creating exclusive consumers only -->
