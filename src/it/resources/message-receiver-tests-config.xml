@@ -11,19 +11,19 @@
                   virtualHost="mule-test"
                   username="mule"
                   password="elum" />
-                  
+
   <amqp:connector name="amqpMuleAckLocalhostConnector"
                   virtualHost="mule-test"
                   username="mule"
                   password="elum"
                   ackMode="MULE_AUTO" />
-                  
+
   <amqp:connector name="amqpManualAckLocalhostConnector"
                   virtualHost="mule-test"
                   username="mule"
                   password="elum"
                   ackMode="MANUAL" />
-                  
+
   <amqp:connector name="amqpExclusiveLocalhostConnector"
                   virtualHost="mule-test"
                   username="mule"
@@ -36,14 +36,14 @@
                            connector-ref="amqpAutoAckLocalhostConnector" />
     <test:component />
   </flow>
-  
+
   <flow name="amqpServerNamedQueueExistingExchangeService">
     <!-- Create a private exclusive server-named queue and bind it to an existing exchange --> 
     <amqp:inbound-endpoint exchangeName="amqpServerNamedQueueExistingExchangeService-exchange"
                            connector-ref="amqpAutoAckLocalhostConnector" />
     <test:component />
   </flow>
-  
+
   <flow name="amqpNewQueueExistingExchangeService">
     <!-- Create a new queue and bind it to an existing exchange  --> 
     <amqp:inbound-endpoint exchangeName="amqpNewQueueExistingExchangeService-exchange"
@@ -117,7 +117,7 @@
   <flow name="amqpManualRecoverService">
     <!-- Test the manual recovery of channels -->
     <amqp:inbound-endpoint queueName="amqpManualRecoverService-queue"
-                           connector-ref="amqpAutoAckLocalhostConnector" />
+                           connector-ref="amqpManualAckLocalhostConnector" />
     <test:component />
     <amqp:recover requeue="true" />
   </flow>

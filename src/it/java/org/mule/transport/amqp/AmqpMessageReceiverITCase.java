@@ -24,7 +24,6 @@ public class AmqpMessageReceiverITCase extends AbstractAmqpITCase
 {
     public AmqpMessageReceiverITCase() throws IOException
     {
-        super();
         // create the required pre-existing exchanges and queues
         setupExchangeAndQueue("amqpExistingQueueService");
         setupExchange("amqpServerNamedQueueExistingExchangeService");
@@ -34,6 +33,7 @@ public class AmqpMessageReceiverITCase extends AbstractAmqpITCase
         setupExchangeAndQueue("amqpMuleAckService");
         setupExchangeAndQueue("amqpManualAckService");
         setupExchangeAndQueue("amqpManualRejectService");
+        setupExchangeAndQueue("amqpManualRecoverService");
         setupExchangeAndQueue("amqpExclusiveConsumerService");
     }
 
