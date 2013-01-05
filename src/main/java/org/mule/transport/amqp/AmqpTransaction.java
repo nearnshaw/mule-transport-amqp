@@ -12,6 +12,7 @@ package org.mule.transport.amqp;
 
 import java.io.IOException;
 
+import org.apache.commons.lang.Validate;
 import org.mule.api.MuleContext;
 import org.mule.api.transaction.TransactionException;
 import org.mule.config.i18n.CoreMessages;
@@ -27,9 +28,19 @@ import com.rabbitmq.client.Channel;
  */
 public class AmqpTransaction extends AbstractSingleResourceTransaction
 {
-    public AmqpTransaction(final MuleContext muleContext)
+    public enum RecoverStrategy
+    {
+        NONE, NO_REQUEUE, REQUEUE
+    };
+
+    private final RecoverStrategy recoverStrategy;
+
+    public AmqpTransaction(final MuleContext muleContext, final RecoverStrategy recoverStrategy)
     {
         super(muleContext);
+
+        Validate.notNull(recoverStrategy, "recoverStrategy can't be null");
+        this.recoverStrategy = recoverStrategy;
     }
 
     @Override
@@ -78,13 +89,37 @@ public class AmqpTransaction extends AbstractSingleResourceTransaction
             return;
         }
 
+        final Channel channel = (Channel) resource;
+
         try
         {
-            ((Channel) resource).txRollback();
+            channel.txRollback();
         }
         catch (final IOException ioe)
         {
             throw new TransactionException(CoreMessages.transactionRollbackFailed(), ioe);
+        }
+
+        try
+        {
+            channel.txRollback();
+            switch (recoverStrategy)
+            {
+                case NONE :
+                    // NOOP
+                    break;
+                case NO_REQUEUE :
+                    channel.basicRecover(false);
+                    break;
+                case REQUEUE :
+                    channel.basicRecover(true);
+                    break;
+            }
+        }
+        catch (final IOException ioe)
+        {
+            logger.warn("Failed to recover channel " + channel + " after rollback (recoverStrategy is "
+                        + recoverStrategy + ")");
         }
     }
 }

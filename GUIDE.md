@@ -615,6 +615,12 @@ The following declares a transacted AMQP bridge:
 If an error occurs during the processing of the message after the inbound endpoint, the transaction will automatically be rolled back.
 Otherwise the transaction will be committed after successful dispatch in the outbound endpoint.
 
+By default, no channel recovery is performed upon rollback. To change that configure a `recoverStrategy` on the transaction element, like
+
+    <amqp:transaction action="ALWAYS_BEGIN" recoverStrategy="REQUEUE" />
+
+Valid values for the `recoverStrategy` option are: `NONE, `NO_REQUEUE` and `REQUEUE`.
+
 Transactions in AMQP are not behaving like JMS transactions: it is strongly suggested that you read [this overview of transaction support in AMQP 0.91](http://www.rabbitmq.com/amqp-0-9-1-reference.html#class.tx) before using transactions.
 It is important to understand that when a transaction gets started on a Mule-managed channel, via for example `<amqp:transaction action="ALWAYS_BEGIN" />`, this channel will remain transactional for its lifetime.
 

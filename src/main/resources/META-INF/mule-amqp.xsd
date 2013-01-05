@@ -487,8 +487,11 @@
                     default="false">
                     <xsd:annotation>
                         <xsd:documentation>
-                            If true, messages will be requeued and possibly delivered to a different consumer.
-                            If false, messages will be redelivered to the same consumer.
+                            If true, messages will be requeued
+                            and possibly delivered to a different consumer.
+                            If
+                            false, messages will be redelivered to the same
+                            consumer.
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
@@ -546,15 +549,35 @@
         </xsd:annotation>
     </xsd:element>
 
-    <xsd:element name="transaction" type="mule:baseTransactionType"
-        substitutionGroup="mule:abstract-transaction">
+    <xsd:element name="transaction" type="transactionType"
+        substitutionGroup="mule:abstract-transaction" />
+    <xsd:complexType name="transactionType">
         <xsd:annotation>
-            <xsd:documentation> The transaction element configures a
-                transaction. Transactions allow a series of operations to be
-                grouped together so that they can be rolled back if a failure
-                occurs. Set the action (such as ALWAYS_BEGIN or
-                JOIN_IF_POSSIBLE) and the timeout setting for the transaction.
+            <xsd:documentation>The transaction element configures a transaction.
+                Transactions allow a series of operations to be grouped together
+                so that they can be rolled back if a failure occurs. Set the
+                action (such as ALWAYS_BEGIN or JOIN_IF_POSSIBLE) and the
+                timeout setting for the transaction.
             </xsd:documentation>
         </xsd:annotation>
-    </xsd:element>
+        <xsd:complexContent>
+            <xsd:extension base="mule:abstractTransactionType">
+                <xsd:attribute name="recoverStrategy" use="optional"
+                    default="NONE">
+                    <xsd:annotation>
+                        <xsd:documentation>Determines if a basic recover should
+                            be performed after a rollback.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:NMTOKEN">
+                            <xsd:enumeration value="NONE" />
+                            <xsd:enumeration value="NO_REQUEUE" />
+                            <xsd:enumeration value="REQUEUE" />
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
 </xsd:schema>

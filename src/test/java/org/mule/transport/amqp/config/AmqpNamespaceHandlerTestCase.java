@@ -28,6 +28,8 @@ import org.mule.transport.amqp.AmqpConnector;
 import org.mule.transport.amqp.AmqpConstants.AckMode;
 import org.mule.transport.amqp.AmqpEndpointUtil;
 import org.mule.transport.amqp.AmqpMessageAcknowledger;
+import org.mule.transport.amqp.AmqpTransaction.RecoverStrategy;
+import org.mule.transport.amqp.AmqpTransactionFactory;
 import org.mule.transport.amqp.transformers.AmqpMessageToObject;
 import org.mule.transport.amqp.transformers.ObjectToAmqpMessage;
 
@@ -143,5 +145,16 @@ public class AmqpNamespaceHandlerTestCase extends FunctionalTestCase
         assertNotNull(endpointBuilder);
         final InboundEndpoint inboundEndpoint = endpointBuilder.buildInboundEndpoint();
         assertTrue(inboundEndpoint.getTransactionConfig().isTransacted());
+    }
+
+    @Test
+    public void testTransactedEndpointWithRecoverStrategy() throws Exception
+    {
+        final EndpointBuilder endpointBuilder = muleContext.getRegistry().lookupEndpointBuilder(
+            "amqpTransactedEndpointWithRecoverStrategy");
+        assertNotNull(endpointBuilder);
+        final InboundEndpoint inboundEndpoint = endpointBuilder.buildInboundEndpoint();
+        assertTrue(inboundEndpoint.getTransactionConfig().isTransacted());
+        assertTrue(((AmqpTransactionFactory) inboundEndpoint.getTransactionConfig().getFactory()).getRecoverStrategy() == RecoverStrategy.REQUEUE);
     }
 }

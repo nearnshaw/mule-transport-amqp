@@ -14,15 +14,18 @@ import org.mule.api.MuleContext;
 import org.mule.api.transaction.Transaction;
 import org.mule.api.transaction.TransactionException;
 import org.mule.api.transaction.UniversalTransactionFactory;
+import org.mule.transport.amqp.AmqpTransaction.RecoverStrategy;
 
 /**
  * {@link AmqpTransactionFactory} creates an AMQP local transaction.
  */
 public class AmqpTransactionFactory implements UniversalTransactionFactory
 {
+    private RecoverStrategy recoverStrategy;
+
     public Transaction beginTransaction(final MuleContext muleContext) throws TransactionException
     {
-        final AmqpTransaction tx = new AmqpTransaction(muleContext);
+        final AmqpTransaction tx = new AmqpTransaction(muleContext, recoverStrategy);
         tx.begin();
         return tx;
     }
@@ -34,6 +37,16 @@ public class AmqpTransactionFactory implements UniversalTransactionFactory
 
     public Transaction createUnboundTransaction(final MuleContext muleContext) throws TransactionException
     {
-        return new AmqpTransaction(muleContext);
+        return new AmqpTransaction(muleContext, recoverStrategy);
+    }
+
+    public RecoverStrategy getRecoverStrategy()
+    {
+        return recoverStrategy;
+    }
+
+    public void setRecoverStrategy(final RecoverStrategy recoverStrategy)
+    {
+        this.recoverStrategy = recoverStrategy;
     }
 }

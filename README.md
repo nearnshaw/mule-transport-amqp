@@ -15,7 +15,7 @@ Features
 - Inbound message receiving via subscription to existing or declared exchanges and queues.
 - Outbound message publication to existing or declared exchanges.
 - Outbound request-response pattern supported via temporary reply queues.
-- Inbound and outbound transaction support.
+- Inbound and outbound transaction support, with optional channel self-recovery.
 - Synchronous Message requesting with time-out.
 - Passive or active-only exchange and queue declarations.
 - Support for connection fallback accross a list of AMQP hosts.

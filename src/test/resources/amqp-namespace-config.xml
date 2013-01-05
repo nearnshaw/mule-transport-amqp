@@ -42,7 +42,15 @@
 
     <!-- Use an existing queue -->
     <amqp:endpoint name="amqpTransactedEndpoint" queueName="target-queue">
+        <!-- Transaction, default recover strategy -->
         <amqp:transaction action="ALWAYS_BEGIN" />
+    </amqp:endpoint>
+
+    <amqp:endpoint name="amqpTransactedEndpointWithRecoverStrategy"
+        queueName="target-queue">
+        <!-- Transaction, explicit recover strategy -->
+        <amqp:transaction action="ALWAYS_BEGIN"
+            recoverStrategy="REQUEUE" />
     </amqp:endpoint>
 
     <flow name="ackerFlow">
