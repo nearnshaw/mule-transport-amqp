@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: AMQP Transport
+Bundle-SymbolicName: org.mule.tooling.ui.contribution.amqp;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.mule.tooling.ui.contribution.amqp.Activator
+Bundle-Vendor: Mulesoft Inc.
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Eclipse-BundleShape: dir
