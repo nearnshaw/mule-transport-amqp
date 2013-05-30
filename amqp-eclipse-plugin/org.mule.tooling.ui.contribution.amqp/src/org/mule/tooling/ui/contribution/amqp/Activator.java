@@ -1,4 +1,4 @@
-package org.mule.tooling.ui.contribution.hl7;
+package org.mule.tooling.ui.contribution.amqp;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;

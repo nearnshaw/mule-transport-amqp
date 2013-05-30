@@ -15,7 +15,6 @@
             icon="icons/small/amqp-endpoint-24x16.png"
             name="AMQP"
             path="amqp.xml"
-            minimumVersion="3.3.2"
             version="3.3.2">
       </externalContribution>
         <module
