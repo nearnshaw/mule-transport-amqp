@@ -5,9 +5,6 @@
 	
 	<connector caption="AMQP Connector" localId="connector" icon="icons/small/amqp-endpoint-24x16.png" image="icons/large/amqp-endpoint-48x32.png" extends="http://www.mulesoft.org/schema/mule/core/connectorType" description="">
 		<attribute-category caption="Protocol" description="Advanced AMQP Protocol properties">
-			<group caption="Generic" id="amqpGenericProperties">
-				<name required="true" description="Give a name to this configuration so it can be later referenced by config-ref." caption="Name" name="name" />
-			</group>
 			<group caption="General" id="general">
 				<string javaType="java.lang.String" required="false" defaultValue="localhost" description="The main AMQP broker host to connect to" caption="Host" name="host" />
 				<integer step="1" min="0" javaType="int" required="false" defaultValue="5672" description="The port to use to connect to the main AMQP broker" caption="Port" name="port" />
