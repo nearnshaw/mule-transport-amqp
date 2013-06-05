@@ -15,18 +15,6 @@ under this project. The update site can be found in: org.mule.tooling.amqp.updat
 And for last, inside studio go to: help -> Install New Software -> Available Software Sites -> Add, and add the folder of the repository.
 After this, you can install the plug-in in Studio in: help -> Install New Software, selecting the working site name used in the previus step.
 
-Using the transport in Studio
------------------------------
-
-Some considerations to take into accout are:
- For outbound-endpoints:
-   - If you don't give an exchange name the process will fail
-   - If you don't give a type to the exchange, the process will fail
- For inbound-endpoints:
-   - If you don't use at least one of the flags [ queue_durable, queue_auto_delete, queue_exclusive] it won't create the queue
- For both:
-   - If you use an Endpoint-ref it will use the data in it to create the endpoint. If you try for example create two inbound-endpoints and in one of them replace the queue with another name, it will produce a duplicate endpoint and the app won't work.
-
 Queues, Exchanges and bindings - Endpoint initialization
 --------------------------------------------------------
  A. When you create an outboud-endpoint
@@ -40,3 +28,8 @@ Queues, Exchanges and bindings - Endpoint initialization
   3. If Queue name is empty, it will create a private queue and bind it to the exchange
   4. If some of the flags [ queue_durable | queue_auto_delete | queue_exclusive ] are true, it will create a Queue and bind it to the exchange
   4.b. If none of the flags are true, it will check if the queue exists
+
+Consumers bind to a Queue
+-------------------------
+ Since AMQP is a transport and for that it sticks to the inbound/outbound endpoint rules of mule, it can't be two different consumers pointing to the same Queue. This is because when an endpoint is started, the endpointUri must be a Unique Key.
+ The endpointUri of an AMQP Inbound-Endpoint is conformed as: amqp://{exchange-name}/amqp-queue.{queue-name}. So, using two different endpoints pointing to the same exchange and queue will result in a duplicate endpointUri.
