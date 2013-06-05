@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:amqp="http://www.mulesoft.org/schema/mule/amqp" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.4.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/amqp http://www.mulesoft.org/schema/mule/amqp/current/mule-amqp.xsd">
+    <amqp:connector name="amqp_config" virtualHost="/mule-test" username="mule" password="elum" doc:name="AMQP Connector" validateConnections="true" />
+    <amqp:endpoint exchangeName="directEx" queueName="directQ" routingKey="direct.key" exchangeType="direct" name="amqp_direct_endpoint" responseTimeout="10000" doc:name="AMQP" queueDurable="true"/>
+    <amqp:endpoint exchangeName="topicEx" queueName="topicQ" routingKey="direct2.key2" exchangeType="topic" name="amqp_topic_endpoint" responseTimeout="10000" doc:name="AMQP" queueDurable="true"/>
+    <amqp:endpoint exchangeName="fanoutEx" queueName="fanoutQ" exchangeType="fanout" name="amqp_fanout_endpoint" responseTimeout="10000" doc:name="AMQP" queueDurable="true"/>
+</mule>
