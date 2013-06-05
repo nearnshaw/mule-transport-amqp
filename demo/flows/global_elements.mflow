@@ -166,5 +166,33 @@
             <property name="connector-ref"/>
         </properties>
     </global-element>
+    <global-element type="http://www.mulesoft.org/schema/mule/amqp/endpoint" name="AMQP" entity-id="AMQP#5">
+        <properties>
+            <property name="businessEventsLabel"/>
+            <property value="topicExComp" name="exchangeName"/>
+            <property name="queueAutoDelete"/>
+            <property name="disableTransportTransformer"/>
+            <property value="topic" name="exchangeType"/>
+            <property name="exchangeAutoDelete"/>
+            <property name="queueExclusive"/>
+            <property name="exchange-pattern"/>
+            <property name="tracking:enable-default-events"/>
+            <property value="direct.key" name="routingKey"/>
+            <property name="ref"/>
+            <property name="transformer-refs"/>
+            <property name="address"/>
+            <property value="true" name="queueDurable"/>
+            <property value="amqp_topic_component_endpoint" name="name"/>
+            <property name="encoding"/>
+            <property name="responseTransformer-refs"/>
+            <property value="topicQComp" name="queueName"/>
+            <property name="consumerTag"/>
+            <property name="exchangeDurable"/>
+            <property name="mimeType"/>
+            <property value="10000" name="responseTimeout"/>
+            <property value="7" name="auxiliary;index"/>
+            <property name="connector-ref"/>
+        </properties>
+    </global-element>
     <description></description>
 </mule-configuration>
