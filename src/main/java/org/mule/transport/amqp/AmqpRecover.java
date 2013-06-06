@@ -52,7 +52,7 @@ public class AmqpRecover implements MessageProcessor
         {
             throw new SessionException(
                 MessageFactory.createStaticMessage("No " + AmqpConstants.CHANNEL
-                                                   + " session property found, impossible to ack message: "
+                                                   + " session property found, impossible to recover message: "
                                                    + message));
         }
 
