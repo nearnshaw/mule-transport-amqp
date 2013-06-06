@@ -3,6 +3,8 @@ Mule AMQP Transport
 
 Read the [complete user guide](http://github.com/mulesoft/mule-transport-amqp/blob/master/GUIDE.md).
 
+MuleStudio Plug-In installation documentation can be found [here](http://mulesoft.github.io/mule-transport-amqp/AMQP-Transport-MuleStudio-Plugin.html).
+
 Supported AMQP Versions
 -----------------------
 
