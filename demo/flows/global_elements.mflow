@@ -5,7 +5,7 @@
             <property name="port"/>
             <property name="fallbackAddresses"/>
             <property name="activeDeclarationsOnly"/>
-            <property value="localhost" name="host"/>
+            <property name="host"/>
             <property name="mandatory"/>
             <property name="deliveryMode"/>
             <property value="true" name="validateConnections"/>
@@ -54,6 +54,35 @@
             <property value="2" name="auxiliary;index"/>
         </properties>
     </global-element>
+    <global-element type="http://www.mulesoft.org/schema/mule/amqp/connector" name="AMQP Connector" entity-id="AMQP Connector#3">
+        <properties>
+            <property value="5672" name="port"/>
+            <property value="" name="fallbackAddresses"/>
+            <property value="false" name="activeDeclarationsOnly"/>
+            <property value="" name="host"/>
+            <property value="false" name="mandatory"/>
+            <property value="PERSISTENT" name="deliveryMode"/>
+            <property value="true" name="validateConnections"/>
+            <property value="" name="defaultReturnEndpointBuilder-ref"/>
+            <property value="elum" name="password"/>
+            <property value="false" name="exclusiveConsumers"/>
+            <property value="" name="dispatcherPoolFactory-ref"/>
+            <property value="false" name="immediate"/>
+            <property value="mule" name="username"/>
+            <property value="0" name="prefetchSize"/>
+            <property value="" name="defaultReturnListener-ref"/>
+            <property value="MANUAL" name="ackMode"/>
+            <property name="updated"/>
+            <property value="/mule-test" name="virtualHost"/>
+            <property value="" name="priority"/>
+            <property value="amqp_config_component" name="name"/>
+            <property value="0" name="prefetchCount"/>
+            <property value="false" name="dynamicNotification"/>
+            <property value="false" name="noLocal"/>
+            <property value="3" name="auxiliary;index"/>
+        </properties>
+        <description></description>
+    </global-element>
     <global-element type="http://www.mulesoft.org/schema/mule/amqp/endpoint" name="AMQP" entity-id="AMQP#1">
         <properties>
             <property name="businessEventsLabel"/>
@@ -78,7 +107,7 @@
             <property name="exchangeDurable"/>
             <property name="mimeType"/>
             <property value="10000" name="responseTimeout"/>
-            <property value="3" name="auxiliary;index"/>
+            <property value="4" name="auxiliary;index"/>
             <property name="connector-ref"/>
         </properties>
     </global-element>
@@ -106,7 +135,7 @@
             <property name="exchangeDurable"/>
             <property name="mimeType"/>
             <property value="10000" name="responseTimeout"/>
-            <property value="4" name="auxiliary;index"/>
+            <property value="5" name="auxiliary;index"/>
             <property name="connector-ref"/>
         </properties>
     </global-element>
@@ -134,7 +163,7 @@
             <property name="exchangeDurable"/>
             <property name="mimeType"/>
             <property value="10000" name="responseTimeout"/>
-            <property value="5" name="auxiliary;index"/>
+            <property value="6" name="auxiliary;index"/>
             <property name="connector-ref"/>
         </properties>
     </global-element>
@@ -162,7 +191,7 @@
             <property name="exchangeDurable"/>
             <property name="mimeType"/>
             <property value="10000" name="responseTimeout"/>
-            <property value="6" name="auxiliary;index"/>
+            <property value="7" name="auxiliary;index"/>
             <property name="connector-ref"/>
         </properties>
     </global-element>
@@ -190,7 +219,7 @@
             <property name="exchangeDurable"/>
             <property name="mimeType"/>
             <property value="10000" name="responseTimeout"/>
-            <property value="7" name="auxiliary;index"/>
+            <property value="8" name="auxiliary;index"/>
             <property name="connector-ref"/>
         </properties>
     </global-element>
