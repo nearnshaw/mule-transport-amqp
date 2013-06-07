@@ -56,32 +56,30 @@
     </global-element>
     <global-element type="http://www.mulesoft.org/schema/mule/amqp/connector" name="AMQP Connector" entity-id="AMQP Connector#3">
         <properties>
-            <property value="5672" name="port"/>
-            <property value="" name="fallbackAddresses"/>
-            <property value="false" name="activeDeclarationsOnly"/>
-            <property value="" name="host"/>
-            <property value="false" name="mandatory"/>
-            <property value="PERSISTENT" name="deliveryMode"/>
+            <property name="port"/>
+            <property name="fallbackAddresses"/>
+            <property name="activeDeclarationsOnly"/>
+            <property name="host"/>
+            <property name="mandatory"/>
+            <property name="deliveryMode"/>
             <property value="true" name="validateConnections"/>
-            <property value="" name="defaultReturnEndpointBuilder-ref"/>
+            <property name="defaultReturnEndpointBuilder-ref"/>
             <property value="elum" name="password"/>
-            <property value="false" name="exclusiveConsumers"/>
-            <property value="" name="dispatcherPoolFactory-ref"/>
-            <property value="false" name="immediate"/>
+            <property name="exclusiveConsumers"/>
+            <property name="dispatcherPoolFactory-ref"/>
+            <property name="immediate"/>
             <property value="mule" name="username"/>
-            <property value="0" name="prefetchSize"/>
-            <property value="" name="defaultReturnListener-ref"/>
+            <property name="defaultReturnListener-ref"/>
+            <property name="prefetchSize"/>
             <property value="MANUAL" name="ackMode"/>
-            <property name="updated"/>
             <property value="/mule-test" name="virtualHost"/>
-            <property value="" name="priority"/>
+            <property name="priority"/>
+            <property name="prefetchCount"/>
             <property value="amqp_config_component" name="name"/>
-            <property value="0" name="prefetchCount"/>
-            <property value="false" name="dynamicNotification"/>
-            <property value="false" name="noLocal"/>
+            <property name="dynamicNotification"/>
+            <property name="noLocal"/>
             <property value="3" name="auxiliary;index"/>
         </properties>
-        <description></description>
     </global-element>
     <global-element type="http://www.mulesoft.org/schema/mule/amqp/endpoint" name="AMQP" entity-id="AMQP#1">
         <properties>
@@ -94,7 +92,7 @@
             <property name="queueExclusive"/>
             <property name="exchange-pattern"/>
             <property name="tracking:enable-default-events"/>
-            <property value="direct.key" name="routingKey"/>
+            <property value="routing.key" name="routingKey"/>
             <property name="ref"/>
             <property name="transformer-refs"/>
             <property name="address"/>
@@ -122,7 +120,7 @@
             <property name="queueExclusive"/>
             <property name="exchange-pattern"/>
             <property name="tracking:enable-default-events"/>
-            <property value="direct.key" name="routingKey"/>
+            <property value="routing.key" name="routingKey"/>
             <property name="ref"/>
             <property name="transformer-refs"/>
             <property name="address"/>
@@ -150,7 +148,7 @@
             <property name="queueExclusive"/>
             <property name="exchange-pattern"/>
             <property name="tracking:enable-default-events"/>
-            <property value="direct2.key2" name="routingKey"/>
+            <property value="routing.key" name="routingKey"/>
             <property name="ref"/>
             <property name="transformer-refs"/>
             <property name="address"/>
@@ -206,7 +204,7 @@
             <property name="queueExclusive"/>
             <property name="exchange-pattern"/>
             <property name="tracking:enable-default-events"/>
-            <property value="direct.key" name="routingKey"/>
+            <property value="routing.key" name="routingKey"/>
             <property name="ref"/>
             <property name="transformer-refs"/>
             <property name="address"/>

@@ -23,5 +23,4 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
         <byte-array-to-string-transformer doc:name="Transform bytearray message to String"/>
         <logger message="I recived a direct message with broker fallback from AMQP: #[payload]" level="INFO" doc:name="Logger"/>
     </flow>
-    
 </mule>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mule-configuration xmlns="http://www.mulesoft.com/tooling/messageflow" name="Direct-Message">
-    <flow SubFlow="false" name="Send_Message_Direct" entity-id="f6c7f23c-e674-4afc-aa7b-80b836102ec5">
+    <flow SubFlow="false" name="Send_Message_Direct" entity-id="9ebd9367-a2c6-4c8f-81c7-ec56848d7084">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
@@ -92,7 +92,7 @@
             </pattern>
         </lane>
     </flow>
-    <flow SubFlow="false" name="Recive_Message_Direct" entity-id="ce6a45df-a4a6-4aa2-9528-de4896cf3cc9">
+    <flow SubFlow="false" name="Recive_Message_Direct" entity-id="48ebeae3-0913-4eac-a025-885889ac3ec5">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
@@ -105,30 +105,35 @@
             <endpoint message-exchange-pattern="RequestResponse" direction="Inbound" type="http://www.mulesoft.org/schema/mule/amqp/endpoint" name="Recive Direct Message" entity-id="AMQP#2">
                 <graphicalData height="0" width="0" y="0" x="0"/>
                 <properties>
-                    <property name="businessEventsLabel"/>
-                    <property name="exchangeName"/>
-                    <property name="queueAutoDelete"/>
-                    <property name="disableTransportTransformer"/>
-                    <property name="exchangeType"/>
-                    <property name="exchangeAutoDelete"/>
-                    <property name="queueExclusive"/>
-                    <property name="tracking:enable-default-events"/>
-                    <property name="exchange-pattern"/>
-                    <property name="routingKey"/>
-                    <property value="amqp_direct_endpoint" name="ref"/>
-                    <property name="transformer-refs"/>
-                    <property name="address"/>
-                    <property name="queueDurable"/>
-                    <property name="encoding"/>
-                    <property name="responseTransformer-refs"/>
-                    <property name="queueName"/>
-                    <property name="consumerTag"/>
-                    <property name="exchangeDurable"/>
-                    <property name="mimeType"/>
-                    <property value="10000" name="responseTimeout"/>
+                    <property value="true" name="auxiliary;erased;mimeType"/>
+                    <property value="" name="exchangeName"/>
+                    <property value="false" name="queueAutoDelete"/>
+                    <property value="false" name="exchangeAutoDelete"/>
+                    <property value="false" name="tracking:enable-default-events"/>
+                    <property value="one-way" name="exchange-pattern"/>
+                    <property name="updated"/>
+                    <property value="true" name="auxiliary;erased;encoding"/>
+                    <property value="false" name="queueDurable"/>
+                    <property value="" name="encoding"/>
+                    <property value="" name="responseTransformer-refs"/>
+                    <property value="" name="queueName"/>
+                    <property value="" name="consumerTag"/>
+                    <property value="false" name="exchangeDurable"/>
                     <property value="8" name="auxiliary;index"/>
+                    <property value="10000" name="responseTimeout"/>
+                    <property value="" name="mimeType"/>
+                    <property value="true" name="auxiliary;erased;exchangeType"/>
+                    <property value="" name="businessEventsLabel"/>
+                    <property value="" name="exchangeType"/>
+                    <property value="false" name="disableTransportTransformer"/>
+                    <property value="false" name="queueExclusive"/>
+                    <property value="" name="routingKey"/>
+                    <property value="amqp_direct_endpoint" name="ref"/>
+                    <property value="" name="transformer-refs"/>
+                    <property value="" name="address"/>
                     <property value="amqp_config" name="connector-ref"/>
                 </properties>
+                <description></description>
             </endpoint>
             <pattern type="http://www.mulesoft.org/schema/mule/core/byte-array-to-string-transformer" name="Transform bytearray message to String" entity-id="Byte Array to String#1">
                 <graphicalData height="0" width="0" y="0" x="0"/>

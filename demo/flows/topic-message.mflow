@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mule-configuration xmlns="http://www.mulesoft.com/tooling/messageflow" name="topic-message">
-    <flow SubFlow="false" name="Send_Message_Topic" entity-id="438dc921-d896-4046-b07d-1c3275e5f1de">
+    <flow SubFlow="false" name="Send_Message_Topic" entity-id="ddc96dcd-4788-47a5-a2df-2c9779650619">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
@@ -46,7 +46,7 @@
                     <property value="3" name="auxiliary;index"/>
                 </properties>
             </pattern>
-            <endpoint message-exchange-pattern="RequestResponse" direction="Outbound" type="http://www.mulesoft.org/schema/mule/amqp/endpoint" name="Send Direct Message" entity-id="AMQP#1">
+            <endpoint message-exchange-pattern="RequestResponse" direction="Outbound" type="http://www.mulesoft.org/schema/mule/amqp/endpoint" name="Send Topic Message" entity-id="AMQP#1">
                 <graphicalData height="0" width="0" y="0" x="0"/>
                 <properties>
                     <property name="businessEventsLabel"/>
@@ -92,7 +92,7 @@
             </pattern>
         </lane>
     </flow>
-    <flow SubFlow="false" name="Recive_Message_Topic_1" entity-id="495ae14a-d48d-4362-9dad-e149bb7b18ba">
+    <flow SubFlow="false" name="Recive_Message_Topic_1" entity-id="103f99ca-a1cf-4089-8bd1-27debd66cb52">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
@@ -102,7 +102,7 @@
         </properties>
         <lane isChoiceOtherwiseLane="false" index="0" hadOnlyOneElement="false" entity-id="compartment-lane#2">
             <graphicalData height="0" width="0" y="0" x="0"/>
-            <endpoint message-exchange-pattern="RequestResponse" direction="Inbound" type="http://www.mulesoft.org/schema/mule/amqp/endpoint" name="Recive Direct Message" entity-id="AMQP#2">
+            <endpoint message-exchange-pattern="RequestResponse" direction="Inbound" type="http://www.mulesoft.org/schema/mule/amqp/endpoint" name="Recive Topic Message" entity-id="AMQP#2">
                 <graphicalData height="0" width="0" y="0" x="0"/>
                 <properties>
                     <property name="businessEventsLabel"/>
@@ -151,7 +151,7 @@
             </pattern>
         </lane>
     </flow>
-    <flow SubFlow="false" name="Recive_Message_Topic_2" entity-id="055e1f85-50b5-493c-904b-34f160c83da9">
+    <flow SubFlow="false" name="Recive_Message_Topic_2" entity-id="ec31cd5b-a4b2-4f9a-9055-be5feda4a7ff">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
@@ -161,7 +161,7 @@
         </properties>
         <lane isChoiceOtherwiseLane="false" index="0" hadOnlyOneElement="false" entity-id="compartment-lane#3">
             <graphicalData height="0" width="0" y="0" x="0"/>
-            <endpoint message-exchange-pattern="RequestResponse" direction="Inbound" type="http://www.mulesoft.org/schema/mule/amqp/endpoint" name="Recive Direct Message" entity-id="AMQP#3">
+            <endpoint message-exchange-pattern="RequestResponse" direction="Inbound" type="http://www.mulesoft.org/schema/mule/amqp/endpoint" name="Recive Topic Message" entity-id="AMQP#3">
                 <graphicalData height="0" width="0" y="0" x="0"/>
                 <properties>
                     <property name="businessEventsLabel"/>
@@ -210,7 +210,7 @@
             </pattern>
         </lane>
     </flow>
-    <flow SubFlow="false" name="Recive_Message_Topic_3" entity-id="0c02dc41-1699-43a0-b478-1aed24dbaf6d">
+    <flow SubFlow="false" name="Recive_Message_Topic_3" entity-id="bbc8ca21-ca3d-4590-8ee1-8b3f13c709c4">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
@@ -220,8 +220,8 @@
         </properties>
         <lane isChoiceOtherwiseLane="false" index="0" hadOnlyOneElement="false" entity-id="compartment-lane#4">
             <graphicalData height="0" width="0" y="0" x="0"/>
-            <endpoint message-exchange-pattern="RequestResponse" direction="Inbound" type="http://www.mulesoft.org/schema/mule/amqp/endpoint" name="Recive Direct Message" entity-id="AMQP#4">
-                <graphicalData height="169" width="133" y="769" x="19"/>
+            <endpoint message-exchange-pattern="RequestResponse" direction="Inbound" type="http://www.mulesoft.org/schema/mule/amqp/endpoint" name="Recive Topic Message" entity-id="AMQP#4">
+                <graphicalData height="0" width="0" y="0" x="0"/>
                 <properties>
                     <property name="businessEventsLabel"/>
                     <property value="topicEx" name="exchangeName"/>
@@ -232,7 +232,7 @@
                     <property name="queueExclusive"/>
                     <property name="tracking:enable-default-events"/>
                     <property name="exchange-pattern"/>
-                    <property value="direct2.key2" name="routingKey"/>
+                    <property value="routing.key" name="routingKey"/>
                     <property name="ref"/>
                     <property name="transformer-refs"/>
                     <property name="address"/>
@@ -249,7 +249,7 @@
                 </properties>
             </endpoint>
             <pattern type="http://www.mulesoft.org/schema/mule/core/byte-array-to-string-transformer" name="Transform bytearray message to String" entity-id="Byte Array to String#3">
-                <graphicalData height="67" width="223" y="769" x="212"/>
+                <graphicalData height="0" width="0" y="0" x="0"/>
                 <properties>
                     <property name="returnClass"/>
                     <property name="ignoreBadInput"/>
@@ -259,71 +259,12 @@
                 </properties>
             </pattern>
             <pattern type="http://www.mulesoft.org/schema/mule/core/logger" name="Logger" entity-id="Logger#4">
-                <graphicalData height="67" width="68" y="769" x="495"/>
+                <graphicalData height="0" width="0" y="0" x="0"/>
                 <properties>
                     <property value="Recived message on Queue{topicQC} with Key {direct2.key2}: #[payload]" name="message"/>
                     <property name="category"/>
                     <property value="INFO" name="level"/>
                     <property value="18" name="auxiliary;index"/>
-                </properties>
-            </pattern>
-        </lane>
-    </flow>
-    <flow SubFlow="false" name="Recive_Message_Topic_4" entity-id="14819eb2-1e77-4445-8860-6243559e2cd9">
-        <properties>
-            <property name="processingStrategy"/>
-            <property name="processingStrategy2"/>
-            <property name="bussinessEventsLabel"/>
-            <property name="tracking:enable-default-events"/>
-            <property value="19" name="auxiliary;index"/>
-        </properties>
-        <lane isChoiceOtherwiseLane="false" index="0" hadOnlyOneElement="false" entity-id="compartment-lane#5">
-            <graphicalData height="0" width="0" y="0" x="0"/>
-            <endpoint message-exchange-pattern="RequestResponse" direction="Inbound" type="http://www.mulesoft.org/schema/mule/amqp/endpoint" name="Recive Direct Message" entity-id="AMQP#5">
-                <graphicalData height="169" width="133" y="1014" x="19"/>
-                <properties>
-                    <property name="businessEventsLabel"/>
-                    <property value="topicEx2" name="exchangeName"/>
-                    <property name="queueAutoDelete"/>
-                    <property name="disableTransportTransformer"/>
-                    <property value="topic" name="exchangeType"/>
-                    <property name="exchangeAutoDelete"/>
-                    <property name="queueExclusive"/>
-                    <property name="tracking:enable-default-events"/>
-                    <property name="exchange-pattern"/>
-                    <property value="direct2.key2" name="routingKey"/>
-                    <property name="ref"/>
-                    <property name="transformer-refs"/>
-                    <property name="address"/>
-                    <property value="true" name="queueDurable"/>
-                    <property name="encoding"/>
-                    <property name="responseTransformer-refs"/>
-                    <property value="topicQD" name="queueName"/>
-                    <property name="consumerTag"/>
-                    <property name="exchangeDurable"/>
-                    <property name="mimeType"/>
-                    <property value="10000" name="responseTimeout"/>
-                    <property value="20" name="auxiliary;index"/>
-                    <property value="amqp_config" name="connector-ref"/>
-                </properties>
-            </endpoint>
-            <pattern type="http://www.mulesoft.org/schema/mule/core/byte-array-to-string-transformer" name="Transform bytearray message to String" entity-id="Byte Array to String#4">
-                <graphicalData height="67" width="223" y="1014" x="212"/>
-                <properties>
-                    <property name="returnClass"/>
-                    <property name="ignoreBadInput"/>
-                    <property name="encoding"/>
-                    <property name="mimeType"/>
-                    <property value="21" name="auxiliary;index"/>
-                </properties>
-            </pattern>
-            <pattern type="http://www.mulesoft.org/schema/mule/core/logger" name="Logger" entity-id="Logger#5">
-                <graphicalData height="67" width="68" y="1014" x="495"/>
-                <properties>
-                    <property value="Recived message on Queue{topicQC} with Key {direct2.key2}: #[payload]" name="message"/>
-                    <property name="category"/>
-                    <property value="INFO" name="level"/>
-                    <property value="22" name="auxiliary;index"/>
                 </properties>
             </pattern>
         </lane>

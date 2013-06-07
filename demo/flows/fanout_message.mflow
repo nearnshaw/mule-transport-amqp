@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mule-configuration xmlns="http://www.mulesoft.com/tooling/messageflow" name="fanout message">
-    <flow SubFlow="false" name="Send_Message_Fanout" entity-id="3ddfe92f-e61d-471c-ac57-c220edd74dd6">
+    <flow SubFlow="false" name="Send_Message_Fanout" entity-id="6471c35e-f079-4c15-9799-dc81571aa861">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
@@ -46,7 +46,7 @@
                     <property value="3" name="auxiliary;index"/>
                 </properties>
             </pattern>
-            <endpoint message-exchange-pattern="RequestResponse" direction="Outbound" type="http://www.mulesoft.org/schema/mule/amqp/endpoint" name="Send Direct Message" entity-id="AMQP#1">
+            <endpoint message-exchange-pattern="RequestResponse" direction="Outbound" type="http://www.mulesoft.org/schema/mule/amqp/endpoint" name="Send Fanout Message" entity-id="AMQP#1">
                 <graphicalData height="0" width="0" y="0" x="0"/>
                 <properties>
                     <property name="businessEventsLabel"/>
@@ -92,7 +92,7 @@
             </pattern>
         </lane>
     </flow>
-    <flow SubFlow="false" name="Recive_Message_Fanout_1" entity-id="a25e0cda-1885-4aaa-95d0-fb010a6b2f63">
+    <flow SubFlow="false" name="Recive_Message_Fanout_1" entity-id="659f3a60-4531-432e-816b-f5f5669a04f7">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
@@ -102,7 +102,7 @@
         </properties>
         <lane isChoiceOtherwiseLane="false" index="0" hadOnlyOneElement="false" entity-id="compartment-lane#2">
             <graphicalData height="0" width="0" y="0" x="0"/>
-            <endpoint message-exchange-pattern="RequestResponse" direction="Inbound" type="http://www.mulesoft.org/schema/mule/amqp/endpoint" name="Recive Direct Message" entity-id="AMQP#2">
+            <endpoint message-exchange-pattern="RequestResponse" direction="Inbound" type="http://www.mulesoft.org/schema/mule/amqp/endpoint" name="Recive Fanout Message" entity-id="AMQP#2">
                 <graphicalData height="0" width="0" y="0" x="0"/>
                 <properties>
                     <property name="businessEventsLabel"/>
@@ -114,7 +114,7 @@
                     <property name="queueExclusive"/>
                     <property name="tracking:enable-default-events"/>
                     <property name="exchange-pattern"/>
-                    <property value="#" name="routingKey"/>
+                    <property name="routingKey"/>
                     <property value="amqp_fanout_endpoint" name="ref"/>
                     <property name="transformer-refs"/>
                     <property name="address"/>
@@ -143,7 +143,7 @@
             <pattern type="http://www.mulesoft.org/schema/mule/core/logger" name="Logger" entity-id="Logger#2">
                 <graphicalData height="0" width="0" y="0" x="0"/>
                 <properties>
-                    <property value="Recived message on Queue{topicQ} without Key: #[payload]" name="message"/>
+                    <property value="Recived message on Queue{fanoutQ} without Key: #[payload]" name="message"/>
                     <property name="category"/>
                     <property value="INFO" name="level"/>
                     <property value="10" name="auxiliary;index"/>
@@ -151,7 +151,7 @@
             </pattern>
         </lane>
     </flow>
-    <flow SubFlow="false" name="Recive_Message_Fanout_2" entity-id="61026a5a-aae6-4753-a70e-1cdb5cb8392c">
+    <flow SubFlow="false" name="Recive_Message_Fanout_2" entity-id="34640f4f-ac53-4695-bd5b-045d12794619">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
@@ -161,7 +161,7 @@
         </properties>
         <lane isChoiceOtherwiseLane="false" index="0" hadOnlyOneElement="false" entity-id="compartment-lane#3">
             <graphicalData height="0" width="0" y="0" x="0"/>
-            <endpoint message-exchange-pattern="RequestResponse" direction="Inbound" type="http://www.mulesoft.org/schema/mule/amqp/endpoint" name="Recive Direct Message" entity-id="AMQP#3">
+            <endpoint message-exchange-pattern="RequestResponse" direction="Inbound" type="http://www.mulesoft.org/schema/mule/amqp/endpoint" name="Recive Fanout Message" entity-id="AMQP#3">
                 <graphicalData height="0" width="0" y="0" x="0"/>
                 <properties>
                     <property name="businessEventsLabel"/>
@@ -202,7 +202,7 @@
             <pattern type="http://www.mulesoft.org/schema/mule/core/logger" name="Logger" entity-id="Logger#3">
                 <graphicalData height="0" width="0" y="0" x="0"/>
                 <properties>
-                    <property value="Recived message on Queue{topicQ2} without Key: #[payload]" name="message"/>
+                    <property value="Recived message on Queue{fanoutQ2} without Key: #[payload]" name="message"/>
                     <property name="category"/>
                     <property value="INFO" name="level"/>
                     <property value="14" name="auxiliary;index"/>
@@ -210,7 +210,7 @@
             </pattern>
         </lane>
     </flow>
-    <flow SubFlow="false" name="Recive_Message_Fanout_3" entity-id="53aeb367-75be-4f58-aee8-a3729557f1c4">
+    <flow SubFlow="false" name="Recive_Message_Fanout_3" entity-id="483d6644-769b-46d0-b9fc-9203a67d3665">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
@@ -220,7 +220,7 @@
         </properties>
         <lane isChoiceOtherwiseLane="false" index="0" hadOnlyOneElement="false" entity-id="compartment-lane#4">
             <graphicalData height="0" width="0" y="0" x="0"/>
-            <endpoint message-exchange-pattern="RequestResponse" direction="Inbound" type="http://www.mulesoft.org/schema/mule/amqp/endpoint" name="Recive Direct Message" entity-id="AMQP#4">
+            <endpoint message-exchange-pattern="RequestResponse" direction="Inbound" type="http://www.mulesoft.org/schema/mule/amqp/endpoint" name="Recive Fanout Message" entity-id="AMQP#4">
                 <graphicalData height="0" width="0" y="0" x="0"/>
                 <properties>
                     <property name="businessEventsLabel"/>
@@ -261,7 +261,7 @@
             <pattern type="http://www.mulesoft.org/schema/mule/core/logger" name="Logger" entity-id="Logger#4">
                 <graphicalData height="0" width="0" y="0" x="0"/>
                 <properties>
-                    <property value="Recived message on Queue{topicQ3} without Key: #[payload]" name="message"/>
+                    <property value="Recived message on Queue{fanoutQ3} without Key: #[payload]" name="message"/>
                     <property name="category"/>
                     <property value="INFO" name="level"/>
                     <property value="18" name="auxiliary;index"/>
