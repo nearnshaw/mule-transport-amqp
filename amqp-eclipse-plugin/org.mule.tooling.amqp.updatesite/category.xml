@@ -3,7 +3,7 @@
     <feature id="org.mule.tooling.amqp">
       <category name="org.mule.tooling.ui.contribution.amqp"/>
     </feature>
-   <category-def name="org.mule.tooling.ui.contribution.amqp" label="Mule AMQP Transport">
+   <category-def name="org.mule.tooling.ui.contribution.amqp" label="Community">
       <description>
 			Mule AMQP Transport
       </description>
