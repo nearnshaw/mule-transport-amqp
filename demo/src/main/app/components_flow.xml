@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:amqp="http://www.mulesoft.org/schema/mule/amqp" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.4.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/amqp http://www.mulesoft.org/schema/mule/amqp/current/mule-amqp.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+	
+	<flow name="Send_Message_Fanout_Component" doc:name="Send_Message_Fanout_Component">
+        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="8090" doc:name="HTTP" path="component" />
+        <set-payload value="#['im a Fanout message'.getBytes()]" doc:name="Set payload for amqp message as ByteArray"/>
+        <amqp:outbound-endpoint responseTimeout="10000"  doc:name="Send Topic Message" connector-ref="amqp_config_component" ref="amqp_topic_component_endpoint"/>
+        <set-payload value="#['Message Sended']" doc:name="Set payload as String"/>
+        <logger message="Fanout message sended" level="INFO" doc:name="Logger"/>
+    </flow>
+    <flow name="Recive_Message_Topic_Component_1" doc:name="Recive_Message_Topic_Component_1">
+        <amqp:inbound-endpoint responseTimeout="10000"  doc:name="Recive Topic Message" connector-ref="amqp_config_component" ref="amqp_topic_component_endpoint" routingKey="#"/>
+        <byte-array-to-string-transformer doc:name="Transform bytearray message to String"/>
+        <logger message="Recived message on Queue{topicQ}: #[payload]" level="INFO" doc:name="Logger"/>
+        <amqp:acknowledge-message doc:name="AMQP Acknowledge Message"/>
+        <logger message="Message ACK" level="INFO" doc:name="Logger"/>
+    </flow>
+    <flow name="Recive_Message_Topic_Component_3" doc:name="Recive_Message_Topic_Component_3">
+        <amqp:inbound-endpoint responseTimeout="10000"  doc:name="Recive Topic Message" connector-ref="amqp_config_component"  routingKey="#" queueName="topicQCComp" exchangeName="topicExComp" exchangeType="topic" queueDurable="true"/>
+        <byte-array-to-string-transformer doc:name="Transform bytearray message to String"/>
+        <logger message="Recived message on Queue{topicQCComp}: #[payload]" level="INFO" doc:name="Logger"/>
+        <amqp:reject-message doc:name="AMQP Reject Message"/>
+        <logger message="Message REJECT" level="INFO" doc:name="Logger"/>
+    </flow>
+</mule>

@@ -8,7 +8,6 @@
     -->
     <id>mule-transport-amqp</id>
     <formats>
-        <format>tar.gz</format>
         <format>zip</format>
     </formats>
     <fileSets>
@@ -20,9 +19,27 @@
             </includes>
         </fileSet>
         <fileSet>
+            <directory>target/classes</directory>
+            <outputDirectory>classes</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
+        <!--
+        <fileSet>
+            <directory>lib</directory>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include></include>
+            </includes>
+        </fileSet>
+        -->
+<!--
+        <fileSet>
             <directory>examples</directory>
             <outputDirectory>lib</outputDirectory>
         </fileSet>
+-->
         <fileSet>
             <directory></directory>
             <outputDirectory></outputDirectory>
@@ -32,15 +49,13 @@
             </includes>
         </fileSet>
     </fileSets>
+    <includeBaseDirectory>false</includeBaseDirectory>
     <dependencySets>
         <dependencySet>
             <outputDirectory>lib</outputDirectory>
-            <useTransitiveFiltering>true</useTransitiveFiltering>
+            <!-- <useTransitiveFiltering>true</useTransitiveFiltering> -->
             <useTransitiveDependencies>true</useTransitiveDependencies>
             <useStrictFiltering>false</useStrictFiltering>
-            <includes>
-                <include>org.mule.transports:mule-transport-amqp</include>
-            </includes>
             <excludes>
                 <!-- exclude all Mule dependencies since they will be avialable in the container -->
                 <exclude>org.mule:mule-core</exclude>

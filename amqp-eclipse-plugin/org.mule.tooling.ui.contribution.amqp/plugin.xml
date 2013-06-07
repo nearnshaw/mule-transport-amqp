@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.mule.tooling.core.contribution">
+    
+      <externalContribution
+            contributionJar="mule-transport-amqp-3.4.0.jar"
+            contributionLibPathInMule="/plugins"
+            contributionLibs="mule-transport-amqp-3.4.0.zip"
+            contributionNamespace="http://www.mulesoft.org/schema/mule/amqp"
+            contributionNamespaceFile="http://www.mulesoft.org/schema/mule/amqp/current/mule-amqp.xsd"
+            contributionNamespacePrefix="amqp"
+            contributionType="connector"
+            icon="icons/small/amqp-endpoint-24x16.png"
+            name="AMQP"
+            path="amqp.xml"
+            version="3.3.2">
+      </externalContribution>
+        <module
+                description="Core endpoints and patterns for Mule Tooling"
+                icon="icons/module-icon.png"
+                id="org.mule.tooling.ui.modules.coreModule"
+                name="Mule Tooling Core Elements">
+        <category
+               expandByDefault="false"
+               icon="icons/categories/EndpointsCategory-16x16.png"
+               id="org.mule.tooling.ui.contribution.amqp"
+               name="Mule AMQP Transport"
+               paletteWeight="3000">
+         </category>
+     </module>
+   </extension>
+
+</plugin>

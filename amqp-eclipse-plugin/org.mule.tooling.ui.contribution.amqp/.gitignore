@@ -1,0 +1,10 @@
+*~
+.classpath
+.project
+.settings
+.springBeans
+bin
+target
+Ddo*
+ddo*
+mule-transport-amqp-*
