@@ -3,14 +3,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.mule.tooling</groupId>
-	<artifactId>org.mule.tooling.amqp</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<groupId>org.mule.transports</groupId>
+	<artifactId>mule-transport-amqp-tooling</artifactId>
 	<packaging>eclipse-feature</packaging>
 	<parent>
-		<artifactId>mule-amqp-ui-eclipse</artifactId>
-		<groupId>org.mule.tooling.amqp</groupId>
-		<version>1.0.0-SNAPSHOT</version>
+		<artifactId>mule-transport-amqp-plugin-parent</artifactId>
+		<groupId>org.mule.transports</groupId>
+		<version>3.3.0.1</version>
 	</parent>
 
 </project>

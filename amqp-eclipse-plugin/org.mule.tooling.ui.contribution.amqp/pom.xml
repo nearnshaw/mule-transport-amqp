@@ -4,19 +4,19 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>mule-amqp-ui-eclipse</artifactId>
-		<groupId>org.mule.tooling.amqp</groupId>
-		<version>1.0.0-SNAPSHOT</version>
+		<artifactId>mule-transport-amqp-plugin-parent</artifactId>
+		<groupId>org.mule.transports</groupId>
+		<version>3.3.0.1</version>
 	</parent>
 
-	<artifactId>org.mule.tooling.ui.contribution.amqp</artifactId>
+	<artifactId>mule-transport-amqp-contribution</artifactId>
 	<packaging>eclipse-plugin</packaging>
 	
 	<properties>
 		<home.dir>.</home.dir>
 		<lib.dir>lib</lib.dir>
 		<mule.version>3.3.0</mule.version>
-		<amqp.version>3.4.0</amqp.version>
+		<amqp.version>3.3.0.1</amqp.version>
 	</properties>
 	<build>
 		<plugins>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.mule.tooling.amqp"
+      id="mule-transport-amqp-tooling"
       label="Mule AMQP Transport"
-      version="1.0.0.qualifier"
+      version="3.3.0.1"
       provider-name="MuleSoft Inc."
       plugin="org.mule.tooling.ui.contribution.amqp"
       exclusive="true">

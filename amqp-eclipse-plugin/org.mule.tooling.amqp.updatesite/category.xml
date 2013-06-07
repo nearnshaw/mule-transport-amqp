@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-    <feature id="org.mule.tooling.amqp">
+    <feature id="mule-transport-amqp-tooling">
       <category name="org.mule.tooling.ui.contribution.amqp"/>
     </feature>
    <category-def name="org.mule.tooling.ui.contribution.amqp" label="Community">
