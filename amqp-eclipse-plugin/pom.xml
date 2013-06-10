@@ -49,6 +49,26 @@
 					<ignoreTychoRepositories>true</ignoreTychoRepositories>
 				</configuration>
 			</plugin>
+			<plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-jarsigner-plugin</artifactId>
+		        <version>1.2</version>
+		        <executions>
+		          <execution>
+		            <id>sign</id>
+		            <phase>deploy</phase>
+		            <goals>
+		              <goal>sign</goal>
+		            </goals>
+		          </execution>
+		        </executions>
+		        <configuration>
+		          <keystore>${keystorePath}</keystore>
+		          <alias>${alias}</alias>
+		          <storepass>${storepass}</storepass>
+		          <keypass>${keypass}</keypass>
+		        </configuration>
+		    </plugin>
 		</plugins>
 	</build>
 	
