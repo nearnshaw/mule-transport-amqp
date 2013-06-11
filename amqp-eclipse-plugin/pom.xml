@@ -5,15 +5,18 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.mule.transports</groupId>
 	<artifactId>mule-transport-amqp-plugin-parent</artifactId>
-	<version>3.3.0.1</version>
+	<version>3.3.0</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<tycho-version>0.14.0</tycho-version>
+		<tycho-extras-version>0.18.0</tycho-extras-version>
 		<maven.clean.plugin.version>2.4.1</maven.clean.plugin.version>
 		<eclipse-updatesite>http://download.eclipse.org/eclipse/updates/3.8/R-3.8.1-201209141540</eclipse-updatesite>
 		<studio-updatesite>https://corp.bamboo.mulesource.com/browse/TOOLING-STUDIO380/latest/artifact/shared/plugin-update-site</studio-updatesite>
 		<eclipse-gef-updatesite>http://download.eclipse.org/releases/juno/201209280900</eclipse-gef-updatesite>
+		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+		<build.qualifier>${maven.build.timestamp}</build.qualifier>
 	</properties>
 
 	<modules>
@@ -28,12 +31,18 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-deploy-plugin</artifactId>
-					<version>2.7</version>
+					<version>2.7</version>			
 				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
 			<plugin>
+           		<artifactId>maven-deploy-plugin</artifactId>
+           		<configuration>
+             		<skip>true</skip>
+           		</configuration>
+         	</plugin>
+        	<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-maven-plugin</artifactId>
 				<version>${tycho-version}</version>
@@ -69,8 +78,30 @@
 		          <keypass>${keypass}</keypass>
 		        </configuration>
 		    </plugin>
+		    <plugin>
+			  	<groupId>org.eclipse.tycho</groupId>
+			  	<artifactId>tycho-packaging-plugin</artifactId>
+			  	<version>${tycho-version}</version>
+			  	<configuration>
+			    	<qualifier>${build.qualifier}</qualifier>
+			  	</configuration>
+			</plugin>
 		</plugins>
 	</build>
+
+	<distributionManagement>
+        <repository>
+            <id>muleforge-releases</id>
+            <name>MuleForge Snapshot Repository</name>
+            <url>http://repository.mulesoft.org/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>muleforge-snapshots</id>
+            <name>MuleForge Repository</name>
+            <url>http://repository.mulesoft.org/snapshots/</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
 	
 	<repositories>
 		<repository>

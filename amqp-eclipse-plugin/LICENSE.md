@@ -1,21 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<feature
-      id="mule-transport-amqp-tooling"
-      label="Mule AMQP Transport"
-      version="3.3.0"
-      provider-name="MuleSoft Inc."
-      plugin="mule-transport-amqp-contribution"
-      exclusive="true">
-
-   <description url="http://www.mulesoft.org/">
-      Mule Studio AMQP Plugin
-   </description>
-
-   <copyright url="http://www.mulesoft.org">
-      Copyright 2012 Mulesoft Inc.
-   </copyright>
-
-   <license url="http://www.mulesoft.com/downloads/legal/studio-license.html">
 Common Public Attribution License Version 1.0 (CPAL)
 ====================================================
 
@@ -503,13 +485,3 @@ Covered Code. :
 Display of Attribution Information is required in Larger Works which are defined
 in the CPAL as a work which combines Covered Code or portions thereof with code
 not governed by the terms of the CPAL.
-   </license>
-
-   <plugin
-         id="mule-transport-amqp-contribution"
-         download-size="0"
-         install-size="0"
-		 unpack="true"
-         version="0.0.0"/>
-
-</feature>

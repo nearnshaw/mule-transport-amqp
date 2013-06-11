@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>mule-transport-amqp-plugin-parent</artifactId>
 		<groupId>org.mule.transports</groupId>
-		<version>3.3.0.1</version>
+		<version>3.3.0</version>
 	</parent>
 
 	<artifactId>mule-transport-amqp-contribution</artifactId>
@@ -64,6 +64,12 @@
 			          <publishArtifacts>true</publishArtifacts>
 			        </configuration>
 			      </plugin>
+			<plugin>
+           		<artifactId>maven-deploy-plugin</artifactId>
+           		<configuration>
+             		<skip>true</skip>
+           		</configuration>
+         	</plugin>         	
 		</plugins>
 	</build>
 
