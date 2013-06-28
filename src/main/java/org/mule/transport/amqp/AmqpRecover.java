@@ -14,21 +14,20 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mule.api.DefaultMuleException;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
-import org.mule.api.model.SessionException;
-import org.mule.api.processor.MessageProcessor;
-import org.mule.config.i18n.MessageFactory;
 
 import com.rabbitmq.client.Channel;
 
 /**
  * Used to manually perform a basic recover of the current channel.
  */
-public class AmqpRecover implements MessageProcessor
+public class AmqpRecover extends AbstractChannelMessageProcessor
 {
-    private final static Log LOG = LogFactory.getLog(AmqpRecover.class);
+    private static final Log LOG = LogFactory.getLog(AmqpRecover.class);
+    private static final String CHANNEL_ACTION = "recover";
 
     protected boolean requeue = false;
 
@@ -43,18 +42,14 @@ public class AmqpRecover implements MessageProcessor
         this.requeue = requeue;
     }
 
-    private static void recover(final MuleEvent event, final boolean requeue) throws SessionException
+    public static void recover(final MuleEvent event, final boolean requeue) throws MuleException
     {
-        final MuleMessage message = event.getMessage();
-        final Channel channel = AmqpConnector.getChannelFromMessage(message);
+        recover(event.getMessage(), requeue);
+    }
 
-        if (channel == null)
-        {
-            throw new SessionException(
-                MessageFactory.createStaticMessage("No " + AmqpConstants.CHANNEL
-                                                   + " session property found, impossible to recover message: "
-                                                   + message));
-        }
+    public static void recover(final MuleMessage message, final boolean requeue) throws MuleException
+    {
+        final Channel channel = getChannelOrFail(message, CHANNEL_ACTION);
 
         try
         {
@@ -62,8 +57,7 @@ public class AmqpRecover implements MessageProcessor
         }
         catch (final IOException ioe)
         {
-            throw new SessionException(MessageFactory.createStaticMessage("Failed to recover channel: "
-                                                                          + channel), ioe);
+            throw new DefaultMuleException("Failed to recover channel: " + channel, ioe);
         }
 
         if (LOG.isDebugEnabled())

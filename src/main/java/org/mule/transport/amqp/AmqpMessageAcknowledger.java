@@ -14,24 +14,23 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mule.api.DefaultMuleException;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
-import org.mule.api.model.SessionException;
-import org.mule.api.processor.MessageProcessor;
-import org.mule.config.i18n.MessageFactory;
 
 import com.rabbitmq.client.Channel;
 
 /**
- * Used to manually perform a basic ack of the message in flow, allowing fine control
- * of message throttling. It looks for a delivery-tag inbound message property and an
- * amqp.channel session property. If the former is missing, it logs a warning. If the
- * former is present but not the latter, it throws an exception.
+ * Used to manually perform a basic ack of the message in flow, allowing fine control of message
+ * throttling. It looks for a delivery-tag inbound message property and an amqp.channel session
+ * property. If the former is missing, it logs a warning. If the former is present but not the
+ * latter, it throws an exception.
  */
-public class AmqpMessageAcknowledger implements MessageProcessor
+public class AmqpMessageAcknowledger extends AbstractChannelMessageProcessor
 {
-    private final static Log LOG = LogFactory.getLog(AmqpMessageAcknowledger.class);
+    private static final Log LOG = LogFactory.getLog(AmqpMessageAcknowledger.class);
+    private static final String CHANNEL_ACTION = "ack";
 
     protected boolean multiple = false;
 
@@ -46,31 +45,15 @@ public class AmqpMessageAcknowledger implements MessageProcessor
         this.multiple = multiple;
     }
 
-    public static void ack(final MuleEvent event, final boolean multiple) throws SessionException
+    public static void ack(final MuleEvent event, final boolean multiple) throws MuleException
     {
         ack(event.getMessage(), multiple);
     }
 
-    public static void ack(final MuleMessage message, final boolean multiple) throws SessionException
+    public static void ack(final MuleMessage message, final boolean multiple) throws MuleException
     {
-        final Long deliveryTag = message.getInboundProperty(AmqpConstants.DELIVERY_TAG);
-
-        if (deliveryTag == null)
-        {
-            LOG.warn("Missing " + AmqpConstants.DELIVERY_TAG
-                     + " inbound property, impossible to ack message: " + message);
-            return;
-        }
-
-        final Channel channel = AmqpConnector.getChannelFromMessage(message);
-
-        if (channel == null)
-        {
-            throw new SessionException(
-                MessageFactory.createStaticMessage("No " + AmqpConstants.CHANNEL
-                                                   + " session property found, impossible to ack message: "
-                                                   + message));
-        }
+        final Long deliveryTag = getDeliveryTagOrFail(message, CHANNEL_ACTION);
+        final Channel channel = getChannelOrFail(message, CHANNEL_ACTION);
 
         try
         {
@@ -78,9 +61,8 @@ public class AmqpMessageAcknowledger implements MessageProcessor
         }
         catch (final IOException ioe)
         {
-            throw new SessionException(
-                MessageFactory.createStaticMessage("Failed to ack message w/deliveryTag: " + deliveryTag
-                                                   + " on channel: " + channel), ioe);
+            throw new DefaultMuleException("Failed to ack message w/deliveryTag: " + deliveryTag
+                                           + " on channel: " + channel, ioe);
         }
 
         if (LOG.isDebugEnabled())
@@ -89,5 +71,4 @@ public class AmqpMessageAcknowledger implements MessageProcessor
                       + channel);
         }
     }
-
 }

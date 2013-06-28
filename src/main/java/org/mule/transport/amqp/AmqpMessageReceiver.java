@@ -41,8 +41,8 @@ import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 
 /**
- * The <code>AmqpMessageReceiver</code> subscribes to a queue and dispatches received
- * messages to Mule.
+ * The <code>AmqpMessageReceiver</code> subscribes to a queue and dispatches received messages to
+ * Mule.
  */
 public class AmqpMessageReceiver extends AbstractMessageReceiver
 {
@@ -218,9 +218,13 @@ public class AmqpMessageReceiver extends AbstractMessageReceiver
 
                 if (amqpConnector.getAckMode() == AckMode.MANUAL)
                 {
-                    // in manual AckMode, the channel will be needed to ack the
-                    // message
+                    // in manual AckMode, the channel will be needed to ack the message
                     muleMessage.setProperty(AmqpConstants.CHANNEL, channel, PropertyScope.INVOCATION);
+                    // so will the consumer tag (which is already added in the inbound properties
+                    // for the end user but that we also add here in the invocation scope for
+                    // internal needs)
+                    muleMessage.setProperty(AmqpConstants.AMQP_DELIVERY_TAG, amqpMessage.getEnvelope()
+                        .getDeliveryTag(), PropertyScope.INVOCATION);
                 }
 
                 if (endpoint.getTransactionConfig().isTransacted())

@@ -89,6 +89,7 @@ public abstract class AmqpConstants
     // technical properties not intended to be messed with directly
     public static final String CONSUMER_TAG = "consumer-tag";
     public static final String CHANNEL = AmqpConnector.AMQP + ".channel";
+    public static final String AMQP_DELIVERY_TAG = AmqpConnector.AMQP + ".delivery-tag";
     public static final String RETURN_LISTENER = AmqpConnector.AMQP + ".return.listener";
 
     public static final String RETURN_CONTEXT_PREFIX = "return.";
@@ -98,7 +99,8 @@ public abstract class AmqpConstants
     public static final String RETURN_ROUTING_KEY = RETURN_CONTEXT_PREFIX + ROUTING_KEY;
 
     private static final String[] AMQP_TRANSPORT_TECHNICAL_PROPERTY_NAMES_ARRAY = new String[]{CONSUMER_TAG,
-        CHANNEL, RETURN_LISTENER, RETURN_REPLY_CODE, RETURN_REPLY_TEXT, RETURN_EXCHANGE, RETURN_ROUTING_KEY};
+        CHANNEL, AMQP_DELIVERY_TAG, RETURN_LISTENER, RETURN_REPLY_CODE, RETURN_REPLY_TEXT, RETURN_EXCHANGE,
+        RETURN_ROUTING_KEY};
 
     public static final Set<String> AMQP_TRANSPORT_TECHNICAL_PROPERTY_NAMES = Collections.unmodifiableSet(new HashSet<String>(
         Arrays.asList(AMQP_TRANSPORT_TECHNICAL_PROPERTY_NAMES_ARRAY)));

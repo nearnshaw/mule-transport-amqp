@@ -90,8 +90,8 @@ public class AmqpConnector extends AbstractConnector
     private final StackObjectPool connectorConnectionPool;
 
     /**
-     * A fake {@link FlowConstruct} that is used when the events need to be
-     * dispatched on behalf of the connector and out of any actual Flow context.
+     * A fake {@link FlowConstruct} that is used when the events need to be dispatched on behalf of
+     * the connector and out of any actual Flow context.
      */
     protected static class AmqpConnectorFlowConstruct extends AbstractFlowConstruct
     {
@@ -491,6 +491,12 @@ public class AmqpConnector extends AbstractConnector
             throw new InitialisationException(
                 MessageFactory.createStaticMessage("Failed to configure default return endpoint"), ee, this);
         }
+    }
+
+    public static Long getDeliveryTagFromMessage(final MuleMessage message)
+    {
+        return message.getInvocationProperty(AmqpConstants.AMQP_DELIVERY_TAG,
+            message.<Long> getInboundProperty(AmqpConstants.DELIVERY_TAG));
     }
 
     public static Channel getChannelFromMessage(final MuleMessage message)
