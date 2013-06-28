@@ -157,4 +157,15 @@ public class AmqpNamespaceHandlerTestCase extends FunctionalTestCase
         assertTrue(inboundEndpoint.getTransactionConfig().isTransacted());
         assertTrue(((AmqpTransactionFactory) inboundEndpoint.getTransactionConfig().getFactory()).getRecoverStrategy() == RecoverStrategy.REQUEUE);
     }
+
+    @Test
+    public void testEndpointWithArguments() throws Exception
+    {
+        final EndpointBuilder endpointBuilder = muleContext.getRegistry().lookupEndpointBuilder(
+            "amqpEndpointWithArguments");
+        assertNotNull(endpointBuilder);
+        final InboundEndpoint inboundEndpoint = endpointBuilder.buildInboundEndpoint();
+        assertTrue(inboundEndpoint.getProperties().containsKey("amqp-exchange.alternate-exchange"));
+        assertTrue(inboundEndpoint.getProperties().containsKey("amqp-queue.x-dead-letter-exchange"));
+    }
 }

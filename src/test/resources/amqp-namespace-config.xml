@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:amqp="http://www.mulesoft.org/schema/mule/amqp"
+    xmlns:amqp="http://www.mulesoft.org/schema/mule/amqp" xmlns:spring="http://www.springframework.org/schema/beans"
     xsi:schemaLocation="
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-       http://www.mulesoft.org/schema/mule/amqp http://www.mulesoft.org/schema/mule/amqp/current/mule-amqp.xsd">
+       http://www.mulesoft.org/schema/mule/amqp http://www.mulesoft.org/schema/mule/amqp/current/mule-amqp.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <amqp:amqpmessage-to-object-transformer
         name="a2o" />
+
     <amqp:object-to-amqpmessage-transformer
         name="o2a" />
 
@@ -44,6 +46,19 @@
     <amqp:endpoint name="amqpTransactedEndpoint" queueName="target-queue">
         <!-- Transaction, default recover strategy -->
         <amqp:transaction action="ALWAYS_BEGIN" />
+    </amqp:endpoint>
+
+    <!-- Set queue and exchange arguments -->
+    <amqp:endpoint name="amqpEndpointWithArguments" exchangeName="target-exchange"
+        exchangeType="fanout" exchangeDurable="true" exchangeAutoDelete="false"
+        queueName="target-queue" queueDurable="true" queueAutoDelete="false"
+        queueExclusive="true" routingKey="a.b.c">
+        <properties>
+            <spring:entry key="amqp-exchange.alternate-exchange"
+                value="some-exchange" />
+            <spring:entry key="amqp-queue.x-dead-letter-exchange"
+                value="some-queue" />
+        </properties>
     </amqp:endpoint>
 
     <amqp:endpoint name="amqpTransactedEndpointWithRecoverStrategy"

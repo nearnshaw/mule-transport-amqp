@@ -624,6 +624,28 @@ Valid values for the `recoverStrategy` option are: `NONE, `NO_REQUEUE` and `REQU
 Transactions in AMQP are not behaving like JMS transactions: it is strongly suggested that you read [this overview of transaction support in AMQP 0.91](http://www.rabbitmq.com/amqp-0-9-1-reference.html#class.tx) before using transactions.
 It is important to understand that when a transaction gets started on a Mule-managed channel, via for example `<amqp:transaction action="ALWAYS_BEGIN" />`, this channel will remain transactional for its lifetime.
 
+### Exchange and Queue Declaration Arguments
+
+AMQP supports the notion of custom arguments during the declartion of exchanges and queues.
+The connector supports these custom arguments:
+they must be passed as endpoint properties with names prefixed with `amqp-exchange.` or `amqp-queue.`
+respectively for exchange or queue arguments.
+
+The following declares a global endpoint that uses the `alternate-exchange` argument during the exchange declaration
+and the `x-dead-letter-exchange` argument during the queue declaration:
+
+    <amqp:endpoint name="amqpEndpointWithArguments" exchangeName="target-exchange"
+        exchangeType="fanout" exchangeDurable="true" exchangeAutoDelete="false"
+        queueName="target-queue" queueDurable="true" queueAutoDelete="false"
+        queueExclusive="true" routingKey="a.b.c">
+        <properties>
+            <spring:entry key="amqp-exchange.alternate-exchange"
+                value="some-exchange" />
+            <spring:entry key="amqp-queue.x-dead-letter-exchange"
+                value="some-queue" />
+        </properties>
+    </amqp:endpoint>
+
 ### Programmatic message requesting
 
 It is possible to programmatically get messages from an AMQP queue.

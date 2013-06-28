@@ -11,8 +11,9 @@
 package org.mule.transport.amqp;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
@@ -27,22 +28,21 @@ import com.rabbitmq.client.Channel;
 
 public abstract class AmqpEndpointUtil
 {
-    private static final Map<String, Object> NO_ARGS = Collections.<String, Object> emptyMap();
+    private static final Log LOG = LogFactory.getLog(AmqpEndpointUtil.class);
 
     public static final String QUEUE_EXCLUSIVE = "queueExclusive";
-
     public static final String QUEUE_AUTO_DELETE = "queueAutoDelete";
-
     public static final String QUEUE_DURABLE = "queueDurable";
-
-    private final static Log LOG = LogFactory.getLog(AmqpEndpointUtil.class);
 
     public static final String EXCHANGE_AUTO_DELETE = "exchangeAutoDelete";
     public static final String EXCHANGE_DURABLE = "exchangeDurable";
-    public static final String QUEUE_PREFIX = "amqp-queue.";
     public static final String EXCHANGE_TYPE = "exchangeType";
+
     public static final String ROUTING_KEY = "routingKey";
     public static final String CONSUMER_TAG = "consumerTag";
+
+    public static final String QUEUE_PREFIX = "amqp-queue.";
+    public static final String EXCHANGE_PREFIX = "amqp-exchange.";
 
     public static String getOrCreateQueue(final Channel channel,
                                           final ImmutableEndpoint endpoint,
@@ -83,9 +83,11 @@ public abstract class AmqpEndpointUtil
             final boolean queueExclusive = BooleanUtils.toBoolean((String) endpoint.getProperty(QUEUE_EXCLUSIVE));
             final boolean queueAutoDelete = BooleanUtils.toBoolean((String) endpoint.getProperty(QUEUE_AUTO_DELETE));
 
-            channel.queueDeclare(queueName, queueDurable, queueExclusive, queueAutoDelete, NO_ARGS);
+            final Map<String, Object> arguments = getArguments(endpoint, QUEUE_PREFIX);
+
+            channel.queueDeclare(queueName, queueDurable, queueExclusive, queueAutoDelete, arguments);
             LOG.info("Declared queue: " + queueName + ", durable: " + queueDurable + ", exclusive: "
-                     + queueExclusive + ", autoDelete: " + queueAutoDelete);
+                     + queueExclusive + ", autoDelete: " + queueAutoDelete + ", arguments: " + arguments);
 
             bindQueue(channel, endpoint, exchangeName, routingKey, queueName);
         }
@@ -144,10 +146,13 @@ public abstract class AmqpEndpointUtil
             final boolean exchangeDurable = BooleanUtils.toBoolean((String) endpoint.getProperty(EXCHANGE_DURABLE));
             final boolean exchangeAutoDelete = BooleanUtils.toBoolean((String) endpoint.getProperty(EXCHANGE_AUTO_DELETE));
 
-            channel.exchangeDeclare(exchangeName, exchangeType, exchangeDurable, exchangeAutoDelete, NO_ARGS);
+            final Map<String, Object> arguments = getArguments(endpoint, EXCHANGE_PREFIX);
+
+            channel.exchangeDeclare(exchangeName, exchangeType, exchangeDurable, exchangeAutoDelete,
+                arguments);
 
             LOG.info("Declared exchange: " + exchangeName + " of type: " + exchangeType + ", durable: "
-                     + exchangeDurable + ", autoDelete: " + exchangeAutoDelete);
+                     + exchangeDurable + ", autoDelete: " + exchangeAutoDelete + ", arguments: " + arguments);
         }
         else if (!activeDeclarationsOnly)
         {
@@ -161,6 +166,24 @@ public abstract class AmqpEndpointUtil
         }
 
         return exchangeName;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> getArguments(final ImmutableEndpoint endpoint,
+                                                    final String argumentPrefix)
+    {
+        final Map<String, Object> arguments = new HashMap<String, Object>();
+
+        for (final Entry<Object, Object> property : ((Map<Object, Object>) endpoint.getProperties()).entrySet())
+        {
+            final String name = property.getKey().toString();
+            if (StringUtils.startsWith(name, argumentPrefix))
+            {
+                arguments.put(StringUtils.substringAfter(name, argumentPrefix), property.getValue());
+            }
+        }
+
+        return arguments;
     }
 
     public static String getRoutingKey(final ImmutableEndpoint endpoint)
