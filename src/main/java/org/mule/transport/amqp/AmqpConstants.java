@@ -92,7 +92,7 @@ public abstract class AmqpConstants
     public static final String AMQP_DELIVERY_TAG = AmqpConnector.AMQP + ".delivery-tag";
     public static final String RETURN_LISTENER = AmqpConnector.AMQP + ".return.listener";
 
-    public static final String RETURN_CONTEXT_PREFIX = "return.";
+    public static final String RETURN_CONTEXT_PREFIX = AmqpConnector.AMQP + ".return.";
     public static final String RETURN_REPLY_CODE = RETURN_CONTEXT_PREFIX + "reply-code";
     public static final String RETURN_REPLY_TEXT = RETURN_CONTEXT_PREFIX + "reply-text";
     public static final String RETURN_EXCHANGE = RETURN_CONTEXT_PREFIX + EXCHANGE;
