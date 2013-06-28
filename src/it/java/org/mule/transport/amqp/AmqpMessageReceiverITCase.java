@@ -13,14 +13,10 @@ package org.mule.transport.amqp;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Test;
-import org.mule.api.MuleMessage;
 
-public class AmqpMessageReceiverITCase extends AbstractAmqpITCase
+public class AmqpMessageReceiverITCase extends AbstractAmqpInboundITCase
 {
     public AmqpMessageReceiverITCase() throws IOException
     {
@@ -112,17 +108,5 @@ public class AmqpMessageReceiverITCase extends AbstractAmqpITCase
     public void testExclusiveConsumer() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpExclusiveConsumerService");
-    }
-
-    private void dispatchTestMessageAndAssertValidReceivedMessage(final String flowName) throws Exception
-    {
-        final Future<MuleMessage> futureReceivedMessage = setupFunctionTestComponentForFlow(flowName);
-
-        final byte[] body = RandomStringUtils.randomAlphanumeric(20).getBytes();
-        final String correlationId = publishMessageWithAmqp(body, flowName);
-
-        final MuleMessage receivedMessage = futureReceivedMessage.get(getTestTimeoutSecs(), TimeUnit.SECONDS);
-
-        assertValidReceivedMessage(correlationId, body, receivedMessage);
     }
 }

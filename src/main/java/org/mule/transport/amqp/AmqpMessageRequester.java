@@ -13,17 +13,14 @@ package org.mule.transport.amqp;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.endpoint.InboundEndpoint;
-import org.mule.api.transport.PropertyScope;
 import org.mule.transport.AbstractMessageRequester;
 import org.mule.transport.ConnectException;
 import org.mule.transport.amqp.AmqpConnector.InboundConnection;
-import org.mule.transport.amqp.AmqpConstants.AckMode;
 
 import com.rabbitmq.client.Channel;
 
 /**
- * The <code>AmqpMessageRequester</code> is used to consume individual messages from
- * an AMQP broker.
+ * The <code>AmqpMessageRequester</code> is used to consume individual messages from an AMQP broker.
  */
 public class AmqpMessageRequester extends AbstractMessageRequester
 {
@@ -59,23 +56,17 @@ public class AmqpMessageRequester extends AbstractMessageRequester
     @Override
     protected MuleMessage doRequest(final long timeout) throws Exception
     {
-        final AmqpMessage amqpMessage = amqpConnector.consume(getChannel(), getQueueName(),
+        final Channel channel = getChannel();
+
+        final AmqpMessage amqpMessage = amqpConnector.consume(channel, getQueueName(),
             amqpConnector.getAckMode().isAutoAck(), timeout);
 
         if (amqpMessage == null) return null;
 
         final MuleMessage muleMessage = createMuleMessage(amqpMessage);
 
-        if (amqpConnector.getAckMode() == AckMode.MANUAL)
-        {
-            // in manual AckMode, the channel will be needed to ack the message
-            muleMessage.setProperty(AmqpConstants.CHANNEL, getChannel(), PropertyScope.INVOCATION);
-        }
-        else
-        {
-            // otherwise, ack if it's mule's responsibility
-            amqpConnector.ackMessageIfNecessary(getChannel(), amqpMessage);
-        }
+        amqpConnector.addInvocationPropertiesIfNecessary(channel, amqpMessage, muleMessage);
+        amqpConnector.ackMessageIfNecessary(channel, amqpMessage, endpoint);
 
         return muleMessage;
     }

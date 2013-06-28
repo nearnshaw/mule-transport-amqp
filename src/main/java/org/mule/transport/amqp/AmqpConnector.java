@@ -36,6 +36,7 @@ import org.mule.api.transport.Connectable;
 import org.mule.api.transport.MessageDispatcher;
 import org.mule.api.transport.MessageReceiver;
 import org.mule.api.transport.MessageRequester;
+import org.mule.api.transport.PropertyScope;
 import org.mule.api.transport.ReplyToHandler;
 import org.mule.config.i18n.MessageFactory;
 import org.mule.construct.AbstractFlowConstruct;
@@ -650,16 +651,36 @@ public class AmqpConnector extends AbstractConnector
             delivery.getBody());
     }
 
-    public void ackMessageIfNecessary(final Channel channel, final AmqpMessage amqpMessage)
-        throws IOException
+    public void ackMessageIfNecessary(final Channel channel,
+                                      final AmqpMessage amqpMessage,
+                                      final ImmutableEndpoint endpoint) throws IOException
     {
-        if (getAckMode() == AckMode.MULE_AUTO)
+        if ((endpoint.getTransactionConfig().isTransacted()) || (getAckMode() != AckMode.MULE_AUTO))
         {
-            channel.basicAck(amqpMessage.getEnvelope().getDeliveryTag(), false);
-            if (logger.isDebugEnabled())
-            {
-                logger.debug("Mule acknowledged message: " + amqpMessage + " on channel: " + channel);
-            }
+            return;
+        }
+
+        channel.basicAck(amqpMessage.getEnvelope().getDeliveryTag(), false);
+
+        if (logger.isDebugEnabled())
+        {
+            logger.debug("Mule acknowledged message: " + amqpMessage + " on channel: " + channel);
+        }
+    }
+
+    public void addInvocationPropertiesIfNecessary(final Channel channel,
+                                                   final AmqpMessage amqpMessage,
+                                                   final MuleMessage muleMessage)
+    {
+        if (getAckMode() == AckMode.MANUAL)
+        {
+            // in manual AckMode, the channel will be needed to ack the message
+            muleMessage.setProperty(AmqpConstants.CHANNEL, channel, PropertyScope.INVOCATION);
+            // so will the consumer tag (which is already added in the inbound properties
+            // for the end user but that we also add here in the invocation scope for
+            // internal needs)
+            muleMessage.setProperty(AmqpConstants.AMQP_DELIVERY_TAG, amqpMessage.getEnvelope()
+                .getDeliveryTag(), PropertyScope.INVOCATION);
         }
     }
 

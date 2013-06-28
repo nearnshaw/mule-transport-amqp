@@ -26,9 +26,8 @@ import org.mule.module.client.MuleClient;
 import org.mule.transport.amqp.AmqpReturnHandler.LoggingReturnListener;
 import org.mule.util.UUID;
 
-import com.rabbitmq.client.QueueingConsumer.Delivery;
 
-public class AmqpMessageDispatcherITCase extends AbstractAmqpITCase
+public class AmqpMessageDispatcherITCase extends AbstractAmqpOutboundITCase
 {
     public AmqpMessageDispatcherITCase() throws Exception
     {
@@ -194,23 +193,5 @@ public class AmqpMessageDispatcherITCase extends AbstractAmqpITCase
 
         assertEquals(payload + "-response", response.getPayloadAsString());
         assertEquals(customHeaderValue, response.getInboundProperty("customHeader").toString());
-    }
-
-    private void dispatchTestMessageAndAssertValidReceivedMessage(final String flowName) throws Exception
-    {
-        final String customHeaderValue = UUID.getUUID();
-        final String payload = RandomStringUtils.randomAlphanumeric(20);
-        new MuleClient(muleContext).dispatch("vm://" + flowName + ".in", payload,
-            Collections.singletonMap("customHeader", customHeaderValue));
-
-        final Delivery dispatchedMessage = consumeMessageWithAmqp(getQueueName(flowName),
-            getTestTimeoutSecs() * 1000L);
-
-        assertNotNull(dispatchedMessage);
-        assertEquals(payload, new String(dispatchedMessage.getBody()));
-        assertEquals(customHeaderValue, dispatchedMessage.getProperties()
-            .getHeaders()
-            .get("customHeader")
-            .toString());
     }
 }

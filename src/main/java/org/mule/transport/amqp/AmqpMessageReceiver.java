@@ -29,11 +29,9 @@ import org.mule.api.execution.ExecutionTemplate;
 import org.mule.api.lifecycle.CreateException;
 import org.mule.api.lifecycle.StartException;
 import org.mule.api.transport.Connector;
-import org.mule.api.transport.PropertyScope;
 import org.mule.config.i18n.MessageFactory;
 import org.mule.transport.AbstractMessageReceiver;
 import org.mule.transport.amqp.AmqpConnector.InboundConnection;
-import org.mule.transport.amqp.AmqpConstants.AckMode;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -216,18 +214,9 @@ public class AmqpMessageReceiver extends AbstractMessageReceiver
                         getEndpoint(), muleMessage));
                 }
 
-                if (amqpConnector.getAckMode() == AckMode.MANUAL)
-                {
-                    // in manual AckMode, the channel will be needed to ack the message
-                    muleMessage.setProperty(AmqpConstants.CHANNEL, channel, PropertyScope.INVOCATION);
-                    // so will the consumer tag (which is already added in the inbound properties
-                    // for the end user but that we also add here in the invocation scope for
-                    // internal needs)
-                    muleMessage.setProperty(AmqpConstants.AMQP_DELIVERY_TAG, amqpMessage.getEnvelope()
-                        .getDeliveryTag(), PropertyScope.INVOCATION);
-                }
+                amqpConnector.addInvocationPropertiesIfNecessary(channel, amqpMessage, muleMessage);
 
-                if (endpoint.getTransactionConfig().isTransacted())
+                try
                 {
                     final ExecutionTemplate<MuleEvent> executionTemplate = createExecutionTemplate();
                     final ExecutionCallback<MuleEvent> processingCallback = new ExecutionCallback<MuleEvent>()
@@ -240,23 +229,15 @@ public class AmqpMessageReceiver extends AbstractMessageReceiver
                     };
                     executionTemplate.execute(processingCallback);
                 }
-                else
+                finally
                 {
-                    try
-                    {
-                        routeMessage(muleMessage);
-                    }
-                    finally
-                    {
-                        amqpConnector.ackMessageIfNecessary(channel, amqpMessage);
-                    }
+                    amqpConnector.ackMessageIfNecessary(channel, amqpMessage, endpoint);
                 }
             }
             catch (final Exception e)
             {
-                logger.error("Impossible to route: " + amqpMessage, e);
+                logger.error("Failed to route: " + amqpMessage, e);
             }
-
         }
 
         public void release()

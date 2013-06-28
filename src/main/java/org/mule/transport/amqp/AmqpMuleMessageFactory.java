@@ -132,5 +132,4 @@ public class AmqpMuleMessageFactory extends AbstractMuleMessageFactory
             messageProperties.put(key, value);
         }
     }
-
 }

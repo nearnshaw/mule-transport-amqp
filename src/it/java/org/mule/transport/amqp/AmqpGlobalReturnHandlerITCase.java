@@ -13,7 +13,6 @@ package org.mule.transport.amqp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.Collections;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -21,11 +20,8 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Test;
 import org.mule.api.MuleMessage;
 import org.mule.module.client.MuleClient;
-import org.mule.util.UUID;
 
-import com.rabbitmq.client.QueueingConsumer.Delivery;
-
-public class AmqpGlobalReturnHandlerITCase extends AbstractAmqpITCase
+public class AmqpGlobalReturnHandlerITCase extends AbstractAmqpOutboundITCase
 {
     public AmqpGlobalReturnHandlerITCase() throws Exception
     {
@@ -69,23 +65,5 @@ public class AmqpGlobalReturnHandlerITCase extends AbstractAmqpITCase
         final MuleMessage returnedMessage = futureReturnedMessage.get(getTestTimeoutSecs(), TimeUnit.SECONDS);
         assertNotNull(returnedMessage);
         assertEquals(payload, returnedMessage.getPayloadAsString());
-    }
-
-    private void dispatchTestMessageAndAssertValidReceivedMessage(final String flowName) throws Exception
-    {
-        final String customHeaderValue = UUID.getUUID();
-        final String payload = RandomStringUtils.randomAlphanumeric(20);
-        new MuleClient(muleContext).dispatch("vm://" + flowName + ".in", payload,
-            Collections.singletonMap("customHeader", customHeaderValue));
-
-        final Delivery dispatchedMessage = consumeMessageWithAmqp(getQueueName(flowName),
-            getTestTimeoutSecs() * 1000L);
-
-        assertNotNull(dispatchedMessage);
-        assertEquals(payload, new String(dispatchedMessage.getBody()));
-        assertEquals(customHeaderValue, dispatchedMessage.getProperties()
-            .getHeaders()
-            .get("customHeader")
-            .toString());
     }
 }
