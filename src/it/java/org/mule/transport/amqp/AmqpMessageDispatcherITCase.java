@@ -26,7 +26,6 @@ import org.mule.module.client.MuleClient;
 import org.mule.transport.amqp.AmqpReturnHandler.LoggingReturnListener;
 import org.mule.util.UUID;
 
-
 public class AmqpMessageDispatcherITCase extends AbstractAmqpOutboundITCase
 {
     public AmqpMessageDispatcherITCase() throws Exception
@@ -44,6 +43,7 @@ public class AmqpMessageDispatcherITCase extends AbstractAmqpOutboundITCase
         setupExchange("amqpMandatoryDeliveryFailureNoHandler");
         setupExchange("amqpMandatoryDeliveryFailureWithHandler");
         setupExchangeAndQueue("amqpMandatoryDeliverySuccess");
+        setupExchange("amqpCustomArgumentsService");
     }
 
     @Override
@@ -193,5 +193,18 @@ public class AmqpMessageDispatcherITCase extends AbstractAmqpOutboundITCase
 
         assertEquals(payload + "-response", response.getPayloadAsString());
         assertEquals(customHeaderValue, response.getInboundProperty("customHeader").toString());
+    }
+
+    @Test
+    public void testCustomArguments() throws Exception
+    {
+        final Future<MuleMessage> routedMessage = setupFunctionTestComponentForFlow("amqpEndpointWithCustomArgumentsMessageProcessor");
+
+        final String payload = RandomStringUtils.randomAlphanumeric(20);
+        new MuleClient(muleContext).dispatch("vm://amqpCustomArgumentsService.in", payload, null);
+
+        final MuleMessage muleMessage = routedMessage.get(getTestTimeoutSecs(), TimeUnit.SECONDS);
+
+        assertEquals(payload, muleMessage.getPayloadAsString());
     }
 }
