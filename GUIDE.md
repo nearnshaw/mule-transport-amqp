@@ -518,6 +518,17 @@ This is done by configuring the connector to perform passive declarations:
                             exchangeName="my-exchange"
                             connector-ref="amqpStrictLocalhostConnector" />
 
+### Declare and bind outbound queue
+
+It's also possible to declare queue in outbound endpoints, as shown here:
+
+    <amqp:outbound-endpoint exchangeName="amqpOutBoundQueue-exchange"
+                            exchangeType="fanout"
+                            queueName="amqpOutBoundQueue-queue"
+                            queueDurable="true" />
+
+Note that the queue will be declared and bound in a lazy fashion, ie only when the outbound endpoint is used.
+
 ### Message level override of exchange and routing key
 
 It is possible to override some outbound endpoint attributes with **outbound-scoped** message properties:

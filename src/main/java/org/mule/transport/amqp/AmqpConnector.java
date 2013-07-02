@@ -607,7 +607,7 @@ public class AmqpConnector extends AbstractConnector
                         || outboundEndpoint.getProperties().containsKey(AmqpEndpointUtil.QUEUE_EXCLUSIVE))
                     {
                         AmqpEndpointUtil.getOrCreateQueue(connectorConnection.getChannel(), outboundEndpoint,
-                            activeDeclarationsOnly);
+                            activeDeclarationsOnly, exchange);
                     }
 
                     String routingKey = AmqpEndpointUtil.getRoutingKey(outboundEndpoint);

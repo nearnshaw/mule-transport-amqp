@@ -49,6 +49,14 @@ public abstract class AmqpEndpointUtil
                                           final boolean activeDeclarationsOnly) throws IOException
     {
         final String exchangeName = getOrCreateExchange(channel, endpoint, activeDeclarationsOnly);
+        return getOrCreateQueue(channel, endpoint, activeDeclarationsOnly, exchangeName);
+    }
+
+    public static String getOrCreateQueue(final Channel channel,
+                                          final ImmutableEndpoint endpoint,
+                                          final boolean activeDeclarationsOnly,
+                                          final String exchangeName) throws IOException
+    {
         final String routingKey = getRoutingKey(endpoint);
 
         if ((StringUtils.isBlank(exchangeName)) && (StringUtils.isNotBlank(routingKey)))
