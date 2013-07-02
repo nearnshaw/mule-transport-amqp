@@ -143,7 +143,7 @@
                            connector-ref="amqpAutoAckLocalhostConnector">
       <properties>
         <spring:entry key="amqp-exchange.alternate-exchange"
-                      value="amqpServerNamedQueueExistingExchangeService-exchange" />
+                      value="amqpAlternateExchange-exchange" />
         <spring:entry key="amqp-queue.x-dead-letter-exchange"
                       value="amqpExistingQueueService-queue" />
       </properties>

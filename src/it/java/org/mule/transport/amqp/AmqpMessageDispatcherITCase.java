@@ -43,6 +43,7 @@ public class AmqpMessageDispatcherITCase extends AbstractAmqpOutboundITCase
         setupExchange("amqpMandatoryDeliveryFailureNoHandler");
         setupExchange("amqpMandatoryDeliveryFailureWithHandler");
         setupExchangeAndQueue("amqpMandatoryDeliverySuccess");
+        deleteExchange("amqpCustomArgumentsService");
         setupExchange("amqpCustomArgumentsService");
     }
 

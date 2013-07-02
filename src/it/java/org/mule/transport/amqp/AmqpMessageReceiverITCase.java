@@ -18,7 +18,7 @@ import org.junit.Test;
 
 public class AmqpMessageReceiverITCase extends AbstractAmqpInboundITCase
 {
-    public AmqpMessageReceiverITCase() throws IOException
+    public AmqpMessageReceiverITCase() throws IOException, InterruptedException
     {
         // create the required pre-existing exchanges and queues
         setupExchangeAndQueue("amqpExistingQueueService");
@@ -31,6 +31,8 @@ public class AmqpMessageReceiverITCase extends AbstractAmqpInboundITCase
         setupExchangeAndQueue("amqpManualRejectService");
         setupExchangeAndQueue("amqpManualRecoverService");
         setupExchangeAndQueue("amqpExclusiveConsumerService");
+        deleteExchange("amqpCustomArgumentsService");
+        setupExchange("amqpAlternateExchange");
     }
 
     @Override
