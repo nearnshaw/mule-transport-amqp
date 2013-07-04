@@ -95,6 +95,24 @@
             queueName="amqpDefaultExchangeService-queue" connector-ref="amqpConnector" />
     </bridge>
 
+    <amqp:endpoint name="amqpGlobalDefaultExchangeEndpoint"
+        exchangeName="" queueName="amqpGlobalDefaultExchangeService-queue"
+        connector-ref="amqpConnector" />
+
+    <bridge name="amqpGlobalDefaultExchangeService" exchange-pattern="one-way">
+        <vm:inbound-endpoint path="amqpGlobalDefaultExchangeService.in">
+            <!-- Carry a custom inbound property to the outbound scope so it is preserved in the rest of the message processing flow -->
+            <message-properties-transformer
+                scope="outbound">
+                <add-message-property key="customHeader"
+                    value="#[message.inboundProperties.customHeader]" />
+            </message-properties-transformer>
+        </vm:inbound-endpoint>
+        <!-- Dispatch to the default exchange  -->
+        <outbound-endpoint ref="amqpGlobalDefaultExchangeEndpoint" />
+    </bridge>
+
+
     <bridge name="amqpMessageLevelOverrideService" exchange-pattern="one-way">
         <vm:inbound-endpoint path="amqpMessageLevelOverrideService.in">
             <!-- Carry a custom inbound property to the outbound scope so it is preserved in the rest of the message processing flow -->

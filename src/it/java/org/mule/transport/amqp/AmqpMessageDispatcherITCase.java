@@ -39,6 +39,7 @@ public class AmqpMessageDispatcherITCase extends AbstractAmqpOutboundITCase
         deleteExchange("amqpOutBoundQueue");
         deleteQueue("amqpOutBoundQueue");
         setupQueue("amqpDefaultExchangeService");
+        setupQueue("amqpGlobalDefaultExchangeService");
         setupExchangeAndQueue("amqpMessageLevelOverrideService");
         setupExchange("amqpMandatoryDeliveryFailureNoHandler");
         setupExchange("amqpMandatoryDeliveryFailureWithHandler");
@@ -69,6 +70,12 @@ public class AmqpMessageDispatcherITCase extends AbstractAmqpOutboundITCase
     public void testDispatchToDefaultExchange() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpDefaultExchangeService");
+    }
+
+    @Test
+    public void testDispatchToGlobalDefaultExchange() throws Exception
+    {
+        dispatchTestMessageAndAssertValidReceivedMessage("amqpGlobalDefaultExchangeService");
     }
 
     @Test

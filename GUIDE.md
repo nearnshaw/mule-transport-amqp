@@ -271,8 +271,8 @@ Endpoint attributes are interpreted differently if they are used on inbound or o
   <tr>
     <td rowspan="1" class="confluenceTd">queueName</td><td style="text-align: center" class="confluenceTd">string</td><td style="text-align: center" class="confluenceTd">no</td><td style="text-align: center" class="confluenceTd"></td><td class="confluenceTd">
       <p>
-      The queue name to consume from. Leave blank
-      or omit for using a new private exclusive server-named queue.
+      The queue name to consume from or to publish to when interacting with the default exchange.
+      Leave blank or omit for using a new private exclusive server-named queue.
     </p>
     </td>
   </tr>
@@ -280,6 +280,7 @@ Endpoint attributes are interpreted differently if they are used on inbound or o
     <td rowspan="1" class="confluenceTd">routingKey</td><td style="text-align: center" class="confluenceTd">string</td><td style="text-align: center" class="confluenceTd">no</td><td style="text-align: center" class="confluenceTd"></td><td class="confluenceTd">
       <p>
       The routing key to use when binding a queue or publishing a message.
+      Leave blank when interacting with the default exchange.
     </p>
     </td>
   </tr>
