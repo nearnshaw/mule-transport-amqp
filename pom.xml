@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.mule.transports</groupId>
         <artifactId>mule-transports</artifactId>
-        <version>3.3.0</version>
+        <version>3.4.0</version>
     </parent>
 
     <artifactId>mule-transport-amqp</artifactId>
     <packaging>jar</packaging>
     <name>Mule AMQP Transport</name>
-    <version>3.3.0.2-SNAPSHOT</version>
+    <version>3.4.0-SNAPSHOT</version>
     <description>Connects to AMQP brokers</description>
     <url>http://www.muleforge.org/projects/AMQP</url>
 
@@ -241,11 +242,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>mockobjects</groupId>
-            <artifactId>mockobjects-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
@@ -353,7 +349,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.1</version>
+                        <version>1.2.1</version>
                         <executions>
                             <execution>
                                 <id>create-test-vhost-and-user</id>
@@ -363,7 +359,7 @@
                                 </goals>
                                 <configuration>
                                     <workingDirectory>src/it/config</workingDirectory>
-                                    <executable>src/it/config/setup_rabbitmq.sh</executable>
+                                    <executable>src/it/config/sudo_setup_rabbitmq.sh</executable>
                                 </configuration>
                             </execution>
                         </executions>
