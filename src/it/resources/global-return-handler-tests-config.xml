@@ -15,7 +15,7 @@
     virtualHost="mule-test" username="mule" password="elum" mandatory="true"
     default-return-endpoint-ref="globalReturnedMessageChannel" />
 
-  <bridge name="amqpMandatoryDeliveryWithGlobalHandlerSuccess" exchange-pattern="one-way">
+  <flow name="amqpMandatoryDeliveryWithGlobalHandlerSuccess">
     <vm:inbound-endpoint path="amqpMandatoryDeliveryWithGlobalHandlerSuccess.in">
       <!-- Carry a custom inbound property to the outbound scope so it is 
         preserved in the rest of the message processing flow -->
@@ -27,7 +27,7 @@
     </vm:inbound-endpoint>
     <!-- A queue is bound to this exchange so this should succeed -->
     <amqp:outbound-endpoint exchangeName="amqpMandatoryDeliveryWithGlobalHandlerSuccess-exchange" />
-  </bridge>
+  </flow>
 
   <flow name="amqpMandatoryDeliveryFailureGlobalHandler">
     <vm:inbound-endpoint path="amqpMandatoryDeliveryFailureGlobalHandler.in" />

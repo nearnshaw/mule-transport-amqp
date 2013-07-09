@@ -30,7 +30,7 @@
     </spring:bean>
 
 
-    <bridge name="amqpExistingExchangeService" exchange-pattern="one-way">
+    <flow name="amqpExistingExchangeService">
         <vm:inbound-endpoint path="amqpExistingExchangeService.in">
             <!-- Carry a custom inbound property to the outbound scope so it is preserved in the rest of the message processing flow -->
             <message-properties-transformer
@@ -42,10 +42,9 @@
         <!-- Dispatch to an existing exchange -->
         <amqp:outbound-endpoint exchangeName="amqpExistingExchangeService-exchange"
             connector-ref="amqpConnector" />
-    </bridge>
+    </flow>
 
-    <bridge name="amqpRedeclaredExistingExchangeService"
-        exchange-pattern="one-way">
+    <flow name="amqpRedeclaredExistingExchangeService">
         <vm:inbound-endpoint path="amqpRedeclaredExistingExchangeService.in">
             <!-- Carry a custom inbound property to the outbound scope so it is preserved in the rest of the message processing flow -->
             <message-properties-transformer
@@ -58,15 +57,15 @@
         <amqp:outbound-endpoint exchangeName="amqpRedeclaredExistingExchangeService-exchange"
             exchangeType="fanout" exchangeAutoDelete="false" exchangeDurable="false"
             connector-ref="amqpConnector" />
-    </bridge>
+    </flow>
 
-    <bridge name="amqpNewExchangeService" exchange-pattern="one-way">
+    <flow name="amqpNewExchangeService">
         <vm:inbound-endpoint path="amqpNewExchangeService.in" />
         <!-- Dispatch to a new exchange  -->
         <amqp:outbound-endpoint exchangeName="amqpNewExchangeService-exchange"
             exchangeType="fanout" exchangeAutoDelete="true" exchangeDurable="false"
             connector-ref="amqpConnector" />
-    </bridge>
+    </flow>
 
     <flow name="amqpNewExchangeMultiStepService">
         <vm:inbound-endpoint path="amqpNewExchangeMultiStepService.in"
@@ -81,7 +80,7 @@
         </all>
     </flow>
 
-    <bridge name="amqpDefaultExchangeService" exchange-pattern="one-way">
+    <flow name="amqpDefaultExchangeService">
         <vm:inbound-endpoint path="amqpDefaultExchangeService.in">
             <!-- Carry a custom inbound property to the outbound scope so it is preserved in the rest of the message processing flow -->
             <message-properties-transformer
@@ -93,13 +92,13 @@
         <!-- Dispatch to the default exchange  -->
         <amqp:outbound-endpoint exchangeName=""
             queueName="amqpDefaultExchangeService-queue" connector-ref="amqpConnector" />
-    </bridge>
+    </flow>
 
     <amqp:endpoint name="amqpGlobalDefaultExchangeEndpoint"
         exchangeName="" queueName="amqpGlobalDefaultExchangeService-queue"
         connector-ref="amqpConnector" />
 
-    <bridge name="amqpGlobalDefaultExchangeService" exchange-pattern="one-way">
+    <flow name="amqpGlobalDefaultExchangeService">
         <vm:inbound-endpoint path="amqpGlobalDefaultExchangeService.in">
             <!-- Carry a custom inbound property to the outbound scope so it is preserved in the rest of the message processing flow -->
             <message-properties-transformer
@@ -110,10 +109,10 @@
         </vm:inbound-endpoint>
         <!-- Dispatch to the default exchange  -->
         <outbound-endpoint ref="amqpGlobalDefaultExchangeEndpoint" />
-    </bridge>
+    </flow>
 
 
-    <bridge name="amqpMessageLevelOverrideService" exchange-pattern="one-way">
+    <flow name="amqpMessageLevelOverrideService">
         <vm:inbound-endpoint path="amqpMessageLevelOverrideService.in">
             <!-- Carry a custom inbound property to the outbound scope so it is preserved in the rest of the message processing flow -->
             <message-properties-transformer
@@ -132,7 +131,7 @@
         </vm:inbound-endpoint>
         <amqp:outbound-endpoint exchangeName="thisExchangeWillBeOverriden"
             connector-ref="activeOnlyAmqpConnector" />
-    </bridge>
+    </flow>
 
     <flow name="amqpMandatoryDeliveryFailureNoHandler">
         <vm:inbound-endpoint path="amqpMandatoryDeliveryFailureNoHandler.in" />
@@ -163,7 +162,7 @@
         <test:component />
     </flow>
 
-    <bridge name="amqpMandatoryDeliverySuccess" exchange-pattern="one-way">
+    <flow name="amqpMandatoryDeliverySuccess">
         <vm:inbound-endpoint path="amqpMandatoryDeliverySuccess.in">
             <!-- Carry a custom inbound property to the outbound scope so it is preserved in the rest of the message processing flow -->
             <message-properties-transformer
@@ -175,10 +174,10 @@
         <!-- A queue is bound to this exchange so this should succeed -->
         <amqp:outbound-endpoint exchangeName="amqpMandatoryDeliverySuccess-exchange"
             connector-ref="mandatoryAmqpConnector" />
-    </bridge>
+    </flow>
 
 
-    <bridge name="amqpRequestResponseService" exchange-pattern="request-response">
+    <flow name="amqpRequestResponseService">
         <vm:inbound-endpoint path="amqpRequestResponseService.in"
             exchange-pattern="request-response">
             <!-- Carry a custom inbound property to the outbound scope so it is preserved in the rest of the message processing flow -->
@@ -200,7 +199,7 @@
             exchangeName="amqpSendTargetService-exchange" exchangeType="fanout"
             exchangeAutoDelete="false" exchangeDurable="false" connector-ref="amqpConnector"
             responseTimeout="15000" />
-    </bridge>
+    </flow>
 
     <flow name="amqpSendTargetService">
         <amqp:inbound-endpoint exchangeName="amqpSendTargetService-exchange"
@@ -218,7 +217,7 @@
         <test:component appendString="-response" />
     </flow>
 
-    <flow name="amqpOutboundQueue">
+    <flow name="amqpOutBoundQueue">
         <vm:inbound-endpoint path="amqpOutBoundQueue.in" />
 
         <amqp:outbound-endpoint exchangeName="amqpOutBoundQueue-exchange"
@@ -247,10 +246,10 @@
         </properties>
     </amqp:endpoint>
 
-    <bridge name="amqpCustomArgumentsService" exchange-pattern="one-way">
+    <flow name="amqpCustomArgumentsService">
         <vm:inbound-endpoint path="amqpCustomArgumentsService.in" />
         <outbound-endpoint ref="amqpEndpointWithCustomArguments" />
-    </bridge>
+    </flow>
 
     <flow name="amqpEndpointWithCustomArgumentsMessageProcessor">
         <inbound-endpoint ref="amqpEndpointWithCustomArguments" />
