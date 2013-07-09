@@ -81,6 +81,37 @@
         </all>
     </flow>
 
+    <bridge name="amqpLegacyDefaultExchangeService" exchange-pattern="one-way">
+        <vm:inbound-endpoint path="amqpLegacyDefaultExchangeService.in">
+            <!-- Carry a custom inbound property to the outbound scope so it is preserved in the rest of the message processing flow -->
+            <message-properties-transformer
+                scope="outbound">
+                <add-message-property key="customHeader"
+                    value="#[message.inboundProperties.customHeader]" />
+            </message-properties-transformer>
+        </vm:inbound-endpoint>
+        <!-- Dispatch to the default exchange  -->
+        <amqp:outbound-endpoint exchangeName=""
+            queueName="amqpLegacyDefaultExchangeService-queue" connector-ref="amqpConnector" />
+    </bridge>
+
+    <amqp:endpoint name="amqpLegacyGlobalDefaultExchangeEndpoint"
+        exchangeName="" queueName="amqpLegacyGlobalDefaultExchangeService-queue"
+        connector-ref="amqpConnector" />
+
+    <bridge name="amqpLegacyGlobalDefaultExchangeService" exchange-pattern="one-way">
+        <vm:inbound-endpoint path="amqpLegacyGlobalDefaultExchangeService.in">
+            <!-- Carry a custom inbound property to the outbound scope so it is preserved in the rest of the message processing flow -->
+            <message-properties-transformer
+                scope="outbound">
+                <add-message-property key="customHeader"
+                    value="#[message.inboundProperties.customHeader]" />
+            </message-properties-transformer>
+        </vm:inbound-endpoint>
+        <!-- Dispatch to the default exchange  -->
+        <outbound-endpoint ref="amqpLegacyGlobalDefaultExchangeEndpoint" />
+    </bridge>
+
     <bridge name="amqpDefaultExchangeService" exchange-pattern="one-way">
         <vm:inbound-endpoint path="amqpDefaultExchangeService.in">
             <!-- Carry a custom inbound property to the outbound scope so it is preserved in the rest of the message processing flow -->
@@ -91,12 +122,12 @@
             </message-properties-transformer>
         </vm:inbound-endpoint>
         <!-- Dispatch to the default exchange  -->
-        <amqp:outbound-endpoint exchangeName=""
-            queueName="amqpDefaultExchangeService-queue" connector-ref="amqpConnector" />
+        <amqp:outbound-endpoint exchangeName="AMQP.DEFAULT.EXCHANGE"
+            routingKey="amqpDefaultExchangeService-queue" connector-ref="amqpConnector" />
     </bridge>
 
     <amqp:endpoint name="amqpGlobalDefaultExchangeEndpoint"
-        exchangeName="" queueName="amqpGlobalDefaultExchangeService-queue"
+        exchangeName="AMQP.DEFAULT.EXCHANGE" routingKey="amqpGlobalDefaultExchangeService-queue"
         connector-ref="amqpConnector" />
 
     <bridge name="amqpGlobalDefaultExchangeService" exchange-pattern="one-way">

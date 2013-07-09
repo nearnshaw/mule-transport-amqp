@@ -38,14 +38,16 @@ public class AmqpMessageDispatcherITCase extends AbstractAmqpOutboundITCase
         deleteExchange("amqpExternalFactoryConnector");
         deleteExchange("amqpOutBoundQueue");
         deleteQueue("amqpOutBoundQueue");
-        setupQueue("amqpDefaultExchangeService");
-        setupQueue("amqpGlobalDefaultExchangeService");
         setupExchangeAndQueue("amqpMessageLevelOverrideService");
         setupExchange("amqpMandatoryDeliveryFailureNoHandler");
         setupExchange("amqpMandatoryDeliveryFailureWithHandler");
         setupExchangeAndQueue("amqpMandatoryDeliverySuccess");
         deleteExchange("amqpCustomArgumentsService");
         setupExchange("amqpCustomArgumentsService");
+        setupQueue("amqpLegacyDefaultExchangeService");
+        setupQueue("amqpLegacyGlobalDefaultExchangeService");
+        setupQueue("amqpDefaultExchangeService");
+        setupQueue("amqpGlobalDefaultExchangeService");
     }
 
     @Override
@@ -64,6 +66,18 @@ public class AmqpMessageDispatcherITCase extends AbstractAmqpOutboundITCase
     public void testDispatchToRedeclaredExistingExchange() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpRedeclaredExistingExchangeService");
+    }
+
+    @Test
+    public void testDispatchToLegacyDefaultExchange() throws Exception
+    {
+        dispatchTestMessageAndAssertValidReceivedMessage("amqpLegacyDefaultExchangeService");
+    }
+
+    @Test
+    public void testDispatchToLegacyGlobalDefaultExchange() throws Exception
+    {
+        dispatchTestMessageAndAssertValidReceivedMessage("amqpLegacyGlobalDefaultExchangeService");
     }
 
     @Test

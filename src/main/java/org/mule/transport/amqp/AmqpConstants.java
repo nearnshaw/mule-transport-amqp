@@ -111,6 +111,8 @@ public abstract class AmqpConstants
             AMQP_TRANSPORT_TECHNICAL_PROPERTY_NAMES_ARRAY))));
     public static final Charset LONG_STRING_CHARSET = Charset.forName("UTF-8");
 
+    public static final String DEFAULT_EXCHANGE_ALIAS = "AMQP.DEFAULT.EXCHANGE";
+
     public static void main(final String[] args)
     {
         // generates the properties HTML tables used in the documentation
