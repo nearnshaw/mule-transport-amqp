@@ -27,9 +27,8 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.ReturnListener;
 
 /**
- * The <code>AmqpMessageDispatcher</code> takes care of sending messages from Mule to
- * an AMQP broker. It supports synchronous sending by the means of private temporary
- * reply queues.
+ * The <code>AmqpMessageDispatcher</code> takes care of sending messages from Mule to an AMQP
+ * broker. It supports synchronous sending by the means of private temporary reply queues.
  */
 public class AmqpMessageDispatcher extends AbstractMessageDispatcher
 {
@@ -137,8 +136,15 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
         }
 
         final Channel eventChannel = getChannel();
-        final String eventExchange = message.getOutboundProperty(AmqpConstants.EXCHANGE, getExchange());
+
+        String eventExchange = message.getOutboundProperty(AmqpConstants.EXCHANGE, getExchange());
+        if (AmqpEndpointUtil.isDefaultExchange(eventExchange))
+        {
+            eventExchange = "";
+        }
+
         final String eventRoutingKey = message.getOutboundProperty(AmqpConstants.ROUTING_KEY, getRoutingKey());
+
         final AmqpMessage amqpMessage = (AmqpMessage) message.getPayload();
 
         // override publication properties if they are not set
@@ -181,8 +187,8 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
     }
 
     /**
-     * Try to associate a return listener to the channel in order to allow flow-level
-     * exception strategy to handle return messages.
+     * Try to associate a return listener to the channel in order to allow flow-level exception
+     * strategy to handle return messages.
      */
     protected void addReturnListenerIfNeeded(final MuleEvent event, final Channel channel)
     {

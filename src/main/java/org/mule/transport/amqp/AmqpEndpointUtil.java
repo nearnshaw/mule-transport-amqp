@@ -59,7 +59,7 @@ public abstract class AmqpEndpointUtil
     {
         final String routingKey = getRoutingKey(endpoint);
 
-        if ((StringUtils.isBlank(exchangeName)) && (StringUtils.isNotBlank(routingKey)))
+        if (isDefaultExchange(exchangeName) && (StringUtils.isNotBlank(routingKey)))
         {
             // no exchange name -> enforce routing key to be empty
             throw new MuleRuntimeException(
@@ -69,7 +69,7 @@ public abstract class AmqpEndpointUtil
 
         final String queueName = getQueueName(endpoint.getAddress());
 
-        if (StringUtils.isBlank(queueName))
+        if (isDefaultExchange(queueName))
         {
             // no queue name -> create a private one on the server
             final DeclareOk queueDeclareResult = channel.queueDeclare();
@@ -119,7 +119,7 @@ public abstract class AmqpEndpointUtil
                                   final String routingKey,
                                   final String queueName) throws IOException
     {
-        if (StringUtils.isBlank(exchangeName))
+        if (isDefaultExchange(exchangeName))
         {
             // default exchange name -> can not bind a queue to it
             throw new MuleRuntimeException(
@@ -134,6 +134,12 @@ public abstract class AmqpEndpointUtil
                  + routingKey);
     }
 
+    public static boolean isDefaultExchange(final String exchangeName)
+    {
+        return StringUtils.isBlank(exchangeName)
+               || StringUtils.equals(exchangeName, AmqpConstants.DEFAULT_EXCHANGE_ALIAS);
+    }
+
     public static String getOrCreateExchange(final Channel channel,
                                              final ImmutableEndpoint endpoint,
                                              final boolean activeDeclarationsOnly) throws IOException
@@ -141,7 +147,7 @@ public abstract class AmqpEndpointUtil
         final String outboundEndpointAddress = endpoint.getAddress();
         final String exchangeName = getExchangeName(outboundEndpointAddress);
 
-        if (StringUtils.isBlank(exchangeName))
+        if (isDefaultExchange(exchangeName))
         {
             LOG.info("Using default exchange for endpoint: " + endpoint);
             return exchangeName;
