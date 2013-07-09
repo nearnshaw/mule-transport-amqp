@@ -330,7 +330,7 @@
             <xsd:annotation>
                 <xsd:documentation>
                     The exchange to publish to or bind queues to.
-                    Leave blank or omit for the default exchange.
+                    Use AMQP.DEFAULT.EXCHANGE for the default exchange.
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>

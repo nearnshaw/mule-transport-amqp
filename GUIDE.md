@@ -264,7 +264,7 @@ Endpoint attributes are interpreted differently if they are used on inbound or o
     <td rowspan="1" class="confluenceTd">exchangeName</td><td style="text-align: center" class="confluenceTd">string</td><td style="text-align: center" class="confluenceTd">no</td><td style="text-align: center" class="confluenceTd"></td><td class="confluenceTd">
       <p>
       The exchange to publish to or bind queues to.
-      Use <b>AMQP.DEFAULT.EXCHANGE</b> to use the default exchange
+      Use <b>AMQP.DEFAULT.EXCHANGE</b> for the default exchange
       (the previous approach that consists in leaving blank or omitting `exchangeName` for the default exchange still works but is not recommended).
     </p>
     </td>
