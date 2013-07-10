@@ -152,16 +152,31 @@
                     value="#[message.inboundProperties.customHeader]" />
             </message-properties-transformer>
             <!-- Define message level overrides for exchange and routing key -->
-            <message-properties-transformer
-                scope="outbound">
-                <add-message-property key="exchange"
-                    value="amqpMessageLevelOverrideService-exchange" />
-                <add-message-property key="routing-key"
-                    value="amqpMessageLevelOverrideService-queue" />
-            </message-properties-transformer>
+            <set-property propertyName="exchange"
+                value="amqpMessageLevelOverrideService-exchange" />
+            <set-property propertyName="routing-key"
+                value="amqpMessageLevelOverrideService-queue" />
         </vm:inbound-endpoint>
         <amqp:outbound-endpoint exchangeName="thisExchangeWillBeOverriden"
             connector-ref="activeOnlyAmqpConnector" />
+    </flow>
+
+    <flow name="amqpMelOutboundEndpointService">
+        <vm:inbound-endpoint path="amqpMelOutboundEndpointService.in">
+            <!-- Carry a custom inbound property to the outbound scope so it is preserved in the rest of the message processing flow -->
+            <message-properties-transformer
+                scope="outbound">
+                <add-message-property key="customHeader"
+                    value="#[message.inboundProperties.customHeader]" />
+            </message-properties-transformer>
+            <!-- Define flow variables to test MEL in endpoint -->
+            <set-variable variableName="myExchangeName"
+                value="amqpMelOutboundEndpointService-exchange" />
+            <set-variable variableName="myRoutingKey"
+                value="amqpMelOutboundEndpointService-queue" />
+        </vm:inbound-endpoint>
+        <amqp:outbound-endpoint exchangeName="#[myExchangeName]"
+            routingKey="#[myRoutingKey]" connector-ref="activeOnlyAmqpConnector" />
     </flow>
 
     <flow name="amqpMandatoryDeliveryFailureNoHandler">

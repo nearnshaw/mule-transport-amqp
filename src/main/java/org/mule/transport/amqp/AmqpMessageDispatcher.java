@@ -16,6 +16,7 @@ import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.endpoint.OutboundEndpoint;
+import org.mule.api.expression.ExpressionManager;
 import org.mule.api.transport.DispatchException;
 import org.mule.config.i18n.MessageFactory;
 import org.mule.transport.AbstractMessageDispatcher;
@@ -143,7 +144,14 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
             eventExchange = "";
         }
 
-        final String eventRoutingKey = message.getOutboundProperty(AmqpConstants.ROUTING_KEY, getRoutingKey());
+        String eventRoutingKey = message.getOutboundProperty(AmqpConstants.ROUTING_KEY, getRoutingKey());
+        // MEL in exchange and queue is auto-resolved as being part of the endpoint URI but routing
+        // key must be resolved by hand
+        final ExpressionManager expressionManager = event.getMuleContext().getExpressionManager();
+        if (expressionManager.isValidExpression(eventRoutingKey))
+        {
+            eventRoutingKey = expressionManager.evaluate(eventRoutingKey, event).toString();
+        }
 
         final AmqpMessage amqpMessage = (AmqpMessage) message.getPayload();
 

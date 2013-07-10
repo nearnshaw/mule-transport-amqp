@@ -24,7 +24,7 @@
         <level value="INFO" />
     </logger>
     <logger name="org.mule.transport.amqp">
-        <level value="DEBUG" />
+        <level value="INFO" />
     </logger>
 
     <root>

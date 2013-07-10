@@ -39,6 +39,7 @@ public class AmqpMessageDispatcherITCase extends AbstractAmqpOutboundITCase
         deleteExchange("amqpOutBoundQueue");
         deleteQueue("amqpOutBoundQueue");
         setupExchangeAndQueue("amqpMessageLevelOverrideService");
+        setupExchangeAndQueue("amqpMelOutboundEndpointService");
         setupExchange("amqpMandatoryDeliveryFailureNoHandler");
         setupExchange("amqpMandatoryDeliveryFailureWithHandler");
         setupExchangeAndQueue("amqpMandatoryDeliverySuccess");
@@ -96,6 +97,12 @@ public class AmqpMessageDispatcherITCase extends AbstractAmqpOutboundITCase
     public void testMessageLevelOverrideService() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpMessageLevelOverrideService");
+    }
+
+    @Test
+    public void testMelOutboundEndpointService() throws Exception
+    {
+        dispatchTestMessageAndAssertValidReceivedMessage("amqpMelOutboundEndpointService");
     }
 
     @Test
