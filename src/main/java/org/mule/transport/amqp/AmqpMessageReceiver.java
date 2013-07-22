@@ -11,26 +11,27 @@
 package org.mule.transport.amqp;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
-import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mule.MessageExchangePattern;
-import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.MuleRuntimeException;
 import org.mule.api.construct.FlowConstruct;
 import org.mule.api.endpoint.InboundEndpoint;
-import org.mule.api.execution.ExecutionCallback;
-import org.mule.api.execution.ExecutionTemplate;
 import org.mule.api.lifecycle.CreateException;
 import org.mule.api.lifecycle.StartException;
+import org.mule.api.transaction.Transaction;
+import org.mule.api.transaction.TransactionException;
 import org.mule.api.transport.Connector;
 import org.mule.config.i18n.MessageFactory;
 import org.mule.transport.AbstractMessageReceiver;
+import org.mule.transport.AbstractReceiverWorker;
 import org.mule.transport.amqp.AmqpConnector.InboundConnection;
 
 import com.rabbitmq.client.AMQP;
@@ -149,7 +150,7 @@ public class AmqpMessageReceiver extends AbstractMessageReceiver
 
     private void deliverAmqpMessage(final AmqpMessage amqpMessage)
     {
-        final AmqpMessageRouterWork work = new AmqpMessageRouterWork(getChannel(), amqpMessage);
+        final AmqpWorker work = new AmqpWorker(getChannel(), amqpMessage);
 
         try
         {
@@ -181,68 +182,51 @@ public class AmqpMessageReceiver extends AbstractMessageReceiver
 
             if (logger.isDebugEnabled())
             {
-                logger.debug("Received: " + amqpMessage);
+                logger.debug("Received: " + amqpMessage + " from: " + super.getChannel());
             }
 
             deliverAmqpMessage(amqpMessage);
         }
     }
 
-    private final class AmqpMessageRouterWork implements Work
+    private final class AmqpWorker extends AbstractReceiverWorker
     {
-        private final Log logger = LogFactory.getLog(AmqpMessageRouterWork.class);
+        private final Log logger = LogFactory.getLog(AmqpWorker.class);
         private final Channel channel;
         private final AmqpMessage amqpMessage;
 
-        private AmqpMessageRouterWork(final Channel channel, final AmqpMessage amqpMessage)
+        private AmqpWorker(final Channel channel, final AmqpMessage amqpMessage)
         {
+            super(Collections.<Object> singletonList(amqpMessage), AmqpMessageReceiver.this);
+
             this.channel = channel;
             this.amqpMessage = amqpMessage;
         }
 
-        public void run()
+        @Override
+        protected void bindTransaction(final Transaction tx) throws TransactionException
         {
-            try
-            {
-                final MuleMessage muleMessage = createMuleMessage(amqpMessage);
-
-                if ((getEndpoint().getExchangePattern() == MessageExchangePattern.REQUEST_RESPONSE)
-                    && (muleMessage.getReplyTo() == null))
-                {
-                    logger.warn(String.format(
-                        "Impossible to honor the request-response exchange pattern of %s for AMQP message without reply to: %s",
-                        getEndpoint(), muleMessage));
-                }
-
-                amqpConnector.addInvocationPropertiesIfNecessary(channel, amqpMessage, muleMessage);
-
-                try
-                {
-                    final ExecutionTemplate<MuleEvent> executionTemplate = createExecutionTemplate();
-                    final ExecutionCallback<MuleEvent> processingCallback = new ExecutionCallback<MuleEvent>()
-                    {
-                        public MuleEvent process() throws Exception
-                        {
-                            routeMessage(muleMessage);
-                            return null;
-                        }
-                    };
-                    executionTemplate.execute(processingCallback);
-                }
-                finally
-                {
-                    amqpConnector.ackMessageIfNecessary(channel, amqpMessage, endpoint);
-                }
-            }
-            catch (final Exception e)
-            {
-                logger.error("Failed to route: " + amqpMessage, e);
-            }
+            tx.bindResource(channel.getClass(), channel);
         }
 
-        public void release()
+        @Override
+        protected void preRouteMuleMessage(final MuleMessage muleMessage) throws Exception
         {
-            // NOOP
+            if ((getEndpoint().getExchangePattern() == MessageExchangePattern.REQUEST_RESPONSE)
+                && (muleMessage.getReplyTo() == null))
+            {
+                logger.warn(String.format(
+                    "Impossible to honor the request-response exchange pattern of %s for AMQP message without reply to: %s",
+                    getEndpoint(), muleMessage));
+            }
+
+            amqpConnector.addInvocationPropertiesIfNecessary(channel, amqpMessage, muleMessage);
+        }
+
+        @Override
+        protected void handleResults(@SuppressWarnings("rawtypes") final List messages) throws Exception
+        {
+            amqpConnector.ackMessageIfNecessary(channel, amqpMessage, endpoint);
         }
     }
 }

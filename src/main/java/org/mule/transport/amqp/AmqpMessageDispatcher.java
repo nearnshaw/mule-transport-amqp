@@ -17,8 +17,10 @@ import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.endpoint.OutboundEndpoint;
 import org.mule.api.expression.ExpressionManager;
+import org.mule.api.transaction.Transaction;
 import org.mule.api.transport.DispatchException;
 import org.mule.config.i18n.MessageFactory;
+import org.mule.transaction.TransactionCoordination;
 import org.mule.transport.AbstractMessageDispatcher;
 import org.mule.transport.amqp.AmqpConnector.OutboundConnection;
 import org.mule.util.StringUtils;
@@ -224,6 +226,12 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
 
     protected Channel getChannel()
     {
+        final Transaction transaction = TransactionCoordination.getInstance().getTransaction();
+        if (transaction instanceof AmqpTransaction)
+        {
+            return ((AmqpTransaction) transaction).getTransactedChannel();
+        }
+
         return outboundConnection == null ? null : outboundConnection.getChannel();
     }
 

@@ -72,7 +72,7 @@ public class AmqpTransaction extends AbstractSingleResourceTransaction
 
         try
         {
-            ((Channel) resource).txCommit();
+            getTransactedChannel().txCommit();
         }
         catch (final IOException ioe)
         {
@@ -89,7 +89,7 @@ public class AmqpTransaction extends AbstractSingleResourceTransaction
             return;
         }
 
-        final Channel channel = (Channel) resource;
+        final Channel channel = getTransactedChannel();
 
         try
         {
@@ -121,5 +121,10 @@ public class AmqpTransaction extends AbstractSingleResourceTransaction
             logger.warn("Failed to recover channel " + channel + " after rollback (recoverStrategy is "
                         + recoverStrategy + ")");
         }
+    }
+
+    public Channel getTransactedChannel()
+    {
+        return (Channel) resource;
     }
 }
