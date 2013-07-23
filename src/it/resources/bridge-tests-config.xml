@@ -63,7 +63,7 @@
                                connector-ref="amqpConnector" />
         <test:component appendString="-response" />
     </flow>
-    <bridge name="amqpTransactedBridge" exchange-pattern="one-way" transacted="true">
+    <flow name="amqpTransactedBridge">
         <amqp:inbound-endpoint queueName="amqpTransactedBridge-queue"
                                connector-ref="amqpConnector">
             <amqp:transaction action="ALWAYS_BEGIN" />
@@ -72,5 +72,5 @@
                                 connector-ref="amqpConnector">
             <amqp:transaction action="ALWAYS_JOIN" />
         </amqp:outbound-endpoint>
-    </bridge>
+    </flow>
 </mule>
