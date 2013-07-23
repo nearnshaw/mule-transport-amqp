@@ -69,7 +69,7 @@ public abstract class AmqpEndpointUtil
 
         final String queueName = getQueueName(endpoint.getAddress());
 
-        if (isDefaultExchange(queueName))
+        if (StringUtils.isBlank(queueName))
         {
             // no queue name -> create a private one on the server
             final DeclareOk queueDeclareResult = channel.queueDeclare();
@@ -119,12 +119,10 @@ public abstract class AmqpEndpointUtil
                                   final String routingKey,
                                   final String queueName) throws IOException
     {
-        if (isDefaultExchange(exchangeName))
+        if ((isDefaultExchange(exchangeName)) && (LOG.isDebugEnabled()))
         {
-            // default exchange name -> can not bind a queue to it
-            throw new MuleRuntimeException(
-                MessageFactory.createStaticMessage("No queue can be programmatically bound to the default exchange: "
-                                                   + endpoint));
+            LOG.debug("Skipped binding of queue: " + queueName + " to default exchange");
+            return;
         }
 
         // bind queue to exchange
@@ -149,8 +147,12 @@ public abstract class AmqpEndpointUtil
 
         if (isDefaultExchange(exchangeName))
         {
-            LOG.info("Using default exchange for endpoint: " + endpoint);
-            return exchangeName;
+            if (LOG.isDebugEnabled())
+            {
+                LOG.debug("Using default exchange for endpoint: " + endpoint);
+            }
+
+            return AmqpConstants.DEFAULT_EXCHANGE_ALIAS;
         }
 
         final String exchangeType = (String) endpoint.getProperty(EXCHANGE_TYPE);
