@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:amqp="http://www.mulesoft.org/schema/mule/amqp" xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+    xmlns:test="http://www.mulesoft.org/schema/mule/test"
+    xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/amqp http://www.mulesoft.org/schema/mule/amqp/current/mule-amqp.xsd
+       http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+       http://www.mulesoft.org/schema/mule/test http://www.mulesoft.org/schema/mule/test/current/mule-test.xsd">
+
+    <amqp:connector name="amqpConnector" virtualHost="mule-test"
+        username="mule" password="elum" />
+
+    <flow name="amqpTransactionalSupport">
+        <vm:inbound-endpoint path="amqpTransactionalSupport.in" />
+        <transactional action="ALWAYS_BEGIN">
+            <amqp:outbound-endpoint exchangeName="amqpTransactionalSupport-exchange"
+                routingKey="rk1">
+                <amqp:transaction action="ALWAYS_JOIN" />
+            </amqp:outbound-endpoint>
+            <amqp:outbound-endpoint exchangeName="amqpTransactionalSupport-exchange"
+                routingKey="rk2">
+                <amqp:transaction action="ALWAYS_JOIN" />
+            </amqp:outbound-endpoint>
+        </transactional>
+    </flow>
+</mule>

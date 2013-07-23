@@ -15,8 +15,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -259,11 +261,27 @@ public abstract class AbstractAmqpITCase extends FunctionalTestCase
     protected Delivery consumeMessageWithAmqp(final String queue, final long timeout)
         throws IOException, InterruptedException
     {
+        return consumeMessagesWithAmqp(queue, timeout, 1).get(0);
+    }
+
+    protected List<Delivery> consumeMessagesWithAmqp(final String queue,
+                                                     final long timeout,
+                                                     final int expectedCount)
+        throws IOException, InterruptedException
+    {
+        final List<Delivery> deliveries = new ArrayList<Delivery>();
+
         final QueueingConsumer consumer = new QueueingConsumer(getChannel());
         final String consumerTag = getChannel().basicConsume(queue, true, consumer);
-        final Delivery delivery = consumer.nextDelivery(timeout);
+
+        for (int i = 0; i < expectedCount; i++)
+        {
+            deliveries.add(consumer.nextDelivery(timeout));
+        }
+
         getChannel().basicCancel(consumerTag);
-        return delivery;
+
+        return deliveries;
     }
 
     protected void assertValidReceivedMessage(final String correlationId,

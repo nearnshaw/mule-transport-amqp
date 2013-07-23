@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.pool.impl.StackObjectPool;
+import org.mule.api.DefaultMuleException;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
@@ -131,7 +132,7 @@ public class AmqpConnector extends AbstractConnector
         {
             try
             {
-                final Channel channel = amqpConnector.getConnection().createChannel();
+                final Channel channel = amqpConnector.createChannel();
 
                 channel.addShutdownListener(new ShutdownListener()
                 {
@@ -153,13 +154,9 @@ public class AmqpConnector extends AbstractConnector
                     }
                 });
 
-                channel.addReturnListener(amqpConnector.defaultReturnListener);
-
-                channel.basicQos(amqpConnector.getPrefetchSize(), amqpConnector.getPrefetchCount(), false);
-
                 if (logger.isDebugEnabled())
                 {
-                    logger.debug("Created and configured new channel: " + channel);
+                    logger.debug("Shutdown listener configured on channel: " + channel);
                 }
 
                 return channel;
@@ -686,6 +683,20 @@ public class AmqpConnector extends AbstractConnector
         }
     }
 
+    public Channel createChannel() throws IOException
+    {
+        final Channel channel = getConnection().createChannel();
+        channel.addReturnListener(defaultReturnListener);
+        channel.basicQos(getPrefetchSize(), getPrefetchCount(), false);
+
+        if (logger.isDebugEnabled())
+        {
+            logger.debug("Created and configured new channel: " + channel);
+        }
+
+        return channel;
+    }
+
     public void closeChannel(final Channel channel) throws ConnectException
     {
         if (channel == null)
@@ -722,6 +733,27 @@ public class AmqpConnector extends AbstractConnector
     public ReplyToHandler getReplyToHandler(final ImmutableEndpoint endpoint)
     {
         return new AmqpReplyToHandler(this);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected Channel createOperationResource(final ImmutableEndpoint endpoint) throws MuleException
+    {
+        try
+        {
+            return createChannel();
+        }
+        catch (final IOException ioe)
+        {
+            throw new DefaultMuleException(ioe);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected Object getOperationResourceFactory()
+    {
+        return this;
     }
 
     public Connection getConnection()
