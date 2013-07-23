@@ -11,7 +11,7 @@
 package org.mule.transport.amqp;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.resource.spi.work.WorkException;
@@ -195,10 +195,11 @@ public class AmqpMessageReceiver extends AbstractMessageReceiver
         private final Channel channel;
         private final AmqpMessage amqpMessage;
 
+        @SuppressWarnings({"unchecked", "rawtypes"})
         private AmqpWorker(final Channel channel, final AmqpMessage amqpMessage)
         {
-            super(Collections.<Object> singletonList(amqpMessage), AmqpMessageReceiver.this);
-
+            super(new ArrayList(1), AmqpMessageReceiver.this);
+            messages.add(amqpMessage);
             this.channel = channel;
             this.amqpMessage = amqpMessage;
         }
@@ -206,7 +207,7 @@ public class AmqpMessageReceiver extends AbstractMessageReceiver
         @Override
         protected void bindTransaction(final Transaction tx) throws TransactionException
         {
-            tx.bindResource(channel.getClass(), channel);
+            tx.bindResource(amqpConnector, channel);
         }
 
         @Override

@@ -21,7 +21,9 @@ import org.mule.transport.amqp.AmqpTransaction.RecoverStrategy;
  */
 public class AmqpTransactionFactory implements UniversalTransactionFactory
 {
-    private RecoverStrategy recoverStrategy;
+    public static final RecoverStrategy DEFAULT_RECOVER_STRATEGY = RecoverStrategy.REQUEUE;
+
+    private RecoverStrategy recoverStrategy = DEFAULT_RECOVER_STRATEGY;
 
     public Transaction beginTransaction(final MuleContext muleContext) throws TransactionException
     {

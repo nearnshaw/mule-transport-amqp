@@ -18,8 +18,11 @@ import org.mule.api.MuleMessage;
 import org.mule.api.endpoint.OutboundEndpoint;
 import org.mule.api.expression.ExpressionManager;
 import org.mule.api.transaction.Transaction;
+import org.mule.api.transaction.TransactionConfig;
 import org.mule.api.transport.DispatchException;
 import org.mule.config.i18n.MessageFactory;
+import org.mule.processor.DelegateTransaction;
+import org.mule.transaction.IllegalTransactionStateException;
 import org.mule.transaction.TransactionCoordination;
 import org.mule.transport.AbstractMessageDispatcher;
 import org.mule.transport.amqp.AmqpConnector.OutboundConnection;
@@ -101,15 +104,18 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
     @Override
     protected void doDisconnect() throws MuleException
     {
-        final Channel channel = getChannel();
-
-        if (logger.isDebugEnabled())
+        if (outboundConnection != null)
         {
-            logger.debug("Disconnecting: exchange: " + getExchange() + " from channel: " + channel);
-        }
+            final Channel channel = outboundConnection.getChannel();
 
-        outboundConnection = null;
-        amqpConnector.closeChannel(channel);
+            if (logger.isDebugEnabled())
+            {
+                logger.debug("Disconnecting: exchange: " + getExchange() + " from channel: " + channel);
+            }
+
+            outboundConnection = null;
+            amqpConnector.closeChannel(channel);
+        }
     }
 
     @Override
@@ -138,7 +144,7 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
                                                    + AmqpMessage.class.getName()), event, getEndpoint());
         }
 
-        final Channel eventChannel = getChannel();
+        final Channel eventChannel = getEventChannel();
 
         String eventExchange = message.getOutboundProperty(AmqpConstants.EXCHANGE, getExchange());
         if (AmqpEndpointUtil.isDefaultExchange(eventExchange))
@@ -224,12 +230,42 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
         }
     }
 
-    protected Channel getChannel()
+    protected Channel getEventChannel() throws Exception
     {
-        final Transaction transaction = TransactionCoordination.getInstance().getTransaction();
-        if (transaction instanceof AmqpTransaction)
+        if (endpoint.getTransactionConfig().isConfigured())
         {
-            return ((AmqpTransaction) transaction).getTransactedChannel();
+            final byte action = endpoint.getTransactionConfig().getAction();
+
+            final boolean mayUseChannelFromTransaction = action == TransactionConfig.ACTION_BEGIN_OR_JOIN
+                                                         || action == TransactionConfig.ACTION_JOIN_IF_POSSIBLE
+                                                         || action == TransactionConfig.ACTION_INDIFFERENT;
+
+            final boolean mustUseChannelFromTransaction = action == TransactionConfig.ACTION_ALWAYS_JOIN;
+
+            final Transaction transaction = TransactionCoordination.getInstance().getTransaction();
+            if (transaction instanceof AmqpTransaction)
+            {
+                if (mustUseChannelFromTransaction || mayUseChannelFromTransaction)
+                {
+                    return ((AmqpTransaction) transaction).getTransactedChannel();
+                }
+            }
+            else if (transaction instanceof DelegateTransaction)
+            {
+                final Channel channel = amqpConnector.createChannel();
+                channel.txSelect();
+                transaction.bindResource(amqpConnector, channel);
+                return channel;
+            }
+            else
+            {
+                if (mustUseChannelFromTransaction)
+                {
+                    throw new IllegalTransactionStateException(
+                        MessageFactory.createStaticMessage("No active AMQP transaction found for endpoint: "
+                                                           + endpoint));
+                }
+            }
         }
 
         return outboundConnection == null ? null : outboundConnection.getChannel();

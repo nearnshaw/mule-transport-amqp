@@ -22,9 +22,8 @@ import org.mule.transaction.IllegalTransactionStateException;
 import com.rabbitmq.client.Channel;
 
 /**
- * {@link AmqpTransaction} is a wrapper for an AMQP local transaction. This object
- * holds the AMQP channel and controls when the transaction is committed or rolled
- * back.
+ * {@link AmqpTransaction} is a wrapper for an AMQP local transaction. This object holds the AMQP
+ * channel and controls when the transaction is committed or rolled back.
  */
 public class AmqpTransaction extends AbstractSingleResourceTransaction
 {
