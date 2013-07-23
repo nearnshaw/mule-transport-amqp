@@ -255,7 +255,10 @@ public abstract class AbstractAmqpITCase extends FunctionalTestCase
         bob.headers(Collections.<String, Object> singletonMap("customHeader", 123L));
 
         final BasicProperties props = bob.build();
-        getChannel().basicPublish(getExchangeName(flowName), "", props, body);
+        final String exchangeName = getExchangeName(flowName);
+        getChannel().basicPublish(exchangeName, "", props, body);
+        logger.info("Published " + props + " / " + new String(body) + " to: " + exchangeName
+                    + " with empty routing key");
     }
 
     protected Delivery consumeMessageWithAmqp(final String queue, final long timeout)

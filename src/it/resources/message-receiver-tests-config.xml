@@ -39,6 +39,14 @@
     <test:component />
   </flow>
 
+  <flow name="amqpUnboundQueueService">
+    <!-- Create a public unbound queue -->
+    <amqp:inbound-endpoint queueName="amqpUnboundQueueService-queue"
+                           queueDurable="true"
+                           connector-ref="amqpAutoAckLocalhostConnector" />
+    <test:component />
+  </flow>
+
   <flow name="amqpServerNamedQueueExistingExchangeService">
     <!-- Create a private exclusive server-named queue and bind it to an existing exchange --> 
     <amqp:inbound-endpoint exchangeName="amqpServerNamedQueueExistingExchangeService-exchange"

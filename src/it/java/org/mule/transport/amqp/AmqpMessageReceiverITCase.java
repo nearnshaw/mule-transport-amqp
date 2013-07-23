@@ -20,8 +20,11 @@ public class AmqpMessageReceiverITCase extends AbstractAmqpInboundITCase
 {
     public AmqpMessageReceiverITCase() throws IOException, InterruptedException
     {
+        super();
+
         // create the required pre-existing exchanges and queues
         setupExchangeAndQueue("amqpExistingQueueService");
+        setupExchange("amqpUnboundQueueService");
         setupExchange("amqpServerNamedQueueExistingExchangeService");
         setupExchange("amqpNewQueueExistingExchangeService");
         setupExchange("amqpNewQueueRedeclaredExistingExchangeService");
@@ -45,6 +48,18 @@ public class AmqpMessageReceiverITCase extends AbstractAmqpInboundITCase
     public void testExistingQueue() throws Exception
     {
         dispatchTestMessageAndAssertValidReceivedMessage("amqpExistingQueueService");
+    }
+
+    @Test
+    public void testUnboundQueue() throws Exception
+    {
+        final String flowName = "amqpUnboundQueueService";
+
+        // mule should have created the queue so let's bind it and use it
+        getChannel().queueBind(getQueueName(flowName), getExchangeName(flowName), "");
+        getChannel().queuePurge(getQueueName(flowName));
+
+        dispatchTestMessageAndAssertValidReceivedMessage(flowName);
     }
 
     @Test

@@ -401,7 +401,7 @@ This behavior is enforced by activeDeclarationsOnly=false, which means that Mule
                     username="my-user"
                     password="my-pwd"
                     activeDeclarationsOnly="false" />
-                    
+
     <amqp:inbound-endpoint exchangeName="my-exchange"
                            queueName="my-queue"
                            queueDurable="false"
@@ -422,6 +422,14 @@ Similarly to the previous example, the inbound connection will fail if the queue
 
     <amqp:inbound-endpoint queueName="my-queue"
                            connector-ref="amqpAutoAckStrictLocalhostConnector" />
+
+### Listen to messages on declared but unbound queue
+
+In this case, the queue is declared but not bound to any exchange.
+Configuring any of the `queueDurable`, `queueAutoDelete` or `queueExclusive` attributes is needed to trigger the queue creation.
+
+    <amqp:inbound-endpoint queueName="my-queue"
+                           queueDurable="true" />
 
 ### Manual message acknowledgement and rejection
 
