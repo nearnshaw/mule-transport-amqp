@@ -16,7 +16,6 @@ import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.endpoint.OutboundEndpoint;
-import org.mule.api.expression.ExpressionManager;
 import org.mule.api.transaction.Transaction;
 import org.mule.api.transaction.TransactionConfig;
 import org.mule.api.transport.DispatchException;
@@ -96,12 +95,6 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
     }
 
     @Override
-    protected void doConnect() throws MuleException
-    {
-        outboundConnection = amqpConnector.connect(this);
-    }
-
-    @Override
     protected void doDisconnect() throws MuleException
     {
         if (outboundConnection != null)
@@ -135,6 +128,13 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
     protected AmqpMessage doOutboundAction(final MuleEvent event, final OutboundAction outboundAction)
         throws Exception
     {
+        // no need to protected this for thread safety because only one thread at a time can
+        // traverse a dispatcher instance
+        if (outboundConnection == null)
+        {
+            outboundConnection = amqpConnector.connect(this, event);
+        }
+
         final MuleMessage message = event.getMessage();
 
         if (!(message.getPayload() instanceof AmqpMessage))
@@ -152,15 +152,6 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
             eventExchange = "";
         }
 
-        String eventRoutingKey = message.getOutboundProperty(AmqpConstants.ROUTING_KEY, getRoutingKey());
-        // MEL in exchange and queue is auto-resolved as being part of the endpoint URI but routing
-        // key must be resolved by hand
-        final ExpressionManager expressionManager = event.getMuleContext().getExpressionManager();
-        if (expressionManager.isValidExpression(eventRoutingKey))
-        {
-            eventRoutingKey = expressionManager.evaluate(eventRoutingKey, event).toString();
-        }
-
         final AmqpMessage amqpMessage = (AmqpMessage) message.getPayload();
 
         // override publication properties if they are not set
@@ -176,14 +167,16 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
 
         addReturnListenerIfNeeded(event, eventChannel);
 
-        final AmqpMessage result = outboundAction.run(amqpConnector, eventChannel, eventExchange,
-            eventRoutingKey, amqpMessage, getTimeOutForEvent(event));
+        final String routingKey = getRoutingKey();
+
+        final AmqpMessage result = outboundAction.run(amqpConnector, eventChannel, eventExchange, routingKey,
+            amqpMessage, getTimeOutForEvent(event));
 
         if (logger.isDebugEnabled())
         {
             logger.debug(String.format(
                 "Successfully performed %s(channel: %s, exchange: %s, routing key: %s) for: %s and received: %s",
-                outboundAction, eventChannel, eventExchange, eventRoutingKey, event, result));
+                outboundAction, eventChannel, eventExchange, routingKey, event, result));
         }
 
         return result;

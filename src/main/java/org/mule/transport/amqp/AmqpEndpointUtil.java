@@ -18,9 +18,9 @@ import java.util.Map.Entry;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mule.api.MuleRuntimeException;
+import org.mule.api.MuleEvent;
 import org.mule.api.endpoint.ImmutableEndpoint;
-import org.mule.config.i18n.MessageFactory;
+import org.mule.api.expression.ExpressionManager;
 import org.mule.util.StringUtils;
 
 import com.rabbitmq.client.AMQP.Queue.DeclareOk;
@@ -58,15 +58,15 @@ public abstract class AmqpEndpointUtil
                                           final String exchangeName) throws IOException
     {
         final String routingKey = getRoutingKey(endpoint);
+        return getOrCreateQueue(channel, endpoint, activeDeclarationsOnly, exchangeName, routingKey);
+    }
 
-        if (isDefaultExchange(exchangeName) && (StringUtils.isNotBlank(routingKey)))
-        {
-            // no exchange name -> enforce routing key to be empty
-            throw new MuleRuntimeException(
-                MessageFactory.createStaticMessage("An exchange name must be provided if a routing key is provided in endpoint: "
-                                                   + endpoint));
-        }
-
+    public static String getOrCreateQueue(final Channel channel,
+                                          final ImmutableEndpoint endpoint,
+                                          final boolean activeDeclarationsOnly,
+                                          final String exchangeName,
+                                          final String routingKey) throws IOException
+    {
         final String queueName = getQueueName(endpoint.getAddress());
 
         if (StringUtils.isBlank(queueName))
@@ -205,6 +205,24 @@ public abstract class AmqpEndpointUtil
     public static String getRoutingKey(final ImmutableEndpoint endpoint)
     {
         return StringUtils.defaultString((String) endpoint.getProperty(ROUTING_KEY));
+    }
+
+    public static String getRoutingKey(final ImmutableEndpoint endpoint, final MuleEvent muleEvent)
+    {
+        final String eventRoutingKey = muleEvent.getMessage().getOutboundProperty(AmqpConstants.ROUTING_KEY,
+            StringUtils.defaultString((String) endpoint.getProperty(ROUTING_KEY)));
+
+        // MEL in exchange and queue is auto-resolved as being part of the endpoint URI but routing
+        // key must be resolved by hand
+        final ExpressionManager expressionManager = muleEvent.getMuleContext().getExpressionManager();
+        if (expressionManager.isValidExpression(eventRoutingKey))
+        {
+            return expressionManager.evaluate(eventRoutingKey, muleEvent).toString();
+        }
+        else
+        {
+            return eventRoutingKey;
+        }
     }
 
     public static String getConsumerTag(final ImmutableEndpoint endpoint)

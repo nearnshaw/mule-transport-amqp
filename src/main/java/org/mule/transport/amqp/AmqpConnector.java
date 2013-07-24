@@ -22,6 +22,7 @@ import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.pool.impl.StackObjectPool;
 import org.mule.api.DefaultMuleException;
 import org.mule.api.MuleContext;
+import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.construct.FlowConstruct;
@@ -583,9 +584,9 @@ public class AmqpConnector extends AbstractConnector
         }
     }
 
-    public OutboundConnection connect(final MessageDispatcher messageDispatcher) throws ConnectException
+    public OutboundConnection connect(final MessageDispatcher messageDispatcher, final MuleEvent muleEvent)
+        throws ConnectException
     {
-
         final OutboundEndpoint outboundEndpoint = messageDispatcher.getEndpoint();
 
         try
@@ -598,16 +599,7 @@ public class AmqpConnector extends AbstractConnector
                     final String exchange = AmqpEndpointUtil.getOrCreateExchange(
                         connectorConnection.getChannel(), outboundEndpoint, activeDeclarationsOnly);
 
-                    if (StringUtils.isNotEmpty(AmqpEndpointUtil.getQueueName(outboundEndpoint.getAddress()))
-                        || outboundEndpoint.getProperties().containsKey(AmqpEndpointUtil.QUEUE_DURABLE)
-                        || outboundEndpoint.getProperties().containsKey(AmqpEndpointUtil.QUEUE_AUTO_DELETE)
-                        || outboundEndpoint.getProperties().containsKey(AmqpEndpointUtil.QUEUE_EXCLUSIVE))
-                    {
-                        AmqpEndpointUtil.getOrCreateQueue(connectorConnection.getChannel(), outboundEndpoint,
-                            activeDeclarationsOnly, exchange);
-                    }
-
-                    String routingKey = AmqpEndpointUtil.getRoutingKey(outboundEndpoint);
+                    String routingKey = AmqpEndpointUtil.getRoutingKey(outboundEndpoint, muleEvent);
 
                     // if dispatching to default exchange and routing key has been omitted use the
                     // queueName as routing key
@@ -620,8 +612,18 @@ public class AmqpConnector extends AbstractConnector
                         }
                     }
 
+                    if (StringUtils.isNotEmpty(AmqpEndpointUtil.getQueueName(outboundEndpoint.getAddress()))
+                        || outboundEndpoint.getProperties().containsKey(AmqpEndpointUtil.QUEUE_DURABLE)
+                        || outboundEndpoint.getProperties().containsKey(AmqpEndpointUtil.QUEUE_AUTO_DELETE)
+                        || outboundEndpoint.getProperties().containsKey(AmqpEndpointUtil.QUEUE_EXCLUSIVE))
+                    {
+                        AmqpEndpointUtil.getOrCreateQueue(connectorConnection.getChannel(), outboundEndpoint,
+                            activeDeclarationsOnly, exchange, routingKey);
+                    }
+
                     final OutboundConnection oc = new OutboundConnection(
                         connectorConnection.getAmqpConnector(), exchange, routingKey);
+
                     return oc;
                 }
             });
