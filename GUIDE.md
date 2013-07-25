@@ -425,7 +425,9 @@ Similarly to the previous example, the inbound connection will fail if the queue
 
 ### Listen to messages on declared but unbound queue
 
-In this case, the queue is declared but not bound to any exchange.
+In this case, the queue is declared but not bound to any custom exchange,
+except the default exchange to which all declared queues are bound by default.
+
 Configuring any of the `queueDurable`, `queueAutoDelete` or `queueExclusive` attributes is needed to trigger the queue creation.
 
     <amqp:inbound-endpoint queueName="my-queue"
