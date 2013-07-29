@@ -3,7 +3,7 @@
 
 	<!-- GLOBAL ELEMENT CONFIGURATION DEFINITION -->
 	
-	<connector caption="AMQP Connector" localId="connector" icon="icons/small/amqp-endpoint-24x16.png" image="icons/large/amqp-endpoint-48x32.png" extends="http://www.mulesoft.org/schema/mule/core/connectorType" description="">
+	<connector caption="AMQP Connector" localId="connector" icon="icons/small/amqp-endpoint-24x16.png" image="icons/large/amqp-endpoint-48x32.png" extends="http://www.mulesoft.org/schema/mule/core/connectorWithReconnectionType" description="">
 		<attribute-category caption="Protocol" description="Advanced AMQP Protocol properties">
 			<group caption="General" id="general">
 				<string javaType="java.lang.String" required="false" defaultValue="localhost" description="The main AMQP broker host to connect to" caption="Host" name="host" />
