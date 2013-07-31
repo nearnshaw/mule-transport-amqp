@@ -247,7 +247,7 @@ public class AmqpMessageDispatcher extends AbstractMessageDispatcher
             {
                 final Channel channel = amqpConnector.createChannel();
                 channel.txSelect();
-                transaction.bindResource(amqpConnector, channel);
+                transaction.bindResource(channel.getConnection(), channel);
                 return channel;
             }
             else
