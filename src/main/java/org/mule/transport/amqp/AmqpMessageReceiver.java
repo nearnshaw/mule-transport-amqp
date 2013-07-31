@@ -207,7 +207,7 @@ public class AmqpMessageReceiver extends AbstractMessageReceiver
         @Override
         protected void bindTransaction(final Transaction tx) throws TransactionException
         {
-            tx.bindResource(amqpConnector, channel);
+            tx.bindResource(channel.getConnection(), channel);
         }
 
         @Override
