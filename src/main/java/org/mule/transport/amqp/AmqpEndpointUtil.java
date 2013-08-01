@@ -215,14 +215,7 @@ public abstract class AmqpEndpointUtil
         // MEL in exchange and queue is auto-resolved as being part of the endpoint URI but routing
         // key must be resolved by hand
         final ExpressionManager expressionManager = muleEvent.getMuleContext().getExpressionManager();
-        if (expressionManager.isValidExpression(eventRoutingKey))
-        {
-            return expressionManager.evaluate(eventRoutingKey, muleEvent).toString();
-        }
-        else
-        {
-            return expressionManager.parse(eventRoutingKey, muleEvent);
-        }
+        return expressionManager.parse(eventRoutingKey, muleEvent);
     }
 
     public static String getConsumerTag(final ImmutableEndpoint endpoint)
