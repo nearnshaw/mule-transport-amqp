@@ -221,7 +221,7 @@ public abstract class AmqpEndpointUtil
         }
         else
         {
-            return eventRoutingKey;
+            return expressionManager.parse(eventRoutingKey, muleEvent);
         }
     }
 
