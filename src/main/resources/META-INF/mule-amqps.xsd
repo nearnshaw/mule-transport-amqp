@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns="http://www.mulesoft.org/schema/mule/amqps"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+    xmlns:schemadoc="http://www.mulesoft.org/schema/mule/schemadoc" xmlns:amqp="http://www.mulesoft.org/schema/mule/amqp"
+    targetNamespace="http://www.mulesoft.org/schema/mule/amqps"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:import namespace="http://www.mulesoft.org/schema/mule/core"
+        schemaLocation="http://www.mulesoft.org/schema/mule/core/3.4/mule.xsd" />
+    <xsd:import namespace="http://www.mulesoft.org/schema/mule/amqp"
+        schemaLocation="http://www.mulesoft.org/schema/mule/amqp/3.4/mule-amqp.xsd" />
+    <xsd:import namespace="http://www.mulesoft.org/schema/mule/schemadoc"
+        schemaLocation="http://www.mulesoft.org/schema/mule/schemadoc/3.4/mule-schemadoc.xsd" />
+
+    <xsd:annotation>
+        <xsd:documentation>Connects to AMQP brokers over SSL/TLS.
+        </xsd:documentation>
+        <xsd:appinfo>
+            <schemadoc:short-name>AMQPS</schemadoc:short-name>
+            <schemadoc:page-title>AMQP Secure Transport</schemadoc:page-title>
+            <schemadoc:transport-features
+                receiveEvents="true" dispatchEvents="false" responseEvents="true"
+                requestEvents="true" transactions="false" streaming="false">
+                <schemadoc:inboundMEPs in-only="true"
+                    in-optional-out="false" in-out="false" />
+                <schemadoc:outboundMEPs out-only="true"
+                    out-in="true" out-optional-in="true" />
+            </schemadoc:transport-features>
+        </xsd:appinfo>
+    </xsd:annotation>
+
+    <xsd:element name="connector" type="amqpsConnectorType"
+        substitutionGroup="mule:abstract-connector">
+        <xsd:annotation>
+            <xsd:documentation>
+                Connects to AMQP brokers over SSL/TLS.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType name="amqpsConnectorType">
+        <xsd:complexContent>
+            <xsd:extension base="amqp:amqpConnectorType">
+                <xsd:attribute name="sslProtocol" default="SSLv3">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            SSL protocol to use.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value="SSLv3" />
+                            <xsd:enumeration value="TLS" />
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:attribute>
+                <xsd:attribute name="sslTrustManager-ref" type="xsd:string"
+                    use="optional">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Reference to the javax.net.ssl.TrustManager
+                            to use, defaults to one that trusts all certificates.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:element name="inbound-endpoint" type="amqp:inboundEndpointType"
+        substitutionGroup="mule:abstract-inbound-endpoint" />
+
+    <xsd:element name="outbound-endpoint" type="amqp:outboundEndpointType"
+        substitutionGroup="mule:abstract-outbound-endpoint" />
+
+    <xsd:element name="endpoint" type="amqp:globalEndpointType"
+        substitutionGroup="mule:abstract-global-endpoint" />
+
+    <xsd:element name="acknowledge-message" type="amqp:basicAckType"
+        substitutionGroup="mule:abstract-message-processor" />
+
+    <xsd:element name="reject-message" type="amqp:basicRejectType"
+        substitutionGroup="mule:abstract-message-processor" />
+
+    <xsd:element name="recover" type="amqp:basicRecoverType"
+        substitutionGroup="mule:abstract-message-processor" />
+
+    <xsd:element name="return-handler" type="amqp:returnHandlerType"
+        substitutionGroup="mule:abstract-message-processor" />
+
+    <xsd:element name="amqpmessage-to-object-transformer" type="mule:abstractTransformerType"
+        substitutionGroup="mule:abstract-transformer">
+        <xsd:annotation>
+            <xsd:documentation>
+                The amqpmessage-to-object-transformer element
+                configures a transformer that converts an AMQP message into an
+                object by extracting the message payload.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:element name="object-to-amqpmessage-transformer" type="mule:abstractTransformerType"
+        substitutionGroup="mule:abstract-transformer">
+        <xsd:annotation>
+            <xsd:documentation>
+                The object-to-amqpmessage-transformer element
+                configures a transformer that accepts byte[] payloads and copies
+                outbound message properties to either standard AMQP headers or
+                custom ones (based on their names).
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="transaction" type="amqp:transactionType"
+        substitutionGroup="mule:abstract-transaction" />
+</xsd:schema>
