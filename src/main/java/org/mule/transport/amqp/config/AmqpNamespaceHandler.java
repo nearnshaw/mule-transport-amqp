@@ -84,23 +84,28 @@ public class AmqpNamespaceHandler extends AbstractMuleNamespaceHandler
         return AmqpConnector.class;
     }
 
+    protected String getConnectorProtocol()
+    {
+        return AmqpConnector.AMQP;
+    }
+
     protected void registerAmqpTransportEndpoints()
     {
         registerAmqpEndpointDefinitionParser("endpoint", new NonExclusiveAddressedEndpointDefinitionParser(
-            AmqpConnector.AMQP, TransportGlobalEndpointDefinitionParser.PROTOCOL,
+            getConnectorProtocol(), TransportGlobalEndpointDefinitionParser.PROTOCOL,
             new OrphanEndpointDefinitionParser(EndpointURIEndpointBuilder.class),
             TransportGlobalEndpointDefinitionParser.RESTRICTED_ENDPOINT_ATTRIBUTES,
             URIBuilder.ALL_ATTRIBUTES, AMQP_ENDPOINT_ATTRIBUTES, new String[][]{}));
 
         registerAmqpEndpointDefinitionParser("inbound-endpoint",
-            new NonExclusiveAddressedEndpointDefinitionParser(AmqpConnector.AMQP,
+            new NonExclusiveAddressedEndpointDefinitionParser(getConnectorProtocol(),
                 TransportEndpointDefinitionParser.PROTOCOL, new ChildEndpointDefinitionParser(
                     InboundEndpointFactoryBean.class),
                 TransportEndpointDefinitionParser.RESTRICTED_ENDPOINT_ATTRIBUTES, URIBuilder.ALL_ATTRIBUTES,
                 AMQP_ENDPOINT_ATTRIBUTES, new String[][]{}));
 
         registerAmqpEndpointDefinitionParser("outbound-endpoint",
-            new NonExclusiveAddressedEndpointDefinitionParser(AmqpConnector.AMQP,
+            new NonExclusiveAddressedEndpointDefinitionParser(getConnectorProtocol(),
                 TransportEndpointDefinitionParser.PROTOCOL, new ChildEndpointDefinitionParser(
                     OutboundEndpointFactoryBean.class),
                 TransportEndpointDefinitionParser.RESTRICTED_ENDPOINT_ATTRIBUTES, URIBuilder.ALL_ATTRIBUTES,

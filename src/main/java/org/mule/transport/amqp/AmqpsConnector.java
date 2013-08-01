@@ -23,7 +23,7 @@ import com.thoughtworks.xstream.InitializationException;
 /**
  * Connects to a particular virtual host on a particular AMQP broker.
  */
-public class AmqpSslConnector extends AmqpConnector
+public class AmqpsConnector extends AmqpConnector
 {
     public static final String AMQPS = "amqps";
 
@@ -31,7 +31,7 @@ public class AmqpSslConnector extends AmqpConnector
     private String sslProtocol;
     private TrustManager sslTrustManager;
 
-    public AmqpSslConnector(final MuleContext muleContext)
+    public AmqpsConnector(final MuleContext muleContext)
     {
         super(muleContext);
     }

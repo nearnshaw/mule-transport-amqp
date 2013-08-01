@@ -14,14 +14,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mule.transport.amqp.AmqpSslConnector;
+import org.mule.transport.amqp.AmqpsConnector;
 
-@Ignore("reactivate and fix")
-public class AmqpSslNamespaceHandlerTestCase extends AbstractAmqpNamespaceHandlerTestCase
+public class AmqpsNamespaceHandlerTestCase extends AbstractAmqpNamespaceHandlerTestCase
 {
-    public AmqpSslNamespaceHandlerTestCase()
+    public AmqpsNamespaceHandlerTestCase()
     {
         super();
     }
@@ -29,19 +27,19 @@ public class AmqpSslNamespaceHandlerTestCase extends AbstractAmqpNamespaceHandle
     @Override
     protected String getConfigResources()
     {
-        return "amqp-ssl-namespace-config.xml";
+        return "amqps-namespace-config.xml";
     }
 
     @Override
     protected String getProtocol()
     {
-        return AmqpSslConnector.AMQPS;
+        return AmqpsConnector.AMQPS;
     }
 
     @Test
     public void testDefaultSslProtocol() throws Exception
     {
-        final AmqpSslConnector c = (AmqpSslConnector) muleContext.getRegistry().lookupConnector(
+        final AmqpsConnector c = (AmqpsConnector) muleContext.getRegistry().lookupConnector(
             "amqpsDefaultSslConnector");
 
         assertEquals("SSLv3", c.getSslProtocol());
@@ -51,7 +49,7 @@ public class AmqpSslNamespaceHandlerTestCase extends AbstractAmqpNamespaceHandle
     @Test
     public void testTlsConnector() throws Exception
     {
-        final AmqpSslConnector c = (AmqpSslConnector) muleContext.getRegistry().lookupConnector(
+        final AmqpsConnector c = (AmqpsConnector) muleContext.getRegistry().lookupConnector(
             "amqpsTlsConnector");
 
         assertEquals("TLS", c.getSslProtocol());
@@ -61,7 +59,7 @@ public class AmqpSslNamespaceHandlerTestCase extends AbstractAmqpNamespaceHandle
     @Test
     public void testTrustManagerConnector() throws Exception
     {
-        final AmqpSslConnector c = (AmqpSslConnector) muleContext.getRegistry().lookupConnector(
+        final AmqpsConnector c = (AmqpsConnector) muleContext.getRegistry().lookupConnector(
             "amqpsTrustManagerConnector");
 
         assertEquals("SSLv3", c.getSslProtocol());
@@ -71,7 +69,7 @@ public class AmqpSslNamespaceHandlerTestCase extends AbstractAmqpNamespaceHandle
     @Test
     public void testTlsTrustManagerConnector() throws Exception
     {
-        final AmqpSslConnector c = (AmqpSslConnector) muleContext.getRegistry().lookupConnector(
+        final AmqpsConnector c = (AmqpsConnector) muleContext.getRegistry().lookupConnector(
             "amqpsTlsTrustManagerConnector");
 
         assertEquals("TLS", c.getSslProtocol());

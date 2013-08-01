@@ -11,13 +11,13 @@
 package org.mule.transport.amqp.config;
 
 import org.mule.transport.amqp.AmqpConnector;
-import org.mule.transport.amqp.AmqpSslConnector;
+import org.mule.transport.amqp.AmqpsConnector;
 
 /**
  * Registers a Bean Definition Parser for handling <code><amqps:connector></code> elements and
  * supporting endpoint elements.
  */
-public class AmqpSslNamespaceHandler extends AmqpNamespaceHandler
+public class AmqpsNamespaceHandler extends AmqpNamespaceHandler
 {
     @Override
     public void init()
@@ -30,6 +30,12 @@ public class AmqpSslNamespaceHandler extends AmqpNamespaceHandler
     @Override
     protected Class<? extends AmqpConnector> getConnectorClass()
     {
-        return AmqpSslConnector.class;
+        return AmqpsConnector.class;
+    }
+
+    @Override
+    protected String getConnectorProtocol()
+    {
+        return AmqpsConnector.AMQPS;
     }
 }

@@ -16,14 +16,14 @@
     <amqps:object-to-amqpmessage-transformer
         name="o2a" />
 
-    <amqps:connector name="amqpssDefaultSslConnector" />
+    <amqps:connector name="amqpsDefaultSslConnector" />
 
-    <amqps:connector name="amqpssTlsConnector" sslProtocol="TLS" />
+    <amqps:connector name="amqpsTlsConnector" sslProtocol="TLS" />
 
-    <amqps:connector name="amqpssTrustManagerConnector"
+    <amqps:connector name="amqpsTrustManagerConnector"
         sslTrustManager-ref="nullTrustManager" />
 
-    <amqps:connector name="amqpssTlsTrustManagerConnector"
+    <amqps:connector name="amqpsTlsTrustManagerConnector"
         sslProtocol="TLS" sslTrustManager-ref="nullTrustManager" />
 
     <!-- Declare an exchange, a queue, bind the latter to the former -->
@@ -34,28 +34,30 @@
 
     <!-- Use an existing queue -->
     <amqps:endpoint name="amqpsExistingQueueGlobalEndpoint"
-        queueName="target-queue" />
+        queueName="target-queue" connector-ref="amqpsDefaultSslConnector" />
 
     <!-- Declare a server-named exclusive queue and bind it to an existing exchange -->
     <amqps:endpoint name="amqpsPrivateQueueGlobalEndpoint"
-        exchangeName="target-exchange" routingKey="a.b.c" />
+        exchangeName="target-exchange" routingKey="a.b.c" connector-ref="amqpsDefaultSslConnector" />
 
     <!-- Declare a queue and bind it to an existing exchange -->
     <amqps:endpoint name="amqpsDeclareQueueGlobalEndpoint"
         exchangeName="target-exchange" queueName="target-queue" queueDurable="true"
-        queueAutoDelete="false" queueExclusive="false" routingKey="a.b.c" />
+        queueAutoDelete="false" queueExclusive="false" routingKey="a.b.c"
+        connector-ref="amqpsDefaultSslConnector" />
 
     <!-- Use an existing exchange -->
     <amqps:endpoint name="amqpsExistingExchangeGlobalEndpoint"
-        exchangeName="target-exchange" />
+        exchangeName="target-exchange" connector-ref="amqpsDefaultSslConnector" />
 
     <!-- Declare an exchange -->
     <amqps:endpoint name="amqpsDeclareExchangeGlobalEndpoint"
         exchangeName="target-exchange" exchangeType="topic" exchangeDurable="true"
-        exchangeAutoDelete="false" />
+        exchangeAutoDelete="false" connector-ref="amqpsDefaultSslConnector" />
 
     <!-- Use an existing queue -->
-    <amqps:endpoint name="amqpsTransactedEndpoint" queueName="target-queue">
+    <amqps:endpoint name="amqpsTransactedEndpoint" queueName="target-queue"
+        connector-ref="amqpsDefaultSslConnector">
         <!-- Transaction, default recover strategy -->
         <amqps:transaction action="ALWAYS_BEGIN" />
     </amqps:endpoint>
@@ -64,20 +66,21 @@
     <amqps:endpoint name="amqpsEndpointWithArguments"
         exchangeName="target-exchange" exchangeType="fanout" exchangeDurable="true"
         exchangeAutoDelete="false" queueName="target-queue" queueDurable="true"
-        queueAutoDelete="false" queueExclusive="true" routingKey="a.b.c">
+        queueAutoDelete="false" queueExclusive="true" routingKey="a.b.c"
+        connector-ref="amqpsDefaultSslConnector">
         <properties>
             <spring:entry key="amqp-exchange.alternate-exchange"
-                value="some-exchange" />
+        value="some-exchange" />
             <spring:entry key="amqp-queue.x-dead-letter-exchange"
-                value="some-queue" />
+        value="some-queue" />
         </properties>
     </amqps:endpoint>
 
     <amqps:endpoint name="amqpsTransactedEndpointWithRecoverStrategy"
-        queueName="target-queue">
+        queueName="target-queue" connector-ref="amqpsDefaultSslConnector">
         <!-- Transaction, explicit recover strategy -->
         <amqps:transaction action="ALWAYS_BEGIN"
-            recoverStrategy="REQUEUE" />
+        recoverStrategy="REQUEUE" />
     </amqps:endpoint>
 
     <flow name="ackerFlow">
