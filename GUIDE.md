@@ -689,3 +689,29 @@ With such a URI defined, it is possible to retrieve a message from the queue usi
     MuleMessage message = new MuleClient(muleContext).request("amqp://amqp-queue.my-queue", 2500L);
  
 The above will wait for 2.5 seconds for a message and will return null if none has shown up in the queue after this amount of time.
+
+### SSL Connectivity
+
+The transport can connect to the broker using SSLv3 or TLS.
+This is done by using the `AMQPS` connector using the following XML namespace declaration:
+
+    xmlns:amqps="http://www.mulesoft.org/schema/mule/amqps"
+    http://www.mulesoft.org/schema/mule/amqps http://www.mulesoft.org/schema/mule/amqps/current/mule-amqps.xsd
+
+Connect using SSLv3 (default) and uses a trust manager that accepts all certificates as valid:
+
+    <amqps:connector name="amqpsDefaultSslConnector" />
+
+Connect using TLS and uses a trust manager that accepts all certificates as valid:
+
+    <amqps:connector name="amqpsTlsConnector" sslProtocol="TLS" />
+
+Connect using SSLv3 (default) and uses a custom trust manager:
+
+    <amqps:connector name="amqpsTrustManagerConnector"
+        sslTrustManager-ref="myTrustManager" />
+
+Connect using TLS and uses a custom trust manager:
+
+    <amqps:connector name="amqpsTlsTrustManagerConnector"
+        sslProtocol="TLS" sslTrustManager-ref="myTrustManager" />

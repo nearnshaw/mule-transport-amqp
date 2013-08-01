@@ -45,8 +45,8 @@ public class AmqpReplyToHandler extends DefaultReplyToHandler
         // target the default (ie. "") exchange with a routing key equals to the
         // queue replied to
         final OutboundEndpoint outboundEndpoint = getEndpoint(event,
-            AmqpConnector.AMQP + "://?routingKey=" + urlEncode(event, replyToQueueName) + "&connector="
-                            + urlEncode(event, amqpConnector.getName()));
+            amqpConnector.getProtocol() + "://?routingKey=" + urlEncode(event, replyToQueueName)
+                            + "&connector=" + urlEncode(event, amqpConnector.getName()));
 
         final AmqpMessageDispatcher dispatcher = new AmqpMessageDispatcher(outboundEndpoint);
         final DefaultMuleEvent replyEvent = new DefaultMuleEvent(returnMessage, event);

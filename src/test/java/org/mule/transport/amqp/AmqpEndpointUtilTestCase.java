@@ -30,12 +30,15 @@ public class AmqpEndpointUtilTestCase
     @Test
     public void testGetExchangeName()
     {
+        assertEquals("exchange", AmqpEndpointUtil.getExchangeName(
+            "amqp://exchange/amqp-queue.queue?connector=foo", AmqpConnector.AMQP));
         assertEquals("exchange",
-            AmqpEndpointUtil.getExchangeName("amqp://exchange/amqp-queue.queue?connector=foo"));
-        assertEquals("exchange", AmqpEndpointUtil.getExchangeName("amqp://exchange/amqp-queue.queue"));
-        assertEquals("", AmqpEndpointUtil.getExchangeName("amqp://amqp-queue.queue?connector=foo"));
-        assertEquals("", AmqpEndpointUtil.getExchangeName("amqp://amqp-queue.queue"));
-        assertEquals("exchange", AmqpEndpointUtil.getExchangeName("amqp://exchange?connector=foo"));
-        assertEquals("exchange", AmqpEndpointUtil.getExchangeName("amqp://exchange"));
+            AmqpEndpointUtil.getExchangeName("amqp://exchange/amqp-queue.queue", AmqpConnector.AMQP));
+        assertEquals("",
+            AmqpEndpointUtil.getExchangeName("amqp://amqp-queue.queue?connector=foo", AmqpConnector.AMQP));
+        assertEquals("", AmqpEndpointUtil.getExchangeName("amqp://amqp-queue.queue", AmqpConnector.AMQP));
+        assertEquals("exchange",
+            AmqpEndpointUtil.getExchangeName("amqp://exchange?connector=foo", AmqpConnector.AMQP));
+        assertEquals("exchange", AmqpEndpointUtil.getExchangeName("amqp://exchange", AmqpConnector.AMQP));
     }
 }

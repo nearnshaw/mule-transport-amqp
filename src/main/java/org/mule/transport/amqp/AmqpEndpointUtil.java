@@ -142,8 +142,8 @@ public abstract class AmqpEndpointUtil
                                              final ImmutableEndpoint endpoint,
                                              final boolean activeDeclarationsOnly) throws IOException
     {
-        final String outboundEndpointAddress = endpoint.getAddress();
-        final String exchangeName = getExchangeName(outboundEndpointAddress);
+        final String endpointAddress = endpoint.getAddress();
+        final String exchangeName = getExchangeName(endpointAddress, endpoint.getConnector().getProtocol());
 
         if (isDefaultExchange(exchangeName))
         {
@@ -228,12 +228,12 @@ public abstract class AmqpEndpointUtil
         return StringUtils.defaultString(StringUtils.substringAfter(trimQuery(endpointAddress), QUEUE_PREFIX));
     }
 
-    public static String getExchangeName(final String endpointAddress)
+    public static String getExchangeName(final String endpointAddress, final String protocol)
     {
         final String trimmedQuery = trimQuery(endpointAddress);
         final String exchangeName = StringUtils.defaultString(
-            StringUtils.substringBetween(trimmedQuery, AmqpConnector.AMQP + "://", "/" + QUEUE_PREFIX),
-            StringUtils.substringAfter(trimmedQuery, AmqpConnector.AMQP + "://"));
+            StringUtils.substringBetween(trimmedQuery, protocol + "://", "/" + QUEUE_PREFIX),
+            StringUtils.substringAfter(trimmedQuery, protocol + "://"));
 
         if (exchangeName.startsWith(QUEUE_PREFIX))
         {
