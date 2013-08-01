@@ -57,8 +57,7 @@
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
-                <xsd:attribute name="port" type="mule:substitutablePortNumber"
-                    default="5672">
+                <xsd:attribute name="port" type="mule:substitutablePortNumber">
                     <xsd:annotation>
                         <xsd:documentation>
                             The port to use to connect to the

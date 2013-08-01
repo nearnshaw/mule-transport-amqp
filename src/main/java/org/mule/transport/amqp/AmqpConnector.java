@@ -70,7 +70,7 @@ public class AmqpConnector extends AbstractConnector
     private final Transformer receiveTransformer;
 
     private String host;
-    private int port;
+    private int port = ConnectionFactory.DEFAULT_AMQP_PORT;
     private String[] fallbackAddresses;
     private String virtualHost;
     private String username;
@@ -808,9 +808,19 @@ public class AmqpConnector extends AbstractConnector
         this.deliveryMode = deliveryMode;
     }
 
+    public String getHost()
+    {
+        return host;
+    }
+
     public void setHost(final String host)
     {
         this.host = host;
+    }
+
+    public int getPort()
+    {
+        return port;
     }
 
     public void setPort(final int port)

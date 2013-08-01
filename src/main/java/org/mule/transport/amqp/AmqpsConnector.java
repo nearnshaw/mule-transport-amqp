@@ -18,6 +18,7 @@ import org.mule.api.MuleContext;
 import org.mule.api.lifecycle.InitialisationException;
 import org.mule.util.StringUtils;
 
+import com.rabbitmq.client.ConnectionFactory;
 import com.thoughtworks.xstream.InitializationException;
 
 /**
@@ -34,6 +35,8 @@ public class AmqpsConnector extends AmqpConnector
     public AmqpsConnector(final MuleContext muleContext)
     {
         super(muleContext);
+
+        setPort(ConnectionFactory.DEFAULT_AMQP_OVER_SSL_PORT);
     }
 
     @Override
