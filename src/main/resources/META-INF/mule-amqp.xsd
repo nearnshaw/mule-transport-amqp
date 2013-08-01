@@ -36,61 +36,9 @@
         </xsd:annotation>
     </xsd:element>
 
-    <xsd:complexType name="sslProtocolType">
-        <xsd:annotation>
-            <xsd:documentation>
-                Configures the connector to use SSL to connect to
-                AMQP.
-            </xsd:documentation>
-        </xsd:annotation>
-        <xsd:attribute name="protocol" default="SSLv3">
-            <xsd:annotation>
-                <xsd:documentation>SSL protocol to use.</xsd:documentation>
-            </xsd:annotation>
-            <xsd:simpleType>
-                <xsd:restriction base="xsd:string">
-                    <xsd:enumeration value="SSLv3" />
-                    <xsd:enumeration value="TLS" />
-                </xsd:restriction>
-            </xsd:simpleType>
-        </xsd:attribute>
-        <xsd:attribute name="trustManager-ref" type="xsd:string"
-            use="optional">
-            <xsd:annotation>
-                <xsd:documentation>
-                    Reference to the javax.net.ssl.TrustManager
-                    to use, defaults to one that trusts all certificates.
-                </xsd:documentation>
-            </xsd:annotation>
-        </xsd:attribute>
-    </xsd:complexType>
-
-    <xsd:complexType name="sslContextType">
-    </xsd:complexType>
-
     <xsd:complexType name="amqpConnectorType">
         <xsd:complexContent>
             <xsd:extension base="mule:connectorType">
-                <xsd:choice minOccurs="0" maxOccurs="1">
-                    <xsd:element minOccurs="0" maxOccurs="1"
-                        name="ssl-protocol" type="sslProtocolType">
-                        <xsd:annotation>
-                            <xsd:documentation>
-                                Configures the connector to use
-                                SSL to connect to AMQP.
-                            </xsd:documentation>
-                        </xsd:annotation>
-                    </xsd:element>
-                    <xsd:element minOccurs="0" maxOccurs="1"
-                        name="ssl-context" type="sslContextType">
-                        <xsd:annotation>
-                            <xsd:documentation>
-                                Configures the connector to use
-                                SSL to connect to AMQP.
-                            </xsd:documentation>
-                        </xsd:annotation>
-                    </xsd:element>
-                </xsd:choice>
                 <xsd:attribute name="host" type="xsd:string"
                     default="localhost">
                     <xsd:annotation>

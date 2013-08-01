@@ -1,28 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:amqp="http://www.mulesoft.org/schema/mule/amqp" xmlns:spring="http://www.springframework.org/schema/beans"
+    xmlns:amqps="http://www.mulesoft.org/schema/mule/amqps" xmlns:spring="http://www.springframework.org/schema/beans"
     xsi:schemaLocation="
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-       http://www.mulesoft.org/schema/mule/amqp http://www.mulesoft.org/schema/mule/amqp/current/mule-amqp.xsd
+       http://www.mulesoft.org/schema/mule/amqps http://www.mulesoft.org/schema/mule/amqps/current/mule-amqps.xsd
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <spring:beans>
         <spring:bean name="nullTrustManager" class="com.rabbitmq.client.NullTrustManager" />
     </spring:beans>
 
-    <amqp:connector name="amqpDefaultSslConnector">
-        <amqp:ssl-protocol />
-    </amqp:connector>
+    <amqps:amqpmessage-to-object-transformer
+        name="a2o" />
 
-    <amqp:connector name="amqpTlsConnector">
-        <amqp:ssl-protocol protocol="TLS" />
-    </amqp:connector>
+    <amqps:object-to-amqpmessage-transformer
+        name="o2a" />
 
-    <amqp:connector name="amqpTrustManagerConnector">
-        <amqp:ssl-protocol trustManager-ref="nullTrustManager" />
-    </amqp:connector>
+    <amqps:connector name="amqpssDefaultSslConnector" />
 
-    <amqp:connector name="amqpTlsTrustManagerConnector">
-        <amqp:ssl-protocol protocol="TLS" trustManager-ref="nullTrustManager" />
-    </amqp:connector>
+    <amqps:connector name="amqpssTlsConnector" sslProtocol="TLS" />
+
+    <amqps:connector name="amqpssTrustManagerConnector"
+        sslTrustManager-ref="nullTrustManager" />
+
+    <amqps:connector name="amqpssTlsTrustManagerConnector"
+        sslProtocol="TLS" sslTrustManager-ref="nullTrustManager" />
+
+    <!-- Declare an exchange, a queue, bind the latter to the former -->
+    <amqps:endpoint name="amqpsFullGlobalEndpoint" exchangeName="target-exchange"
+        exchangeType="fanout" exchangeDurable="true" exchangeAutoDelete="false"
+        queueName="target-queue" queueDurable="true" queueAutoDelete="false"
+        queueExclusive="true" routingKey="a.b.c" connector-ref="amqpsDefaultSslConnector" />
+
+    <!-- Use an existing queue -->
+    <amqps:endpoint name="amqpsExistingQueueGlobalEndpoint"
+        queueName="target-queue" />
+
+    <!-- Declare a server-named exclusive queue and bind it to an existing exchange -->
+    <amqps:endpoint name="amqpsPrivateQueueGlobalEndpoint"
+        exchangeName="target-exchange" routingKey="a.b.c" />
+
+    <!-- Declare a queue and bind it to an existing exchange -->
+    <amqps:endpoint name="amqpsDeclareQueueGlobalEndpoint"
+        exchangeName="target-exchange" queueName="target-queue" queueDurable="true"
+        queueAutoDelete="false" queueExclusive="false" routingKey="a.b.c" />
+
+    <!-- Use an existing exchange -->
+    <amqps:endpoint name="amqpsExistingExchangeGlobalEndpoint"
+        exchangeName="target-exchange" />
+
+    <!-- Declare an exchange -->
+    <amqps:endpoint name="amqpsDeclareExchangeGlobalEndpoint"
+        exchangeName="target-exchange" exchangeType="topic" exchangeDurable="true"
+        exchangeAutoDelete="false" />
+
+    <!-- Use an existing queue -->
+    <amqps:endpoint name="amqpsTransactedEndpoint" queueName="target-queue">
+        <!-- Transaction, default recover strategy -->
+        <amqps:transaction action="ALWAYS_BEGIN" />
+    </amqps:endpoint>
+
+    <!-- Set queue and exchange arguments -->
+    <amqps:endpoint name="amqpsEndpointWithArguments"
+        exchangeName="target-exchange" exchangeType="fanout" exchangeDurable="true"
+        exchangeAutoDelete="false" queueName="target-queue" queueDurable="true"
+        queueAutoDelete="false" queueExclusive="true" routingKey="a.b.c">
+        <properties>
+            <spring:entry key="amqp-exchange.alternate-exchange"
+                value="some-exchange" />
+            <spring:entry key="amqp-queue.x-dead-letter-exchange"
+                value="some-queue" />
+        </properties>
+    </amqps:endpoint>
+
+    <amqps:endpoint name="amqpsTransactedEndpointWithRecoverStrategy"
+        queueName="target-queue">
+        <!-- Transaction, explicit recover strategy -->
+        <amqps:transaction action="ALWAYS_BEGIN"
+            recoverStrategy="REQUEUE" />
+    </amqps:endpoint>
+
+    <flow name="ackerFlow">
+        <amqps:acknowledge-message multiple="true" />
+    </flow>
 </mule>

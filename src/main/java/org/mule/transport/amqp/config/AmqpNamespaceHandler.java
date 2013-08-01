@@ -38,7 +38,6 @@ import org.mule.transport.amqp.AmqpMessageRejecter;
 import org.mule.transport.amqp.AmqpRecover;
 import org.mule.transport.amqp.AmqpReturnHandler;
 import org.mule.transport.amqp.AmqpTransactionFactory;
-import org.mule.transport.amqp.config.parsers.SslProtocolDefinitionParser;
 import org.mule.transport.amqp.transformers.AmqpMessageToObject;
 import org.mule.transport.amqp.transformers.ObjectToAmqpMessage;
 
@@ -55,9 +54,7 @@ public class AmqpNamespaceHandler extends AbstractMuleNamespaceHandler
     {
         registerAmqpTransportEndpoints();
 
-        registerConnectorDefinitionParser(AmqpConnector.class);
-
-        registerBeanDefinitionParser("ssl-protocol", new SslProtocolDefinitionParser());
+        registerConnectorDefinitionParser(getConnectorClass());
 
         registerBeanDefinitionParser("amqpmessage-to-object-transformer",
             new MessageProcessorDefinitionParser(AmqpMessageToObject.class));
@@ -80,6 +77,11 @@ public class AmqpNamespaceHandler extends AbstractMuleNamespaceHandler
 
         registerBeanDefinitionParser("transaction", new TransactionDefinitionParser(
             AmqpTransactionFactory.class));
+    }
+
+    protected Class<? extends AmqpConnector> getConnectorClass()
+    {
+        return AmqpConnector.class;
     }
 
     protected void registerAmqpTransportEndpoints()
