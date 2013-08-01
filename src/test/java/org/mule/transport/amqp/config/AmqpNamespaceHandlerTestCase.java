@@ -56,6 +56,8 @@ public class AmqpNamespaceHandlerTestCase extends FunctionalTestCase
         assertNotNull(c);
 
         assertEquals(AckMode.AMQP_AUTO, c.getAckMode());
+        assertTrue(c.getSslProtocol() == null);
+        assertTrue(c.getSslTrustManager() == null);
     }
 
     @Test

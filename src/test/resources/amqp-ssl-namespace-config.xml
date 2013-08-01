@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:amqp="http://www.mulesoft.org/schema/mule/amqp" xmlns:spring="http://www.springframework.org/schema/beans"
+    xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/amqp http://www.mulesoft.org/schema/mule/amqp/current/mule-amqp.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <spring:beans>
+        <spring:bean name="nullTrustManager" class="com.rabbitmq.client.NullTrustManager" />
+    </spring:beans>
+
+    <amqp:connector name="amqpDefaultSslConnector">
+        <amqp:ssl-protocol />
+    </amqp:connector>
+
+    <amqp:connector name="amqpTlsConnector">
+        <amqp:ssl-protocol protocol="TLS" />
+    </amqp:connector>
+
+    <amqp:connector name="amqpTrustManagerConnector">
+        <amqp:ssl-protocol trustManager-ref="nullTrustManager" />
+    </amqp:connector>
+
+    <amqp:connector name="amqpTlsTrustManagerConnector">
+        <amqp:ssl-protocol protocol="TLS" trustManager-ref="nullTrustManager" />
+    </amqp:connector>
+</mule>

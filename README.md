@@ -31,6 +31,7 @@ Features
 - Support of prefetch size and count "quality of service" settings.
 - Support of noLocal and exclusive consumers.
 - Support of custom exchange and queue arguments.
+- Support for SSL connectivity.
 
 
 Integration Testing

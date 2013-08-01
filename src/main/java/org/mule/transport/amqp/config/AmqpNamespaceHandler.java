@@ -38,12 +38,13 @@ import org.mule.transport.amqp.AmqpMessageRejecter;
 import org.mule.transport.amqp.AmqpRecover;
 import org.mule.transport.amqp.AmqpReturnHandler;
 import org.mule.transport.amqp.AmqpTransactionFactory;
+import org.mule.transport.amqp.config.parsers.SslProtocolDefinitionParser;
 import org.mule.transport.amqp.transformers.AmqpMessageToObject;
 import org.mule.transport.amqp.transformers.ObjectToAmqpMessage;
 
 /**
- * Registers a Bean Definition Parser for handling <code><amqp:connector></code>
- * elements and supporting endpoint elements.
+ * Registers a Bean Definition Parser for handling <code><amqp:connector></code> elements and
+ * supporting endpoint elements.
  */
 public class AmqpNamespaceHandler extends AbstractMuleNamespaceHandler
 {
@@ -55,6 +56,8 @@ public class AmqpNamespaceHandler extends AbstractMuleNamespaceHandler
         registerAmqpTransportEndpoints();
 
         registerConnectorDefinitionParser(AmqpConnector.class);
+
+        registerBeanDefinitionParser("ssl-protocol", new SslProtocolDefinitionParser());
 
         registerBeanDefinitionParser("amqpmessage-to-object-transformer",
             new MessageProcessorDefinitionParser(AmqpMessageToObject.class));
@@ -81,20 +84,20 @@ public class AmqpNamespaceHandler extends AbstractMuleNamespaceHandler
 
     protected void registerAmqpTransportEndpoints()
     {
-        registerErlangEndpointDefinitionParser("endpoint", new NonExclusiveAddressedEndpointDefinitionParser(
+        registerAmqpEndpointDefinitionParser("endpoint", new NonExclusiveAddressedEndpointDefinitionParser(
             AmqpConnector.AMQP, TransportGlobalEndpointDefinitionParser.PROTOCOL,
             new OrphanEndpointDefinitionParser(EndpointURIEndpointBuilder.class),
             TransportGlobalEndpointDefinitionParser.RESTRICTED_ENDPOINT_ATTRIBUTES,
             URIBuilder.ALL_ATTRIBUTES, AMQP_ENDPOINT_ATTRIBUTES, new String[][]{}));
 
-        registerErlangEndpointDefinitionParser("inbound-endpoint",
+        registerAmqpEndpointDefinitionParser("inbound-endpoint",
             new NonExclusiveAddressedEndpointDefinitionParser(AmqpConnector.AMQP,
                 TransportEndpointDefinitionParser.PROTOCOL, new ChildEndpointDefinitionParser(
                     InboundEndpointFactoryBean.class),
                 TransportEndpointDefinitionParser.RESTRICTED_ENDPOINT_ATTRIBUTES, URIBuilder.ALL_ATTRIBUTES,
                 AMQP_ENDPOINT_ATTRIBUTES, new String[][]{}));
 
-        registerErlangEndpointDefinitionParser("outbound-endpoint",
+        registerAmqpEndpointDefinitionParser("outbound-endpoint",
             new NonExclusiveAddressedEndpointDefinitionParser(AmqpConnector.AMQP,
                 TransportEndpointDefinitionParser.PROTOCOL, new ChildEndpointDefinitionParser(
                     OutboundEndpointFactoryBean.class),
@@ -102,8 +105,8 @@ public class AmqpNamespaceHandler extends AbstractMuleNamespaceHandler
                 AMQP_ENDPOINT_ATTRIBUTES, new String[][]{}));
     }
 
-    protected void registerErlangEndpointDefinitionParser(final String element,
-                                                          final MuleDefinitionParser parser)
+    protected void registerAmqpEndpointDefinitionParser(final String element,
+                                                        final MuleDefinitionParser parser)
     {
         parser.addAlias("exchangeName", URIBuilder.HOST);
         parser.addAlias("queueName", URIBuilder.PATH);
@@ -113,8 +116,8 @@ public class AmqpNamespaceHandler extends AbstractMuleNamespaceHandler
 
     /**
      * The following specific parser exists because the default
-     * AddressedEndpointDefinitionParser.AddressParser enforces exclusivity of
-     * address attributes which is not OK for AMQP endpoints.
+     * AddressedEndpointDefinitionParser.AddressParser enforces exclusivity of address attributes
+     * which is not OK for AMQP endpoints.
      */
     private static class NonExclusiveAddressedEndpointDefinitionParser extends
         AbstractSingleParentFamilyDefinitionParser
@@ -226,9 +229,6 @@ public class AmqpNamespaceHandler extends AbstractMuleNamespaceHandler
                     registerPreProcessor(new CheckRequiredAttributes(requiredPropertiesSets));
                 }
             }
-
         }
-
     }
-
 }

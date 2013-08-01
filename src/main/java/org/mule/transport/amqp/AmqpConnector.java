@@ -11,10 +11,13 @@
 package org.mule.transport.amqp;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+
+import javax.net.ssl.TrustManager;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,6 +62,7 @@ import com.rabbitmq.client.QueueingConsumer.Delivery;
 import com.rabbitmq.client.ReturnListener;
 import com.rabbitmq.client.ShutdownListener;
 import com.rabbitmq.client.ShutdownSignalException;
+import com.thoughtworks.xstream.InitializationException;
 
 /**
  * Connects to a particular virtual host on a particular AMQP broker.
@@ -87,6 +91,10 @@ public class AmqpConnector extends AbstractConnector
     private int prefetchCount;
     private boolean noLocal;
     private boolean exclusiveConsumers;
+
+    // SSL support
+    private String sslProtocol;
+    private TrustManager sslTrustManager;
 
     private ConnectionFactory connectionFactory;
     private Connection connection;
@@ -352,6 +360,25 @@ public class AmqpConnector extends AbstractConnector
             setHost(connectionFactory.getHost());
             setPort(connectionFactory.getPort());
         }
+
+        try
+        {
+            if (StringUtils.isNotBlank(sslProtocol))
+            {
+                if (sslTrustManager == null)
+                {
+                    connectionFactory.useSslProtocol(sslProtocol);
+                }
+                else
+                {
+                    connectionFactory.useSslProtocol(sslProtocol, sslTrustManager);
+                }
+            }
+        }
+        catch (final GeneralSecurityException gse)
+        {
+            throw new InitializationException("Failed to configure SSL", gse);
+        }
     }
 
     @Override
@@ -427,13 +454,13 @@ public class AmqpConnector extends AbstractConnector
         }
     }
 
-    protected void connectToFirstResponsiveBroker(final List<Address> brokerAddresses) throws IOException
+    protected void connectToFirstResponsiveBroker(final List<Address> brokerAddresses) throws Exception
     {
-        IOException lastIOE = null;
+        Exception lastException = null;
 
         for (final Address brokerAddress : brokerAddresses)
         {
-            lastIOE = null;
+            lastException = null;
 
             try
             {
@@ -458,15 +485,15 @@ public class AmqpConnector extends AbstractConnector
                 });
 
             }
-            catch (final IOException ioe)
+            catch (final Exception e)
             {
-                lastIOE = ioe;
+                lastException = e;
             }
         }
 
-        if (lastIOE != null)
+        if (lastException != null)
         {
-            throw lastIOE;
+            throw lastException;
         }
     }
 
@@ -906,5 +933,25 @@ public class AmqpConnector extends AbstractConnector
     public ConnectionFactory getConnectionFactory()
     {
         return this.connectionFactory;
+    }
+
+    public String getSslProtocol()
+    {
+        return sslProtocol;
+    }
+
+    public void setSslProtocol(final String sslProtocol)
+    {
+        this.sslProtocol = sslProtocol;
+    }
+
+    public TrustManager getSslTrustManager()
+    {
+        return sslTrustManager;
+    }
+
+    public void setSslTrustManager(final TrustManager sslTrustManager)
+    {
+        this.sslTrustManager = sslTrustManager;
     }
 }

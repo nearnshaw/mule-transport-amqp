@@ -36,9 +36,61 @@
         </xsd:annotation>
     </xsd:element>
 
+    <xsd:complexType name="sslProtocolType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Configures the connector to use SSL to connect to
+                AMQP.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="protocol" default="SSLv3">
+            <xsd:annotation>
+                <xsd:documentation>SSL protocol to use.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="SSLv3" />
+                    <xsd:enumeration value="TLS" />
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="trustManager-ref" type="xsd:string"
+            use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Reference to the javax.net.ssl.TrustManager
+                    to use, defaults to one that trusts all certificates.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="sslContextType">
+    </xsd:complexType>
+
     <xsd:complexType name="amqpConnectorType">
         <xsd:complexContent>
             <xsd:extension base="mule:connectorType">
+                <xsd:choice minOccurs="0" maxOccurs="1">
+                    <xsd:element minOccurs="0" maxOccurs="1"
+                        name="ssl-protocol" type="sslProtocolType">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Configures the connector to use
+                                SSL to connect to AMQP.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element minOccurs="0" maxOccurs="1"
+                        name="ssl-context" type="sslContextType">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Configures the connector to use
+                                SSL to connect to AMQP.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:choice>
                 <xsd:attribute name="host" type="xsd:string"
                     default="localhost">
                     <xsd:annotation>
@@ -62,8 +114,7 @@
                     <xsd:annotation>
                         <xsd:documentation>
                             The port to use to connect to the
-                            main
-                            AMQP broker.
+                            main AMQP broker.
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
@@ -71,10 +122,8 @@
                     <xsd:annotation>
                         <xsd:documentation>
                             A comma-separated list of "host:port"
-                            or
-                            "host", defining fallback brokers to attempt
-                            connection
-                            to, should the connection to main broker
+                            or "host", defining fallback brokers to attempt
+                            connection to, should the connection to main broker
                             fail.
                         </xsd:documentation>
                     </xsd:annotation>
@@ -93,8 +142,7 @@
                     <xsd:annotation>
                         <xsd:documentation>
                             The user name to use to connect to
-                            the
-                            AMQP broker.
+                            the AMQP broker.
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
@@ -111,8 +159,7 @@
                     <xsd:annotation>
                         <xsd:documentation>
                             The delivery mode to use when
-                            publishing
-                            to the AMQP broker.
+                            publishing to the AMQP broker.
                         </xsd:documentation>
                     </xsd:annotation>
                     <xsd:simpleType>
@@ -126,8 +173,7 @@
                     <xsd:annotation>
                         <xsd:documentation>
                             The priority to use when publishing
-                            to
-                            the AMQP broker.
+                            to the AMQP broker.
                         </xsd:documentation>
                     </xsd:annotation>
                     <xsd:simpleType>
@@ -142,15 +188,10 @@
                     <xsd:annotation>
                         <xsd:documentation>
                             This flag tells the server how to
-                            react
-                            if the message cannot be
-                            routed to a queue. If
-                            this flag is
-                            set to true, the server will throw an
-                            exception for any
-                            unroutable message. If this flag is
-                            false, the server
-                            silently drops the message.
+                            react if the message cannot be routed to a queue. If
+                            this flag is set to true, the server will throw an
+                            exception for any unroutable message. If this flag
+                            is false, the server silently drops the message.
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
@@ -159,20 +200,11 @@
                     <xsd:annotation>
                         <xsd:documentation>
                             This flag tells the server how to
-                            react
-                            if the message cannot be
-                            routed to a queue
-                            consumer
-                            immediately. If this flag is set to true,
-                            the server
-                            will
-                            throw an exception for any
-                            undeliverable message. If
-                            this
-                            flag is false, the
-                            server will queue the message, but
-                            with
-                            no guarantee
+                            react if the message cannot be routed to a queue
+                            consumer immediately. If this flag is set to true,
+                            the server will throw an exception for any
+                            undeliverable message. If this flag is false, the
+                            server will queue the message, but with no guarantee
                             that it will ever be consumed.
                         </xsd:documentation>
                     </xsd:annotation>
@@ -182,9 +214,7 @@
                     <xsd:annotation>
                         <xsd:documentation>
                             Reference to an endpoint to which
-                            AMQP
-                            returned message should be
-                            dispatched to.
+                            AMQP returned messages should be dispatched to.
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
@@ -199,22 +229,20 @@
                         <xsd:restriction base="xsd:string">
                             <xsd:enumeration value="AMQP_AUTO">
                                 <xsd:annotation>
-                                    <xsd:documentation>The AMQP broker will
-                                        consider
-                                        messages acknowledged once
+                                    <xsd:documentation>
+                                        The AMQP broker will
+                                        consider messages acknowledged once
                                         delivered.
                                     </xsd:documentation>
                                 </xsd:annotation>
                             </xsd:enumeration>
                             <xsd:enumeration value="MULE_AUTO">
                                 <xsd:annotation>
-                                    <xsd:documentation>Mule will automatically
-                                        acknowledge
-                                        messages when the flow will
-                                        have been processed, if
-                                        no exception has
-                                        been encountered.
-                                        Using asynchronous
+                                    <xsd:documentation>
+                                        Mule will automatically
+                                        acknowledge messages when the flow will
+                                        have been processed, if no exception has
+                                        been encountered. Using asynchronous
                                         sub-flows or dispatch may lead to early
                                         acknowledgment.
                                     </xsd:documentation>
@@ -222,9 +250,9 @@
                             </xsd:enumeration>
                             <xsd:enumeration value="MANUAL">
                                 <xsd:annotation>
-                                    <xsd:documentation>The AMQP broker will
-                                        expect
-                                        explicit message acknowledgments.
+                                    <xsd:documentation>
+                                        The AMQP broker will
+                                        expect explicit message acknowledgments.
                                     </xsd:documentation>
                                 </xsd:annotation>
                             </xsd:enumeration>
@@ -236,8 +264,7 @@
                     <xsd:annotation>
                         <xsd:documentation>
                             The maximum amount of content
-                            (measured
-                            in octets) that the server will deliver, 0
+                            (measured in octets) that the server will deliver, 0
                             if unlimited.
                         </xsd:documentation>
                     </xsd:annotation>
@@ -247,8 +274,7 @@
                     <xsd:annotation>
                         <xsd:documentation>
                             The maximum number of messages that
-                            the
-                            server will deliver, 0 if unlimited.
+                            the server will deliver, 0 if unlimited.
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
@@ -257,10 +283,8 @@
                     <xsd:annotation>
                         <xsd:documentation>
                             If the no-local field is set the
-                            server
-                            will not send messages to the connection that
-                            published
-                            them.
+                            server will not send messages to the connection that
+                            published them.
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
@@ -269,8 +293,7 @@
                     <xsd:annotation>
                         <xsd:documentation>
                             Set to true if the connector should
-                            only
-                            create exclusive consumers.
+                            only create exclusive consumers.
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
@@ -279,10 +302,8 @@
                     <xsd:annotation>
                         <xsd:documentation>
                             Defines if the connector should only
-                            do
-                            active exchange and queue declarations or can also
-                            perform
-                            passive declarations to enforce their
+                            do active exchange and queue declarations or can
+                            also perform passive declarations to enforce their
                             existence.
                         </xsd:documentation>
                     </xsd:annotation>
@@ -432,12 +453,9 @@
                     <xsd:annotation>
                         <xsd:documentation>
                             Set to true to acknowledge all
-                            messages up to and including the
-                            delivery tag of the
-                            AMQP message that is currently
-                            processed by Mule;
-                            false to acknowledge just the current
-                            message.
+                            messages up to and including the delivery tag of the
+                            AMQP message that is currently processed by Mule;
+                            false to acknowledge just the current message.
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
@@ -503,7 +521,8 @@
         substitutionGroup="mule:abstract-message-processor" />
     <xsd:complexType name="returnHandlerType">
         <xsd:annotation>
-            <xsd:documentation>Defines the strategy to use to handle messages
+            <xsd:documentation>
+                Defines the strategy to use to handle messages
                 returned by the AMQP broker.
             </xsd:documentation>
         </xsd:annotation>
@@ -513,9 +532,9 @@
                     <xsd:group ref="mule:messageProcessorOrOutboundEndpoint"
                         minOccurs="0" maxOccurs="1">
                         <xsd:annotation>
-                            <xsd:documentation>Destination to which returned
-                                messages
-                                will be sent.
+                            <xsd:documentation>
+                                Destination to which returned
+                                messages will be sent.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:group>
@@ -529,10 +548,8 @@
         <xsd:annotation>
             <xsd:documentation>
                 The amqpmessage-to-object-transformer element
-                configures a transformer
-                that converts an AMQP message into an
-                object by extracting the
-                message payload.
+                configures a transformer that converts an AMQP message into an
+                object by extracting the message payload.
             </xsd:documentation>
         </xsd:annotation>
     </xsd:element>
@@ -541,8 +558,7 @@
         <xsd:annotation>
             <xsd:documentation>
                 The object-to-amqpmessage-transformer element
-                configures a transformer
-                that accepts byte[] payloads and copies
+                configures a transformer that accepts byte[] payloads and copies
                 outbound message properties to either standard AMQP headers or
                 custom ones (based on their names).
             </xsd:documentation>
@@ -553,7 +569,8 @@
         substitutionGroup="mule:abstract-transaction" />
     <xsd:complexType name="transactionType">
         <xsd:annotation>
-            <xsd:documentation>The transaction element configures a transaction.
+            <xsd:documentation>
+                The transaction element configures a transaction.
                 Transactions allow a series of operations to be grouped together
                 so that they can be rolled back if a failure occurs. Set the
                 action (such as ALWAYS_BEGIN or JOIN_IF_POSSIBLE) and the
@@ -565,7 +582,8 @@
                 <xsd:attribute name="recoverStrategy" use="optional"
                     default="NONE">
                     <xsd:annotation>
-                        <xsd:documentation>Determines if a basic recover should
+                        <xsd:documentation>
+                            Determines if a basic recover should
                             be performed after a rollback.
                         </xsd:documentation>
                     </xsd:annotation>
