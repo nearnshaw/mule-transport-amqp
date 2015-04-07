@@ -154,10 +154,18 @@ The AMQP connector will accept an use a `receiver-threading-profile` that will b
     </td>
   </tr>
   <tr>
-    <td rowspan="1" class="confluenceTd">priority</td><td style="text-align: center" class="confluenceTd"></td><td style="text-align: center" class="confluenceTd">no</td><td style="text-align: center" class="confluenceTd">0</td><td class="confluenceTd">
+    <td rowspan="1" class="confluenceTd">priority</td><td style="text-align: center" class="confluenceTd">integer</td><td style="text-align: center" class="confluenceTd">no</td><td style="text-align: center" class="confluenceTd">0</td><td class="confluenceTd">
       <p>
           The priority to use when publishing to
           the AMQP broker.
+        </p>
+    </td>
+  </tr>
+  <tr>
+    <td rowspan="1" class="confluenceTd">requestedHeartbeat</td><td style="text-align: center" class="confluenceTd">integer</td><td style="text-align: center" class="confluenceTd">no</td><td style="text-align: center" class="confluenceTd">0</td><td class="confluenceTd">
+      <p>
+          The requested AMQP heartbeat interval in seconds.
+          Default value is 0 which means no heartbeats.
         </p>
     </td>
   </tr>
