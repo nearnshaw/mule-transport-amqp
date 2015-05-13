@@ -320,10 +320,19 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <additionalClasspathElements>
-                                <additionalClasspathElement>${basedir}/conf</additionalClasspathElement>
-                            </additionalClasspathElements>
+                            <includes>
+                                <include>**/*ItCase.java</include>
+                            </includes>
+                            <systemPropertyVariables>
+                                <amqpVirtualHost>/</amqpVirtualHost>
+                                <amqpUserName>guest</amqpUserName>
+                                <amqpPassword>guest</amqpPassword>
+                                <amqpHost>127.0.0.1</amqpHost>
+                                <amqpPort>5672</amqpPort>
+                                <amqpSslPort>5671</amqpSslPort>
+                            </systemPropertyVariables>
                         </configuration>
+                       
                         <executions>
                             <execution>
                                 <id>integration-test</id>
@@ -336,24 +345,6 @@
                                 <goals>
                                     <goal>verify</goal>
                                 </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.2.1</version>
-                        <executions>
-                            <execution>
-                                <id>create-test-vhost-and-user</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <workingDirectory>src/it/config</workingDirectory>
-                                    <executable>src/it/config/sudo_setup_rabbitmq.sh</executable>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
