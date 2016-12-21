@@ -240,7 +240,7 @@ The AMQP connector will accept an use a `receiver-threading-profile` that will b
     </td>
   </tr>
   <tr>
-    <td rowspan="1" class="confluenceTd">numberOfChannels</td><td style="text-align: center" class="confluenceTd">integer</td><td style="text-align: center" class="confluenceTd">no</td><td style="text-align: center" class="confluenceTd">4</td><td class="confluenceTd">
+    <td rowspan="1" class="confluenceTd">numberOfChannels</td><td style="text-align: center" class="confluenceTd">integer</td><td style="text-align: center" class="confluenceTd">no</td><td style="text-align: center" class="confluenceTd">1</td><td class="confluenceTd">
       <p>
           The number of channels that will be spawned per inbound endpoint to receive AMQP messages.
           Default value is 4.
